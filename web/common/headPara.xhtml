@@ -1,0 +1,43 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	
+	<div id="logo">
+ 		<img height="90px" width="145px" src="#{request.contextPath}/images/herp_logo9.png" alt="Logo" />	
+		
+	</div>
+	<table style="position: absolute;top:25%;width: 100%"  >
+	  <tr><td  style="text-align: center;"> <h:outputLabel value="#{bundle.openTreatmentDapy}" styleClass="pageTitle"  /></td></tr>
+	  <tr><td style="text-align: center;"> <h:outputLabel value="(#{sessionBean.users.hospital.name} - #{bundle.grEx})" styleClass="pageSubTitle"  /></td></tr> 
+	   
+			<ui:insert name="status">
+			<p:ajaxStatus style="width:30px;height:30px;position:fixed;right:15%;top:55px">
+				<f:facet name="start">
+					<p:graphicImage  value="../images/ajax-loader.gif" />
+				</f:facet>
+
+				<f:facet name="complete">
+					<h:outputText value="" />
+				</f:facet>
+			</p:ajaxStatus>
+		</ui:insert>
+	
+	</table>
+    
+     
+	
+	<div id="globalthemeswitcher">
+	  <h:form>	
+		<ui:include  src="languageSelector.xhtml" />
+		<br/>
+		<ui:include src="themeMenu.xhtml" />
+	 </h:form>	
+		
+	</div>
+
+
+</ui:composition>

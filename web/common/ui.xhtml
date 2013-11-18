@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view>
+
+        <h:head>
+            <f:facet name="first">
+                <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+                <title>#{sessionBean.pageName}</title>
+            </f:facet>
+
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/css/default.css" />
+
+            <ui:insert name="head"></ui:insert> 
+
+            <script type="text/javascript">
+                $(function() {$('.sidebar a').hover(function() {$(this).toggleClass('ui-state-hover');})});
+            </script>
+
+            <script type="text/javascript">
+//                var _gaq = _gaq || [];
+//                _gaq.push(['_setAccount', 'UA-12200033-3']);
+//                _gaq.push(['_trackPageview']);
+
+//                (function() {
+//                    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+//                    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+//                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+//                })();
+
+            </script>
+
+            <script type="text/javascript">
+                PrimeFaces.locales['el'] = {
+                    closeText: 'Κλείσιμο',
+                    prevText: 'Προηγούμενο',
+                    nextText: 'Επόμενο',
+                    currentText: 'Σήμερα',
+                    monthNames: ['Ιανουάριος','Φεβρουάριος','Μάρτιος','Απρίλιος','Μάϊος','Ιούνιος','Ιούλιος','Άυγουστος','Σεπτέμβιος','Οκτώβριος','Νοέμβριος','Δεκέμβριος'],
+                    monthNamesShort: ['Ιαν','Φεβ','Μαρ','Απρ','Μαι','Ιουν', 'Ιουλ','Αυγ','Σεπ','Οκτ','Νοε','Δεκ'],
+                    dayNames: ['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο'],
+                    dayNamesShort: ['Κυρ','Δευ','Τρι','Τετ','Πεμ','Παρ','Σαβ'],
+                    dayNamesMin: ['Κ','Δ','Τρ','Τε','Πε','Πα','Σ'],
+                    weekHeader: 'Εβδ',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    timeOnlyTitle: 'Επιλογή Ώρας',
+                    timeText: 'Χρόνος',
+                    hourText: 'Ώρα',
+                    minuteText: 'Λεπτό',
+                    secondText: 'Δεύτερολεπτο',
+                    currentText: 'Τρέχουσα Ημ/νία',
+                    ampm: false,
+                    month: 'Μήνας',
+                    week: 'Εβδομάδα',
+                    day: 'Μέρα',
+                    allDayText : 'Όλη Μέρα'
+                };
+                
+                function resetTableIndex(){
+                    dataTable.getPaginator().setPage(0);                    
+                }
+          
+            </script>  
+        </h:head>
+
+        <h:body  styleClass="mainBG">
+            <p:idleMonitor timeout="1800000" onidle="idleDialog.show()">  
+                <p:ajax event="idle" listener="#{administrationAction.invalidateSession}"/>                  
+            </p:idleMonitor> 
+            
+            <p:dialog header="#{bundle.attention}" resizable="false"  closable="false" 
+                      widgetVar="idleDialog" modal="true" style="color: black;font-weight: bold;">  
+                <h:form>                    
+                    <table>
+                        <tr><td><h:outputText value="#{bundle.idleMsg}" style="color: black;" /><br/></td></tr>
+                        <tr><td style="text-align: center"><p:commandButton value="OK" ajax="false" action="#{administrationAction.loginAction()}"/></td></tr>
+                    </table>
+                </h:form>
+            </p:dialog> 
+
+            <div id="sidebar" class="ui-widget-content ui-corner-bottom ui-helper-clearfix ui-shadow" style="padding:1px">
+                <ui:include src="leftPara.xhtml" />										
+            </div>
+
+
+            <DIV style="margin-left: 17% !important;margin-right: 1% !important;" > 
+                <div id="header" class="ui-widget ui-widget-header ui-corner-all ui-shadow">
+                    <ui:include src="headPara.xhtml" />	
+                </div>
+ 
+                <div id="page" class="ui-widget ui-shadow">						
+                    <div id="content">				
+                        <ui:insert name="content">...</ui:insert>				
+                    </div>
+
+                    <div style="clear: both;">&nbsp;</div>
+                </div>
+
+                <div id="footer" class="ui-widget ui-widget-header ui-corner-all ui-shadow">
+                    <ui:include src="footerPara.xhtml" />				
+                </div>
+
+
+                <!-- EXPIRED SESSION DIALOG -->
+               <!-- <p:confirmDialog header="#{bundle.msg}" severity="alert" visible="#{not empty param['expired']}" message="#{bundle.expiredSession}" widgetVar="confirmDlg" >
+                    <p:commandButton type="button" value="OK" onclick="confirmDlg.hide()" styleClass="centered" />
+                </p:confirmDialog> -->
+
+
+
+                <!-- DISCONNECT CONFIRMATION DIALOG -->
+                <p:confirmDialog header="#{bundle.disconnect}" severity="alert" visible="false"  message="#{bundle.msgDisconnect}" widgetVar="disconnectDlg">	        
+                    <h:form >                         
+                        <p:commandButton  value="OK" action="#{administrationAction.logoutAction}" ajax="false"  />
+                        <p:commandButton type="button" value="#{bundle.cancel}" onclick="disconnectDlg.hide()" />	                                                  
+                    </h:form>  
+                </p:confirmDialog>
+            </DIV>
+        </h:body>
+    </f:view>
+</html>

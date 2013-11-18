@@ -1,0 +1,110 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:form>
+        <p:fieldset legend="#{bundle.connectionDetails}" toggleable="true" toggleSpeed="500" styleClass="left-fieldset">
+            <!--<h:panelGrid columns="2" cellpadding="0"
+                         columnClasses="right-font,left-font">-->
+            <table>   
+                <tr> 
+                    <td style="font-weight: bold;width: 31%;text-align: right"><h:outputLabel value="#{bundle.healthUnitAbb}:" /></td>
+                    <td><h:outputText value="#{sessionBean.users.hospital.name}" /></td>
+                </tr>       
+                <tr>
+                    <td style="font-weight: bold;width: 31%;text-align: right"><h:outputLabel value="#{bundle.user}:" /></td>
+                    <td><h:outputText value="#{sessionBean.users.username}" /> </td>
+                </tr>
+            </table>                   
+                <!--<h:outputLabel value="#{bundle.tameio}:" />
+                <h:outputText value="#{sessionBean.tameio.name}" />
+            </h:panelGrid> -->
+        </p:fieldset>
+
+
+       <!-- <span id="#{not empty sessionBean.tameio ? 'other' : 'checktameio'}" >	 
+            <p:fieldset legend="#{bundle.selectTameio}" toggleable="true" toggleSpeed="500"  styleClass="left-fieldset" >
+                <p:selectOneMenu value="#{sessionBean.tameio}" effect="fade" converter="TameioConverter" >
+                    <f:selectItem itemLabel="#{bundle.selectTameio}" itemValue="" /> 
+                    <f:selectItems value="#{sessionBean.tameia}" var="tameio" itemLabel="#{tameio.name}" itemValue="#{tameio}"   />
+                    <p:ajax update="@form" /> 
+                </p:selectOneMenu>
+            </p:fieldset>   
+        </span> -->
+
+
+
+        <p:fieldset legend="#{bundle.paras}" toggleable="true" toggleSpeed="500" styleClass="left-fieldset">
+            <p:menu styleClass="menuleft"> 		
+                <p:menuitem value="#{bundle.new}"   icon="ui-icon-gear" action="#{dapyAction.createPara}" rendered="#{sessionBean.users.role.roleid ==6 ||sessionBean.users.role.roleid == 7}" /> 
+                <p:menuitem value="#{bundle.search}" icon="ui-icon-gear"  action="#{paraAction.searchPara}"  rendered="#{sessionBean.users.role.roleid ==6 ||sessionBean.users.role.roleid == 7}"/>          
+                <p:menuitem value="#{bundle.dailyPara}" icon="ui-icon-gear"  action="#{paraAction.dailySearchPara}" rendered="#{sessionBean.users.role.roleid == 8}"/>
+            </p:menu>        
+        </p:fieldset>
+
+
+
+        <p:fieldset legend="#{bundle.dapyAdmin}" toggleable="true" toggleSpeed="500" styleClass="left-fieldset"  rendered="#{sessionBean.users.role.roleid == 7}">			
+            <p:menu styleClass="menuleft"> 				
+                <p:menuitem  value="#{bundle.actions}" action="#{dapyAction.adminActions}"  icon="ui-icon-gear" />
+                <p:menuitem  value="#{bundle.statistics}" action="#{paraAction.statisticAnalysis}"  icon="ui-icon-gear" />
+                
+<!--<p:menuitem  value="#{bundle.usualMedActs}" icon="ui-icon-gear" /> -->							
+            </p:menu>			
+        </p:fieldset>
+
+
+
+        <p:fieldset legend="#{bundle.patientAdmin}" toggleable="true" toggleSpeed="500" styleClass="left-fieldset" rendered="#{sessionBean.users.role.roleid ==6 ||sessionBean.users.role.roleid == 7}" >
+            <p:menu styleClass="menuleft"> 		
+                <p:menuitem value="#{bundle.insert}" action="#{patientAction.createPatient}" icon="ui-icon-gear"  />  
+                <p:menuitem value="#{bundle.search}" action="#{patientAction.searchPatient}" icon="ui-icon-gear"/>          
+            </p:menu> 
+        </p:fieldset>
+
+
+        <p:fieldset legend="#{bundle.contracts}" toggleable="true" toggleSpeed="500" styleClass="left-fieldset" rendered="#{sessionBean.users.role.roleid == 7}">
+            <p:menu styleClass="menuleft"> 		
+                <p:menuitem value="#{bundle.viewContract}"  action="#{dapyAction.viewContracts}" icon="ui-icon-gear"  />                          
+            </p:menu>
+        </p:fieldset>
+
+
+        <p:fieldset legend="#{bundle.currentUser}" toggleable="true" toggleSpeed="500" styleClass="left-fieldset">
+            <p:menu styleClass="menuleft"> 		
+                <p:menuitem value="#{bundle.homePage}"  action="home?redirect=true" icon="ui-icon-extlink"  />  
+                <p:menuitem value="#{bundle.disconnect}"  onclick="disconnectDlg.show()" icon="ui-icon-close"  />           	         	
+            </p:menu> 		
+        </p:fieldset>
+    </h:form> 
+
+    <h:panelGroup layout="block"  id="primeAlertPanel" >
+        <p:confirmDialog  message="#{sessionBean.alertMessage}" header="#{bundle.warning}" severity="alert" 
+                          widgetVar="alertMessageDialog">                    
+            <p:commandButton value="OK" oncomplete="alertMessageDialog.hide()" styleClass="centered"  />    	                      	                      
+        </p:confirmDialog>
+
+        <p:dialog  header="#{bundle.warning}" severity="alert" modal="true" resizable="false" 
+                   widgetVar="alertMessageDlg"  visible="#{sessionBean.showGeneralDialog}" >                    
+            <h:form id="alertMsgForm"> 
+                <table>
+                    <tr>
+                        <td style="text-align: center">
+                            <h:outputLabel value="#{sessionBean.alertMessage}"/>
+                        </td>
+                    </tr>                    
+                    <tr>
+                        <td style="text-align: center">
+                            <p:commandButton  update=":primeAlertPanel" value="OK" action="#{administrationAction.closeAlertDlg}"/>
+                        </td>
+                    </tr>    	                      	                      
+                </table>
+            </h:form>
+        </p:dialog>
+    </h:panelGroup>
+       
+    
+</ui:composition>

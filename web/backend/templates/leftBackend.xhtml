@@ -1,0 +1,138 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:form>
+        <p:fieldset legend="#{bundle.connectionDetails}" toggleable="true" toggleSpeed="500" styleClass="left-fieldset">            
+            <table>   
+                <tr> 
+                    <td style="font-weight: bold;width: 31%;text-align: right"><h:outputLabel value="#{bundle.company}:" /></td>
+                    <td><h:outputText value="#{sessionBean.users.company.name}" /></td>
+                </tr>       
+                <tr>
+                    <td style="font-weight: bold;width: 31%;text-align: right"><h:outputLabel value="#{bundle.user}:" /></td>
+                    <td><h:outputText value="#{sessionBean.users.username}" /> </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold;width: 31%;text-align: right"><h:outputLabel value="#{bundle.role}:" /></td>
+                    <td><h:outputText value="#{sessionBean.users.role.name}" /> </td>
+                </tr>                
+            </table> 
+            
+            <!--<ui:insert name="status">
+                <p:ajaxStatus onstart="statusDialog.show();" onsuccess="statusDialog.hide();"/>  
+                <p:dialog modal="true" widgetVar="statusDialog" header="Status"   
+                          draggable="false" closable="false"> 
+                    <p:graphicImage value="../resources/images/ajax-loader.gif" />  
+                </p:dialog> 
+            </ui:insert> -->
+            
+            
+        </p:fieldset>
+
+        <p:fieldset legend="#{bundle.adminAction}" toggleable="true" toggleSpeed="500" styleClass="left-fieldset"  collapsed="true"
+                    rendered="#{sessionBean.users.role.roleid ==1}">		
+            <p:menu styleClass="menuleft"> 				
+                <p:menuitem value="#{bundle.companyMgt}"   icon="ui-icon-gear"  
+                            rendered="#{sessionBean.users.role.roleid ==1}" style='#{sessionBean.pageCode==administrationAction.getPropertyValue("PAGE_CREATE_PRODUCTLINE") ? "background-color: aqua":""}' /> 
+                <p:menuitem value="#{bundle.userMgt}"   icon="ui-icon-gear" 
+                            rendered="#{sessionBean.users.role.roleid ==1}" style='#{sessionBean.pageCode==administrationAction.getPropertyValue("PAGE_CREATE_PRODUCTLINE") ? "background-color: aqua":""}' /> 
+                <p:menuitem value="#{bundle.pricingRules}"   icon="ui-icon-gear" 
+                            rendered="#{sessionBean.users.role.roleid ==1}" style='#{sessionBean.pageCode==administrationAction.getPropertyValue("PAGE_CREATE_PRODUCTLINE") ? "background-color: aqua":""}' /> 
+                <p:menuitem value="#{bundle.bundleRules}"   icon="ui-icon-gear" 
+                            rendered="#{sessionBean.users.role.roleid ==1}" style='#{sessionBean.pageCode==administrationAction.getPropertyValue("PAGE_CREATE_PRODUCTLINE") ? "background-color: aqua":""}' /> 
+                <p:menuitem value="#{bundle.audit}" icon="ui-icon-gear"    
+                            rendered="#{sessionBean.users.role.roleid ==1}" style='#{sessionBean.pageCode==administrationAction.getPropertyValue("PAGE_SEARCH_PRODUCTLINE") ? "background-color: aqua":""}'/>                           
+            </p:menu>			
+        </p:fieldset> 
+
+        <p:fieldset legend="#{bundle.productAdmin}" toggleable="true" toggleSpeed="500" styleClass="left-fieldset" 
+                    rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}">
+            <p:menu styleClass="menuleft"> 		
+                <p:menuitem value="#{bundle.newProduct}"   icon="ui-icon-gear" action="#{furnitureAction.createProduct}" 
+                            rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}" style='#{sessionBean.pageCode==administrationAction.getPropertyValue("PAGE_CREATE_PRODUCT") ? "background-color: aqua":""}' /> 
+                <p:menuitem value="#{bundle.productPricing}"   icon="ui-icon-gear" action="#{furnitureAction.priceProduct}" 
+                            rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}" style='#{sessionBean.pageCode==administrationAction.getPropertyValue("PAGE_PRICE_PRODUCT") ? "background-color: aqua":""}' /> 
+                
+                <p:menuitem value="#{bundle.search}" icon="ui-icon-gear"  action="#{furnitureAction.searchProduct}"  
+                            rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2  || sessionBean.users.role.roleid == 3}" style='#{sessionBean.pageCode==administrationAction.getPropertyValue("PAGE_SEARCH_PRODUCT") ? "background-color: aqua":""}'/>                          
+            </p:menu>        
+        </p:fieldset>
+
+
+
+       <!-- <p:fieldset legend="#{bundle.productLineAdmin}" toggleable="true" toggleSpeed="500" styleClass="left-fieldset"  
+                    rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}">		
+            <p:menu styleClass="menuleft"> 				
+                <p:menuitem value="#{bundle.newProductLine}"   icon="ui-icon-gear" action="{furnitureAction.createProductLine}" 
+                            rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}" style='#{sessionBean.pageCode==administrationAction.getPropertyValue("PAGE_CREATE_PRODUCTLINE") ? "background-color: aqua":""}' /> 
+                <p:menuitem value="#{bundle.search}" icon="ui-icon-gear"  action="{furnitureAction.searchProductLine}"  
+                            rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}" style='#{sessionBean.pageCode==administrationAction.getPropertyValue("PAGE_SEARCH_PRODUCTLINE") ? "background-color: aqua":""}'/>                           
+            </p:menu>			
+        </p:fieldset> -->
+        
+        <p:fieldset legend="#{bundle.catalogueAdmin}" toggleable="true" toggleSpeed="500" styleClass="left-fieldset" collapsed="true"  
+                    rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}">			
+            <p:menu styleClass="menuleft"> 				
+                <p:menuitem value="#{bundle.newCatalogue}"   icon="ui-icon-gear" action="#{furnitureAction.createCatalogue}" 
+                            rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}" style='#{sessionBean.pageCode==administrationAction.getPropertyValue("PAGE_CREATE_CATALOGUE") ? "background-color: aqua":""}' /> 
+                <p:menuitem value="#{bundle.newProductLine}"   icon="ui-icon-gear" 
+                            rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}" style='#{sessionBean.pageCode==administrationAction.getPropertyValue("PAGE_CREATE_PRODUCTLINE") ? "background-color: aqua":""}' /> 
+                <p:menuitem value="#{bundle.search}" icon="ui-icon-gear"  action="#{furnitureAction.searchCatalogue}"  
+                            rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}" style='#{sessionBean.pageCode==administrationAction.getPropertyValue("PAGE_SEARCH_CATALOGUE") ? "background-color: aqua":""}'/>                           
+            </p:menu>			
+        </p:fieldset>
+
+
+<!--
+        <p:fieldset legend="#{bundle.patientAdmin}" toggleable="true" toggleSpeed="500" styleClass="left-fieldset" >
+            <p:menu styleClass="menuleft"> 		
+                <p:menuitem value="#{bundle.insert}" action="{patientAction.createPatient}" icon="ui-icon-gear"  />  
+                <p:menuitem value="#{bundle.search}" action="{patientAction.searchPatient}" icon="ui-icon-gear"/>          
+            </p:menu> 
+        </p:fieldset>
+
+
+        <p:fieldset legend="#{bundle.contracts}" toggleable="true" toggleSpeed="500" styleClass="left-fieldset" >
+            <p:menu styleClass="menuleft"> 		
+                <p:menuitem value="#{bundle.viewContract}"  action="#{kinisiAction.viewContracts}" icon="ui-icon-gear"  />                          
+            </p:menu>
+        </p:fieldset>
+        action="home?redirect=true"
+-->
+        <p:fieldset legend="#{bundle.currentUser}" toggleable="true" toggleSpeed="500" styleClass="left-fieldset">
+            <p:menu styleClass="menuleft"> 
+                <p:menuitem value="#{bundle.homePage}"   icon="ui-icon-extlink"  action="#{administrationAction.gotoMain()}"   
+                            style='#{sessionBean.pageCode==administrationAction.getPropertyValue("PAGE_FURNITURE_HOME") ? "background-color: aqua":""}' />  
+                <p:menuitem value="#{bundle.disconnect}"  onclick="disconnectDlg.show()" icon="ui-icon-close"  />           	         	
+            </p:menu> 		
+        </p:fieldset>
+    </h:form>
+
+    
+    
+    <h:panelGroup layout="block"  id="primeAlertPanel" >        
+        <p:dialog  header="#{bundle.warning}" severity="alert" modal="true" resizable="false" closable="false"
+                   widgetVar="alertMessageDlg"  visible="#{sessionBean.showGeneralDialog}" >                    
+            <h:form id="alertMsgForm"> 
+                <table>
+                    <tr>
+                        <td style="text-align: center">
+                            <h:outputLabel value="#{sessionBean.alertMessage}"/>
+                        </td>
+                    </tr>                     
+                    <tr>
+                        <td style="text-align: center">
+                            <p:commandButton  update=":primeAlertPanel" value="OK" action="#{administrationAction.closeAlertDlg}"/>
+                        </td>
+                    </tr>    	                      	                      
+                </table>
+            </h:form>
+        </p:dialog>
+    </h:panelGroup>
+       
+    
+</ui:composition>

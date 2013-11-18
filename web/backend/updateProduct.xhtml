@@ -1,0 +1,520 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="templates/uiBackend.xhtml"> 
+
+
+    <!--<f:metadata>
+        <f:event type="preRenderView" listener="#{updateProductBean.fillFormData}" /> 
+    </f:metadata> -->
+    <f:metadata>
+        <f:viewParam name="productID" value="#{updateProductBean.productID}" />
+    </f:metadata>
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-confirm-dialog-severity {
+                margin: 0 7px 7px 0;
+            }
+        </style>
+        <script  type="text/javascript">
+            function reloadGalleria(){
+                alert('GO!!!!!!1');            
+                PrimeFaces.cw('Galleria','widget_galis',{id:'galiss',autoPlay:false,showCaption:true,panelWidth:500,panelHeight:313,custom:false},'galleria');        
+            } 
+        
+        </script>
+    </ui:define>
+
+    <ui:define name="content" >
+        <p:messages id="opsnMsg" redisplay="false" autoUpdate="true"   />
+        <p:growl autoUpdate="true"/> 
+
+        <h:form id="createProductForm"> 
+            <table>
+                <tr>
+                    <td style="vertical-align: top">
+                        <p:panel id="basicData" header="#{bundle.basicProductData}"  style="padding:0px ! important; margin: 5px; " > 
+                            <table cellspacing="3">
+                                <tr>
+                                    <td style="vertical-align: top;float: right"><p:outputLabel value="#{bundle.name}* : " style="font-weight: bold"/></td>
+                                    <td style="vertical-align: top;"><p:inputText required="true" size="30" requiredMessage="#{bundle.productName}: #{bundle.mandatoryField}"  value="#{updateProductBean.updateProduct.name}" 
+                                                                                  id="productName" /><p:message for="productName" display="icon"/>
+                                    </td>
+                                    <td style="vertical-align: top;float: right"><p:outputLabel value="#{bundle.category} :"  style="font-weight: bold"/></td>
+                                    <td style="vertical-align: top;" >
+
+                                        <p:selectOneMenu id="productCategory" value="#{updateProductBean.updateProduct.productcategory}" converter="ProductcategoryConverter" required="true" requiredMessage="#{bundle.productCategory}: #{bundle.mandatoryField}" >
+                                            <f:selectItem itemValue="" itemLabel="" />
+                                            <f:selectItems value="#{applicationBean.productcategories}" var="pc" itemLabel="#{pc.name}" itemValue="#{pc}"   /> 
+                                        </p:selectOneMenu> <br/>                                                                                
+
+                                    </td>
+                                    <td style="vertical-align: top;float: right"><h:outputLabel value="#{bundle.insertDate}: " style="font-weight: bold" /></td>
+                                    <td> 
+                                        <p:calendar locale="el" size="12"  readonlyInput="true"  required="false" navigator="true" showOn="button" 
+                                                    pattern="dd/MM/yyyy" value="#{updateProductBean.updateProduct.createddate}" id="createdate"/> 
+                                    </td>                                                                                            
+                                </tr>                                
+
+                                <tr>
+                                    <td style="vertical-align: top;float: right"><p:outputLabel value="#{bundle.description} :"  style="font-weight: bold"/></td>
+                                    <td style="vertical-align: top;"><p:inputTextarea required="true" requiredMessage="#{bundle.productDescription}: #{bundle.mandatoryField}"  value="#{updateProductBean.updateProduct.description}" id="productDescription" rows="5" cols="30" />
+                                        <p:message for="productDescription" display="icon"/>
+                                    </td>
+                                    <td style="vertical-align: top; float: right"> <p:outputLabel value="#{bundle.company}* :"  style="font-weight: bold"/> </td>
+                                    <td style="vertical-align: top" rowspan="2">
+
+
+                                        <p:selectManyMenu disabled="#{sessionBean.users.role.roleid!=1}"  required="true" value="#{updateProductBean.selectedCompanies}" requiredMessage="#{bundle.company}: #{bundle.mandatoryField}"
+                                                          converter="CompanyConverter"  id="selectCompany" style="width:150px;height:130px" var="comp" showCheckbox="true"> 						                                                                                                                                                                              
+                                            <f:selectItems value="#{applicationBean.companies}" var="company" itemLabel="#{company.name}" itemValue="#{company}"   />						                                      
+                                            <p:column>#{comp.name}</p:column>                                
+                                            <p:ajax  listener="#{furnitureAction.handleCompanySelectUpdate}"  update="selectProductLine"   /> 
+                                        </p:selectManyMenu>                                    
+                                        <p:message for="selectCompany" display="icon"/>
+                                        <!--<p:inputText readonly="true" value="{updateProductBean.selectedCompanies(0)}" rendered="#{sessionBean.users.role.roleid!=1}"  />-->
+                                    </td>     
+
+
+                                    <td style="vertical-align: top;float: right"> <p:outputLabel value="#{bundle.productLine}* :"  style="font-weight: bold"/> </td>
+                                    <td style="vertical-align: top;" rowspan="2">
+                                        <p:selectManyMenu id="selectProductLine" value="#{updateProductBean.selectedProductLines}" required="true" requiredMessage="#{bundle.productLine}: #{bundle.mandatoryField}"
+                                                          converter="ProductLineConverter" style="width:150px;height:130px" var="p" showCheckbox="true">                                  
+                                            <f:selectItems value="#{updateProductBean.productLines}" var="productLine" itemLabel="#{productLine.name}" itemValue="#{productLine}" />  
+                                            <p:column>  
+                                                #{p.name} 
+                                            </p:column>  
+                                        </p:selectManyMenu>
+                                        <p:message for="selectProductLine" display="icon"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><p:outputLabel value="#{bundle.subProduct} :"  style="font-weight: bold"/></td>
+                                    <td>
+                                        <p:selectOneRadio id="subproduct" value="#{updateProductBean.updateProduct.subproduct}">  
+                                            <f:selectItem itemLabel="#{bundle.yes}" itemValue="1" />
+                                            <f:selectItem itemLabel="#{bundle.no}" itemValue="0" />
+                                            <p:ajax  listener="#{furnitureAction.handleSubproductSelectUpdate}"  update="selectParentProduct tesss"   /> 
+                                        </p:selectOneRadio> 
+
+                                        <p:panel id="tesss" style="border-style: none">
+                                            <p:selectOneMenu value="#{updateProductBean.updateProduct.product}" id="selectParentProduct" converter="ProductConverter" 
+                                                             required="true" requiredMessage="#{bundle.subProduct}: #{bundle.mandatpryField}"  rendered="#{updateProductBean.updateProduct.subproduct eq 1}"  >                                                                                      
+                                                <f:selectItems value="#{updateProductBean.parentProductList}" var="prod" itemLabel="#{prod.name}" itemValue="#{prod}"   /> 
+                                            </p:selectOneMenu>
+                                        </p:panel>    
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </p:panel>   
+                    </td>
+
+                </tr>
+                <tr>
+                    <td style="vertical-align: top; " >
+
+                        <table>
+                            <tr>
+                                <td style="vertical-align: top">
+                                    <p:panel id="imageDataAdmin" header="#{bundle.multimediaMgt}"  style="padding:0px ! important; margin-left:  10px; "  >
+                                        <p:outputLabel style="font-weight: bold;color: black" value="#{bundle.images}  " /> <p:outputLabel style="font-weight: bold;" value="(#{updateProductBean.images.size()}) :" /> 
+                                        <p:spacer height="0" width="20" /> 
+                                        <p:commandButton immediate="true"  icon="ui-icon-plusthick" action="#{furnitureAction.openSelectImageDlgUpdate}" update=""  /> 
+                                        <p:commandButton icon="ui-icon-search" immediate="true"  disabled="#{updateProductBean.images.size()==0}" alt="#{bundle.preview}"  oncomplete="dialogGaleria.show()" update=":galeriaForm"  /> 
+                                        <p:commandButton icon="ui-icon-pencil" immediate="true"  disabled="#{updateProductBean.images.size()==0}" alt="#{bundle.update}"   update="" /> 
+
+                                        <p:separator />                                  
+                                        <p:outputLabel style="font-weight: bold;color: black" value="Videos    " /> <p:outputLabel style="font-weight: bold;" value="(#{updateProductBean.videos.size()}) :" /> 
+                                        <p:spacer height="0" width="20" /> 
+                                        <p:commandButton immediate="true"  icon="ui-icon-plusthick" action="#{furnitureAction.openSelectVideoDlgUpdate}" update=""  /> 
+                                        <p:commandButton icon="ui-icon-search" immediate="true"  disabled="#{updateProductBean.videos.size()==0}" alt="#{bundle.preview}"  oncomplete="dialogGaleriaVideo.show()" update=":galeriaVideoForm" /> 
+                                        <p:commandButton icon="ui-icon-pencil" immediate="true"  disabled="#{updateProductBean.videos.size()==0}" alt="#{bundle.update}"   update="" /> 
+                                    </p:panel>
+                                </td>
+                                <td style="vertical-align: top">
+                                    <p:panel id="imagechar" header="#{bundle.productCharacteristics}"  style="padding:0px ! important; margin-left: 0px;  "  >
+                                        <!--<p:outputLabel style="font-weight: bold;color: black" value="#{bundle.selectSpecCategory}:" /><br/>
+                                        <p:spacer width="0" height="40" />-->
+                                        <table>
+                                            <tr>
+                                                <td style="vertical-align: top"><p:outputLabel style="font-weight: bold;color: black" value="#{bundle.selectProductTemplate}:  " /></td>
+                                                <td><p:selectOneMenu value="#{updateProductBean.updateProduct.item}" converter="ItemConverter" >						 
+                                                        <f:selectItem itemLabel="" itemValue=""  />
+                                                        <f:selectItems value="#{applicationBean.items}" var="itm" itemLabel="#{itm.name}" itemValue="#{itm}"   />
+                                                        <p:ajax  update="showSpecsButton"   /> 
+                                                    </p:selectOneMenu> </td>
+                                                <td rowspan="2" style="vertical-align: top">                                                      
+                                                     <p:commandButton  id="showSpecsButton"  disabled="#{updateProductBean.selectedSpecificationCat.size()==0 and updateProductBean.updateProduct.item==null}"   immediate="true" 
+                                                          value="#{bundle.selectSpec}" process="@this" action="#{furnitureAction.showSpecificationsUpdate()}" update=":selectSpecForm"  />                                                                                     
+                                                </td>
+                                            </tr>
+
+                                            <td style="vertical-align: top"><p:outputLabel style="font-weight: bold;color: black" value="#{bundle.selectSpecCat}:  " /> </td>
+                                            <td><p:selectCheckboxMenu value="#{updateProductBean.selectedSpecificationCat}" label="#{bundle.categories}" filter="true" 
+                                                                      filterText="Filter" filterMatchMode="startsWith"   converter="SpecificationcategoryConverter"
+                                                                      style="">  
+                                                    <f:selectItems value="#{applicationBean.specificationCategories}" var="category" itemLabel="#{category.name}" itemValue="#{category}" />
+                                                    <p:ajax    update="showSpecsButton"   /> 
+                                                </p:selectCheckboxMenu> </td>
+                                        </table>
+
+                                        <p:separator  /> 
+
+
+                                       <!-- <p:commandButton  id="showSpecsButton"  disabled="#{updateProductBean.selectedSpecificationCat.size()==0 and updateProductBean.updateProduct.item==null}"   immediate="true" 
+                                                          value="#{bundle.selectSpec}" process="@this" action="#{furnitureAction.showSpecificationsUpdate()}" update=":selectSpecForm"  />                                                                                     
+                                       -->
+                                        <p:commandButton id="charBtn" immediate="true"  disabled="#{updateProductBean.productSpecifications.size()==0}"   oncomplete="" update="" value="#{bundle.view}" />
+
+                                        <p:overlayPanel id="charPanel" for="charBtn" hideEffect="fade" >  
+                                            <p:dataTable id="charTable" var="char" value="#{updateProductBean.productSpecifications}" rows="10" paginator="false">  
+                                                <p:column headerText="#{bundle.name}" width="20%">  
+                                                    <h:outputText value="#{char.specification.name}" />                                        
+                                                </p:column>  
+                                                <p:column headerText="#{bundle.values}" width="70%">                                         
+                                                    <ui:repeat var="pr" value="#{char.productvalues}" >
+                                                        <h:outputText value="#{pr.svalue.name} " rendered="#{pr.svalue!=null}" /> 
+                                                        <h:outputText value="#{pr.value} " rendered="#{pr.svalue==null}" /> 
+                                                    </ui:repeat>                                         
+                                                </p:column>  
+
+                                               <p:column headerText="#{bundle.actions}" width="10%">  
+                                                   <p:commandLink value="#{bundle.delete}" process="@this"  style="color:blue;text-decoration: underline;font-weight:bold;"  action="#{furnitureAction.deleteProductSpecificationUpdate}" 
+                                                                   update="@form"   >
+                                                        <f:setPropertyActionListener value="#{char}" target="#{updateProductBean.productSpecification}" />    
+                                                    </p:commandLink> 
+                                                </p:column> 
+
+                                            </p:dataTable>  
+                                        </p:overlayPanel>  
+
+                                        <p:spacer width="30" height="0" />
+                                        <p:outputLabel style="font-weight: bold;color: black" value="#{bundle.charecteristics}  " /> <p:outputLabel style="font-weight: bold;" value="(#{updateProductBean.productSpecifications.size()})" />  
+
+                                    </p:panel>   
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <p:commandButton   value="#{bundle.saveChanges}" action="#{furnitureAction.updateProduct}" style="font-weight:bold ; margin: 10px;  "  />
+                                    <!--<p:commandButton process="@this"  value="#{bundle.resetFrom}" action="#{furnitureAction.createProduct()}" style="font-weight:bold ; margin: 10px;  "  /> -->
+                                </td>
+                            </tr>
+                        </table>
+                    </td> 
+
+                </tr>
+            </table>
+        </h:form>
+
+
+
+        <h:form id="selectSpecForm"> 
+            <p:dialog header="#{bundle.selectSpecification}" id="selectSpecID" position="center" widgetVar="selectSpecDialog" modal="true" minWidth="200" minHeight="500" resizable="false">
+                <p:dataTable id="specsTable" var="spec" value="#{updateProductBean.specifications}" selection="#{updateProductBean.specification}" widgetVar="specsTableWIdget"
+                             emptyMessage="#{bundle.noRecordsFound}" rowIndexVar="tt"  rowKey="#{spec}" paginator="true" rows="15"  >
+                    <p:column headerText="#{bundle.name}" style="width:24%">  
+                        <h:outputText value="#{spec.name}" />  
+                    </p:column>  
+                    <p:column style="width:4%">  
+                        <p:commandButton id="selectButton" icon="ui-icon-search" action="#{furnitureAction.selectSpecificationUpdate()}" update=":selectValueForm"  >
+                            <f:setPropertyActionListener value="#{spec}" target="#{updateProductBean.specification}" />
+                        </p:commandButton>
+                    </p:column>  
+                </p:dataTable>  
+            </p:dialog>
+        </h:form>
+
+
+
+
+        <h:form id="selectValueForm">
+            <p:dialog header="#{bundle.selectSpecificationValue}" id="selectValueID" position="center" widgetVar="selectValueDialog" modal="true" resizable="false" >
+                <p:messages autoUpdate="true" severity="error"/>
+                <p:outputLabel style="font-weight: bold" value="#{bundle.valuesFor} #{updateProductBean.specification.name} " rendered="#{updateProductBean.specification.freetext==0}" />  
+                <p:outputLabel style="font-weight: bold;font-style: italic" value=" (#{bundle.multipleSelection})" rendered="#{updateProductBean.specification.freetext==0 and updateProductBean.specification.multiplevalues==1}"/> 
+
+
+                <p:selectManyCheckbox id="grid1" value="#{updateProductBean.selectedSvalues}" converter="SpecificationvalueConverter"  layout="grid" columns="3" rendered="#{updateProductBean.specification.freetext==0 and updateProductBean.specification.multiplevalues==1}">  
+                    <f:selectItems value="#{updateProductBean.svalues}"  var="svalue" itemLabel="#{svalue.svalue.name}"  itemValue="#{svalue}"  /> 
+                    <p:ajax update="bt1" />
+                </p:selectManyCheckbox>
+
+
+                <p:selectOneRadio id="grid2" value="#{updateProductBean.selectedSvalue}"  converter="omnifaces.SelectItemsConverter" layout="grid" columns="3" rendered="#{updateProductBean.specification.freetext==0 and updateProductBean.specification.multiplevalues==0}">  
+                    <f:selectItems value="#{updateProductBean.svalues}" var="sval" itemLabel="#{sval.svalue.name}"  itemValue="#{sval}"/>  
+                    <p:ajax update="bt2" /> 
+                </p:selectOneRadio>
+
+
+                <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor} :* " rendered="#{updateProductBean.specification.freetext==1}"  />  
+                <p:inputTextarea rows="5" cols="40" value="#{updateProductBean.svalue}" rendered="#{updateProductBean.specification.freetext==1}" required="true" requiredMessage="#{bundle.value}: #{bundle.mandatoryField}"/>
+
+                <p:separator />
+
+                <p:commandButton id="bt1" update=":createProductForm:imagechar" action="#{furnitureAction.selectSValuesUpdate}"  value="#{bundle.insert}" disabled="#{updateProductBean.selectedSvalues.size()==0}" rendered="#{updateProductBean.specification.freetext==0 and updateProductBean.specification.multiplevalues==1}"/>
+                <p:commandButton id="bt2" update=":createProductForm:imagechar" action="#{furnitureAction.selectSValuesUpdate}"  value="#{bundle.insert}" disabled="#{updateProductBean.selectedSvalue==null}" rendered="#{updateProductBean.specification.freetext==0 and updateProductBean.specification.multiplevalues==0}"/>
+                <p:commandButton id="bt3" update=":createProductForm:imagechar" action="#{furnitureAction.selectSValuesUpdate}"  value="#{bundle.insert}"  rendered="#{updateProductBean.specification.freetext==1}"/>                                                                      
+
+            </p:dialog>
+        </h:form>
+
+
+        <!--oncomplete="PF('carDialog').show()" -->
+
+        <p:dialog id="dialogFotosID" position="top" widgetVar="dialogFotos" modal="true" minWidth="600" minHeight="500" header="#{bundle.selectImage}" resizable="false">
+            <p:messages id="selectPatientMsg" autoUpdate="true" severity="error" /> 
+            <h:form prependId="false" enctype="multipart/form-data">
+                <p:fileUpload fileUploadListener="#{furnitureAction.handleFileUploadUpdate}"
+                              update=":imgData"
+                              cancelLabel="#{bundle.cancel}"
+                              fileLimit="20"
+                              sizeLimit="500000"                        
+                              fileLimitMessage="#{bundle.invalidImageSize}"
+                              label="#{bundle.select}"
+                              invalidFileMessage="#{bundle.invalidImageType}"
+                              invalidSizeMessage="#{bundle.imageTooBig}"
+                              uploadLabel="#{bundle.upload}"
+                              multiple="true"
+                              allowTypes="/(\.|\/)(jpe?g|png)$/"  >
+
+                </p:fileUpload>
+            </h:form>
+
+            <h:form id="imgData">
+                <p:outputPanel id="productPhoto">
+                    <h:panelGrid>
+                        <p:graphicImage cache="false" id="imagemTmp" value="../temp/#{updateProductBean.newImage.filename}" height="300" style="margin: 0 auto;"/>
+                        <h:outputText style="font-weight: bold" value="#{bundle.ordered}*" rendered="#{updateProductBean.newImage.filename!=null}" />
+                        <p:inputMask mask="9" value="#{updateProductBean.newImage.primary}" size="5" required="true" requiredMessage="#{bundle.ordered}: #{bundle.mandatoryField}" rendered="#{updateProductBean.newImage.filename!=null}" />
+                        <h:outputText style="font-weight: bold" value="#{bundle.description}" rendered="#{updateProductBean.newImage.filename!=null}"/>
+                        <p:inputTextarea  rows="5" cols="50" value="#{updateProductBean.newImage.description}" size="49" rendered="#{updateProductBean.newImage.filename!=null}" />                        
+                    </h:panelGrid>
+                </p:outputPanel>
+                <p:commandButton value="#{bundle.insert}" action="#{furnitureAction.savePhotoUpdate}" update="productPhoto :createProductForm:imageDataAdmin @this" rendered="#{updateProductBean.newImage.filename!=null}" />            
+            </h:form>
+        </p:dialog>
+
+
+        <h:form id="galeriaForm">
+            <p:dialog id="dialogGaleriaID" widgetVar="dialogGaleria" modal="true" position="top" minWidth="440" minHeight="500">
+                <p:galleria value="#{updateProductBean.images}" var="image" panelWidth="500" panelHeight="313" showCaption="true">  
+                    <p:graphicImage value="../temp/#{image.filename}" alt="#{image.description}" title="#{image.filename}"/>  
+                </p:galleria>
+            </p:dialog>
+        </h:form>
+
+
+
+
+
+
+
+
+
+
+
+        <p:dialog id="dialogVideosID" position="top" widgetVar="dialogVideos" modal="true" minWidth="600" minHeight="500" header="#{bundle.selectVideo}" resizable="false">
+            <p:messages id="selectVideoMsg" autoUpdate="true" severity="error" /> 
+            <h:form prependId="false" enctype="multipart/form-data">
+                <p:fileUpload fileUploadListener="#{furnitureAction.handleFileUploadVideoUpdate}"
+                              update=":videoData"
+                              cancelLabel="#{bundle.cancel}"
+                              fileLimit="2000000"
+                              fileLimitMessage="#{bundle.videoTooBig}"
+                              label="#{bundle.select}"
+                              invalidFileMessage="#{bundle.invalidVideoType}"
+                              invalidSizeMessage="#{bundle.invalidVideoSize}"
+                              uploadLabel="#{bundle.upload}"
+                              multiple="false"
+                              allowTypes="/(\.|\/)(mov|avi|mp4|mpeg4)$/">
+
+                </p:fileUpload>
+            </h:form>
+
+            <h:form id="videoData">
+                <p:outputPanel id="productVideo">
+                   
+                        <p:media value="../temp/#{updateProductBean.newVideo.filename}" width="500" height="400"  rendered="#{updateProductBean.newVideo.filename!=null}">  
+                            <f:param name="autoPlay" value="false" />  
+                        </p:media> 
+                        <table  cellpadding="4">
+                            <tr>                                
+                                 <td>  
+                                    <h:outputText style="font-weight: bold" value=" #{bundle.ordered}*" rendered="#{updateProductBean.newVideo.filename!=null}" />
+                                    <p:inputMask mask="9" value="#{updateProductBean.newVideo.primary}" size="4" required="true" requiredMessage="#{bundle.ordered}: #{bundle.mandatoryField}" rendered="#{updateProductBean.newVideo.filename!=null}" />                       
+                                </td>
+                                <td style="vertical-align: middle">
+                                    <h:outputText  style="font-weight: bold; " value="#{bundle.description}:" rendered="#{updateProductBean.newVideo.filename!=null}"/>
+                                    <p:inputTextarea  rows="4" cols="40" value="#{updateProductBean.newVideo.description}" size="49" rendered="#{updateProductBean.newVideo.filename!=null}" />                                                                              
+                                </td>
+                               
+                            </tr>
+                        </table>                   
+                    
+                   
+                </p:outputPanel>
+                <p:commandButton value="#{bundle.insert}" action="#{furnitureAction.saveVideoUpdate}" update="productVideo :createProductForm:imageDataAdmin @this" rendered="#{updateProductBean.newVideo.filename!=null}" />            
+            </h:form>
+        </p:dialog>
+
+
+
+
+        <h:form id="galeriaVideoForm">
+            <p:dialog id="dialogGaleriaVideoID" widgetVar="dialogGaleriaVideo" modal="true" position="top" minWidth="500" minHeight="500" resizable="false" header="#{bundle.productVideos}">
+                <p:dataTable value="#{updateProductBean.videos}" var="video" rows="1" paginator="true"> 
+                    <p:column> 
+                        <p:media value="../temp/#{video.filename}" width="480" height="450"   >  
+                            <f:param name="autoPlay" value="false" />  
+                        </p:media>
+                        <p:outputLabel style="font-weight: bold" value="#{video.description}" />
+                    </p:column>                
+                </p:dataTable>
+            </p:dialog>
+        </h:form>
+
+
+
+
+        <h:form id="productPreviewForm">
+            <p:dialog header="#{bundle.productPreview}" id="productPreviewID" position="top" widgetVar="productPreviewDialog" modal="true" resizable="false" >
+                <p:panelGrid>
+                    <f:facet name="header"> 
+                        <p:row>  
+                            <p:column colspan="1"><p:outputLabel value="#{bundle.name}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                            <p:column colspan="5"><p:outputLabel value="#{updateProductBean.updateProduct.name}" /></p:column>  
+                        </p:row> 
+                    </f:facet>
+
+                    
+                    
+                    <p:row>  
+                        <p:column colspan="1"><p:outputLabel value="#{bundle.subProduct}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                        <p:column colspan="3">
+                            <p:outputLabel value="#{bundle.yes} " rendered="#{updateProductBean.updateProduct.subproduct==1}" />
+                            <p:outputLabel value=" - (#{updateProductBean.updateProduct.product.name})" rendered="#{updateProductBean.updateProduct.subproduct==1}" />
+                            <p:outputLabel value="#{bundle.no} " rendered="#{updateProductBean.updateProduct.subproduct==0}" />
+                        </p:column> 
+                        
+                        <p:column rowspan="8"  ><p:outputLabel value="#{bundle.images}: " style="font-weight: bold;vertical-align: top;float: right" /></p:column> 
+                        <p:column rowspan="8">
+                            <p:galleria id="imageGaler" value="#{updateProductBean.images}" var="image" panelWidth="330" panelHeight="370" autoPlay="false" 
+                                        frameWidth="40" frameHeight="40" effect="clip">  
+                                <p:graphicImage id="produImage" value="../temp/#{image.filename}" alt="" title="#{image.description}" height="50" width="50"/>  
+                                <f:facet name="content">  
+                                    <h:panelGrid  columns="2" cellpadding="0" style="border-style: none; font-weight: 8px; border-width:1px ! important;
+                                                border-style:none ! important;">  
+                                        <f:facet name="header">  
+                                            <p:graphicImage value="../temp/#{image.filename}" height="300" width="330" />  
+                                        </f:facet>  
+
+                                        <p:outputLabel value="#{bundle.description}: " style="font-weight: bold;" />  
+                                        <p:outputLabel value="#{image.description}"/>  
+
+                                        <p:outputLabel value="#{bundle.ordered}: " style="font-weight: bold;" />  
+                                        <p:outputLabel id="number" value="#{image.primary}"/>  
+                                    </h:panelGrid>  
+                                </f:facet>  
+
+                            </p:galleria> 
+                        </p:column>  
+                        
+                        
+                        
+                    </p:row>
+                    
+                     <p:row>  
+                        <p:column ><p:outputLabel value="#{bundle.company}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column> 
+                        <p:column colspan="3">
+                            <ui:repeat var="companyProduct" value="#{updateProductBean.selectedCompanies}" >
+                                <p:outputLabel value="#{companyProduct.name} "/>                                     
+                            </ui:repeat>
+                        </p:column>  
+                    </p:row>
+
+                    <p:row>  
+                        <p:column colspan="1"><p:outputLabel value="#{bundle.description}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                        <p:column colspan="3"><p:outputLabel value="#{updateProductBean.updateProduct.description}" /></p:column>  
+                    </p:row> 
+
+                    <p:row>  
+                        <p:column colspan="1"><p:outputLabel value="#{bundle.insertDate}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                        <p:column colspan="3"><h:outputLabel  converter="DateConverter"  value="#{updateProductBean.updateProduct.createddate}"   /></p:column>  
+                    </p:row>
+
+                    <p:row>  
+                        <p:column colspan="1"><p:outputLabel value="#{bundle.productCategory}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                        <p:column colspan="3"><p:outputLabel value="#{updateProductBean.updateProduct.productcategory.name}" /></p:column>  
+                    </p:row>
+
+                   
+
+                    <p:row>  
+                        <p:column ><p:outputLabel value="#{bundle.productLine}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column> 
+                        <p:column colspan="3">
+                            <ui:repeat var="productLineProduct" value="#{updateProductBean.selectedProductLines}" >
+                                <p:outputLabel value="#{productLineProduct.name} "/>                                     
+                            </ui:repeat>
+                        </p:column>  
+                    </p:row>
+                    
+                     <p:row>  
+                        <p:column colspan="1"><p:outputLabel value="#{bundle.productTemplate}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                        <p:column colspan="3"><p:outputLabel value="#{updateProductBean.updateProduct.item.name}" rendered="#{updateProductBean.updateProduct.item!=null}" /></p:column>  
+                    </p:row>
+                    
+                   
+                    <p:row>  
+                        <p:column colspan="1"><p:outputLabel value="Video:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                        <p:column colspan="3">                            
+                            <p:commandButton id="vidBtn" type="button"  rendered="#{updateProductBean.videos.size()>0}"  
+                                             value="#{bundle.view}" onclick="videoDlg.show()" />                                                        
+                        </p:column>  
+                    </p:row>
+
+                    <p:row>  
+                        <p:column colspan="6" styleClass="ui-widget-header">  
+                            <p:outputLabel value="#{bundle.productCharacteristics} "/>    
+                        </p:column>  
+                    </p:row>
+
+                    <p:row>
+                        <p:column colspan="6">                           
+                            <p:dataTable var="pss" value="#{updateProductBean.productSpecifications}" styleClass="hide-column-names" >
+                                <p:column width="20%" >  
+                                    <p:outputLabel value="#{pss.specification.name}: " style="font-weight: bold;vertical-align: top;float: right"/> 
+                                </p:column> 
+                                <p:column width="80%">                                         
+                                    <ui:repeat var="prr" value="#{pss.productvalues}" >
+                                        <h:outputText value="#{prr.svalue.name}" rendered="#{prr.svalue!=null}" /> 
+                                        <h:outputText value="#{prr.value}" rendered="#{prr.svalue==null}" /> 
+                                    </ui:repeat>                                         
+                                </p:column>  
+
+                            </p:dataTable>                           
+                        </p:column>                       
+                    </p:row>                                                         
+                </p:panelGrid><br/>
+                <p:commandButton value="#{bundle.saveChanges}" action="#{furnitureAction.confirmUpdateProduct}"/>
+                <p:commandButton value="#{bundle.cancel}" type="button" onclick="productPreviewDialog.hide()" />
+            </p:dialog>
+            
+           
+            <p:dialog header="Videos" id="videoDlgID" position="top" widgetVar="videoDlg" modal="true" resizable="false" >
+                <p:dataTable value="#{updateProductBean.updateProduct.videoproducts}" var="video" rows="1" paginator="true"> 
+                    <p:column> 
+                        <p:media value="../temp/#{video.filename}" width="480" height="450"   >  
+                            <f:param name="autoPlay" value="false" />  
+                        </p:media>
+                        <p:outputLabel style="font-weight: bold" value="#{video.description}" />
+                    </p:column>                
+                </p:dataTable>                
+            </p:dialog>
+            
+        </h:form>           
+    </ui:define>
+</ui:composition>

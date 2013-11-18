@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:view contentType="text/html">
+
+	<h:head>
+		<f:facet name="first">
+			<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+			<title>#{bundle.errorPage}</title>
+		</f:facet>
+
+		<link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/css/default.css" />
+				
+	</h:head>
+
+	<h:body>
+
+		<DIV style="margin-left: 15% !important;margin-right: 15% !important;" >
+			<div id="header" class="ui-widget ui-widget-header" >
+				<ui:include src="../common/headError.xhtml" />	
+			</div>
+		<h:form>		
+			<div id="page" class="ui-widget">											
+			 <p:panel id="panel" header="#{bundle.errorInfo}">  			 		  					
+		       <span class="errorDetails">#{errorBean.errorMSG}</span> <br/><br/>
+		        <div style="display:table;text-align:center;width: 100%">
+				  <div style="display:table-cell;vertical-align:middle;">
+				     <p:commandButton id="btn" value="#{bundle.disconnect}" action="#{administrationAction.logoutAction}" />
+				  </div>
+				 </div>  
+			 </p:panel>								
+			</div>
+	     </h:form>
+			<div id="footer" class="ui-widget ui-widget-header ui-corner-all">
+			 	<ui:include src="../common/footerLogin.xhtml" />				
+			</div>
+		</DIV>
+
+		 
+	</h:body>
+</f:view>
+</html>

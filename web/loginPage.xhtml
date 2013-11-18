@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view>
+
+        <h:head>
+            <f:facet name="first">
+                <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+                <title>#{bundle.loginPage}</title>
+            </f:facet>
+
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/css/default.css" />
+
+            <!--<ui:insert name="head"></ui:insert> -->
+
+            <!--<script type="text/javascript">
+                $(function() {$('.sidebar a').hover(function() {$(this).toggleClass('ui-state-hover');})});
+            </script>
+
+            <script type="text/javascript">
+                var _gaq = _gaq || [];
+                _gaq.push(['_setAccount', 'UA-12200033-3']);
+                _gaq.push(['_trackPageview']);
+
+                (function() {
+                    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+                })();
+
+            </script> -->
+        </h:head>
+
+        <h:body styleClass="mainBG">
+
+            <DIV style="margin-left: 30% !important; margin-right: 30% !important;  " >
+                <div id="header" class="ui-widget ui-widget-header" style="border-radius:7px; box-shadow: 4px 4px 4px #5C5C5C " >
+                    <ui:include src="common/headLogin.xhtml" />	
+                </div> 
+                
+                
+                <h:form>		
+                    <div id="page" class="ui-widget" style="border-radius:7px; margin-top: 0.8% ; box-shadow: 4px 4px 4px #5C5C5C ;">											
+                        <p:panel id="panel" header="#{bundle.userLogin}" style=" background: whitesmoke; ">  
+                            <p:messages id="msgs"/>  
+
+                            <h:panelGrid columns="3" styleClass="content1">  
+                                <h:outputLabel for="username" value="#{bundle.username}: *" />  
+                                <p:inputText id="username" value="#{userBean.username}" required="true" label="username" requiredMessage="#{bundle.username}:#{bundle.mandatoryField}" />  			              
+                                <p:message for="username" display="icon"/>  
+
+                                <h:outputLabel for="password" value="#{bundle.password}: *" />  
+                                <p:password id="password" value="#{userBean.password}" label="password" required="true" requiredMessage="#{bundle.password}:#{bundle.mandatoryField}" />  			              
+                                <p:message for="password" id="msgPassword" display="icon"/>  
+                            </h:panelGrid>  
+
+                            <p:commandButton id="btn" value="#{bundle.entrance}" update="panel, :selectRolePanel"  action="#{administrationAction.loginAction}" /> 
+                        </p:panel>					
+                    </div>
+                </h:form>
+
+
+
+                <p:dialog id="selectRoleDialogID" header="#{bundle.selectRole}" widgetVar="selectRoleDialog" visible="false"  
+                          modal="true" resizable="false" position="center" parent="" >  
+
+
+                    <p:panel id="selectRolePanel" style="padding:0px ! important;" > 
+                        <h:form id="selectRoleForm"> 
+
+                            <table>
+                                <tr>
+                                    <td>
+                                   
+                                <p:selectOneMenu value="#{roleSelectionBean.selectedRole}" converter="UserrolesConverter"  onchange="" >									 
+                                    <f:selectItem itemLabel="#{bundle.selectRole}" itemValue=""  />
+                                    <f:selectItems value="#{roleSelectionBean.userroles}" var="userrole" itemLabel="#{userrole.role.name}" itemValue="#{userrole}"   />
+                                     <p:ajax update="@form" /> 
+                                </p:selectOneMenu>
+                                </td>
+                                </tr>
+
+                                <tr>                                    
+                                    <td>
+                                <p:commandButton update=":selectRolePanel" disabled="#{roleSelectionBean.selectedRole==null}" value="#{bundle.select}" oncomplete="selectRoleDialog.hide()" action="#{administrationAction.selectRole}"  />
+                                <p:commandButton value="#{bundle.cancel}" onclick="selectRoleDialog.hide()"  />
+
+                                </td>
+                                </tr>
+                            </table>
+
+                        </h:form>
+                    </p:panel>
+                </p:dialog> 
+
+
+
+
+
+                <div id="footer" class="ui-widget ui-widget-header ui-corner-all" style="border-radius:7px; margin-top: 0.8%; box-shadow: 4px 4px 4px #5C5C5C ">
+                    <ui:include src="common/footerLogin.xhtml" />				
+                </div>
+            </DIV>
+
+        </h:body>
+    </f:view>
+</html>

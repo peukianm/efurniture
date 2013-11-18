@@ -1,0 +1,158 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="templates/uiBackend.xhtml"> 
+
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-confirm-dialog-severity {
+                margin: 0 7px 7px 0;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <p:messages id="priceMsg" autoUpdate="true" severity="error,fatal"  />
+        <p:growl autoUpdate="true"/> 
+
+        <div class="entry" style="line-height:100%;" >
+            <h:form id="priceForm">                
+                <p:panel id="pricePanel" header="#{bundle.addPrice} " toggleable="false" style="padding:0px ! important; width:auto;white-space: nowrap;margin:  5px;width:90% " > 
+                    <table cellspacing="3" class="content1" >
+                        <tr>
+                            <td><h:outputLabel value="#{bundle.product}:" style="font-weight: bold"/></td>
+                            <td><p:inputText value="#{priceBean.selectedProduct.name}" id="prName" readonly="true" required="true" requiredMessage="#{bundle.product}: #{bundle.mandatoryField}" />
+                                 <p:message for="prName" display="icon"/>
+                            </td>
+                            <td colspan="2"><h:outputLabel value="#{bundle.searchByProductName}:" style="font-weight: bold; float: right"/></td>
+                            <td colspan="4">   
+                                <p:autoComplete queryDelay="300" scrollHeight="550" id="nameComplete" value="#{priceBean.selectedProductByName}" completeMethod="#{furnitureAction.completeNameProduct}" size="40" required="false"  
+                                                var="product" itemLabel="#{product.name}" itemValue="#{product}" converter="ProductConverter" forceSelection="true">  
+                                    <p:ajax event="itemSelect" listener="#{furnitureAction.autocompleteNameSelectProduct}"    update="prName comp priceTable @this pricesPanel"  />  
+                                </p:autoComplete>
+                                <br/>
+
+                            </td>                           
+                        </tr>
+
+                        <tr>
+                            <td><h:outputLabel value="#{bundle.initialPrice}:*" style="font-weight: bold"/></td>
+                            <td>
+                                <h:inputText id="inAmount" value="#{priceBean.initialAmount}" size="9"  converter="DoubleConverter" required="true" requiredMessage="#{bundle.initialPrice}: #{bundle.mandatoryField}" >
+                                    <p:ajax event="blur" listener="#{furnitureAction.updateFinalPrice}" update="finalPrice"  />
+                                    <f:validateDoubleRange minimum="0.00" maximum="1000000.00" />
+                                </h:inputText> 
+                                <p:message for="inAmount" display="icon"/>
+                            </td>
+                            <td><h:outputLabel value="#{bundle.discount}:*" style="font-weight: bold"/></td>
+                            <td>
+                                <h:inputText id="disc" value="#{priceBean.discount}" size="6"  converter="DoubleConverter" required="true" requiredMessage="#{bundle.discount}: #{bundle.mandatoryField}" >
+                                    <p:ajax event="blur" listener="#{furnitureAction.updateFinalPrice}" update="finalPrice"  />
+                                    <f:validateDoubleRange minimum="0.00" maximum="100.00" />
+                                </h:inputText> 
+                                <p:message for="disc" display="icon"/>
+                            </td>
+                            <td><h:outputLabel value="#{bundle.finalPrice}:*" style="font-weight: bold"/></td>
+                            <td>
+                                <h:inputText id="finalPrice" readonly="true"  value="#{priceBean.amount}" size="9"  converter="DoubleConverter" required="true" requiredMessage="#{bundle.finalPrice}: #{bundle.mandatoryField}" />
+                                <p:message for="finalPrice" display="icon"/>
+                            </td>
+                            <td><h:outputLabel value="#{bundle.currency}:*"  style="font-weight: bold"/></td>   			 		 
+                            <td colspan="1"> 
+                                <p:selectOneMenu value="#{priceBean.currency}" converter="CurrencyConverter"  id="selectCurrency">						 
+                                    <f:selectItems value="#{applicationBean.currencies}" var="currency" itemLabel="#{currency.name}" itemValue="#{currency}"   />						     
+                                </p:selectOneMenu>
+                                <p:message for="selectCurrency" display="icon"/>
+                            </td>
+                        </tr>  
+
+
+                        <tr>
+                            <td>
+                                <h:outputLabel value="#{bundle.company}:*" style="font-weight: bold" />
+                            </td>
+                            <td>
+                                <p:selectOneMenu  id="comp" value="#{priceBean.selectedCompany}" converter="CompanyConverter" required="true" 
+                                                  requiredMessage="#{bundle.company}:#{bundle.mandatoryField}" disabled="#{sessionBean.users.role.roleid != 1}">						 
+                                    <f:selectItem itemLabel="" itemValue=""  />
+                                    <f:selectItems value="#{priceBean.companies}" var="comp" itemLabel="#{comp.name}" itemValue="#{comp}"   />						     
+                                    <p:ajax  listener="#{furnitureAction.handleCompanySelectCatalogue}"  update="selectCatalogue"   />  
+                                </p:selectOneMenu>
+                                <p:message for="comp" display="icon"/>
+                                
+                            </td>
+
+                            <td>
+                                <h:outputLabel value="#{bundle.catalogue}:*" style="font-weight: bold" />
+                            </td>
+                            <td>
+                                <p:selectOneMenu value="#{priceBean.selectedCatalogue}" converter="CatalogueConverter" id="selectCatalogue" required="true" requiredMessage="#{bundle.catalogue}:#{bundle.mandatoryField}" >						 
+                                    <f:selectItem itemLabel="" itemValue=""  />
+                                    <f:selectItems value="#{priceBean.catalogues}" var="cat" itemLabel="#{cat.name}" itemValue="#{cat}"   />						     
+                                </p:selectOneMenu>
+                                <p:message for="selectCatalogue" display="icon"/>
+                            </td>
+
+                            <td >
+                                <h:outputLabel value="#{bundle.date}:" style="font-weight: bold"/>
+                            </td>
+                            <td>
+                                <p:calendar locale="el" size="12"  readonlyInput="true"   navigator="true" showOn="button" required="true"
+                                            requiredMessage="#{bundle.date}:#{bundle.mandatoryField}" pattern="dd/MM/yyyy" value="#{priceBean.priceDate}" id="pricedate"/> 
+                                <p:message for="pricedate" display="icon"/>
+                            </td>
+                        </tr> 
+                    </table>
+                    <br/>
+                    <p:commandButton value="#{bundle.insertPrice}" type="button"  onclick="confInsertPriceDlg.show()" style="font-weight: bold" />
+                    
+                    <p:confirmDialog  id="confInsertPriceDlgID" message="#{bundle.confInsertPrice}" header="#{bundle.warning}" severity="alert" widgetVar="confInsertPriceDlg" >                                                                                             
+                        <p:commandButton action="#{furnitureAction.insertPrice()}" value="#{bundle.yes}" update="@form"  onclick="confInsertPriceDlg.hide()"/>                                                       
+                        <p:commandButton value="#{bundle.no}"  onclick="confInsertPriceDlg.hide()" type="button" />                             
+                    </p:confirmDialog>
+                    
+                    <p:commandButton value="#{bundle.reset}" action="#{furnitureAction.resetPrice}" ajax="false" style="font-weight: bold" immediate="true" />
+                </p:panel>
+
+
+                <p:panel id="pricesPanel" header="#{bundle.productPrices} - #{priceBean.selectedProduct.name} " toggleable="false" 
+                         style="padding:0px ! important; width:auto;white-space: nowrap;margin:  5px;width:85% " > 
+                    <p:dataTable id="priceTable" var="price" value="#{priceBean.prices}" rows="6" paginator="true" rendered="#{priceBean.prices.size()>0}">
+                        <p:column headerText="#{bundle.finalPrice}" >  
+                            <h:outputText value="#{price.amount}" />                                        
+                        </p:column>
+                        <p:column headerText="#{bundle.discount}" >  
+                            <h:outputText value="#{price.discount}" />                                        
+                        </p:column>
+
+                        <p:column headerText="#{bundle.company}" >  
+                            <h:outputText value="#{price.company.name}" />                                        
+                        </p:column>
+
+                        <p:column headerText="#{bundle.catalogue}" >  
+                            <h:outputText value="#{price.catalogue.name}" />                                        
+                        </p:column>
+
+                        <p:column headerText="#{bundle.date}" >  
+                            <h:outputText value="#{price.pricedate}" converter="DateConverter" />                                        
+                        </p:column>
+
+                        <p:column headerText="#{bundle.actions}" >  
+                            <p:commandButton id="deleteButton"  icon="ui-icon-closethick" title="Διαγραφή" oncomplete="confDeletePriceDlg.show()" immediate="true" >
+                                <f:setPropertyActionListener value="#{price}" target="#{priceBean.price}" />
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+
+                    <p:confirmDialog  id="confDeletePriceDlgID" message="#{bundle.confDeletePrice}" header="#{bundle.warning}" severity="alert" widgetVar="confDeletePriceDlg" >                                                                                             
+                        <p:commandButton action="#{furnitureAction.removePrice()}" value="#{bundle.yes}" immediate="true" update="pricesPanel priceTable"  onclick="confDeletePriceDlg.hide()"/>                                                       
+                        <p:commandButton value="#{bundle.no}"  onclick="confDeletePriceDlg.hide()" type="button" />                             
+                    </p:confirmDialog> 
+                </p:panel>
+            </h:form>
+            
+        </div>
+    </ui:define>
+</ui:composition>

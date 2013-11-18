@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+  <persistence-unit name="efurniture" transaction-type="JTA">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <jta-data-source>jdbc/OracleFe</jta-data-source>
+    
+    <class>com.furniture.entities.Action</class>
+    <class>com.furniture.entities.Actionscategory</class>
+    <class>com.furniture.entities.Address</class>
+    <class>com.furniture.entities.Auditing</class>
+    <class>com.furniture.entities.Catalogue</class>
+    <class>com.furniture.entities.Catalogueproductline</class>
+    <class>com.furniture.entities.Company</class>
+    <class>com.furniture.entities.Companycatalogue</class>
+    <class>com.furniture.entities.Companyproduct</class>
+    <class>com.furniture.entities.Currency</class>
+    <class>com.furniture.entities.Imagecatalogue</class>
+    <class>com.furniture.entities.Imageproduct</class>
+    <class>com.furniture.entities.Imageproductline</class>
+    <class>com.furniture.entities.Imagevalue</class>
+    <class>com.furniture.entities.Item</class>
+    <class>com.furniture.entities.Price</class>
+    <class>com.furniture.entities.Product</class>
+    <class>com.furniture.entities.Productline</class>
+    <class>com.furniture.entities.Productlineproduct</class>
+    <class>com.furniture.entities.Productspecification</class>
+    <class>com.furniture.entities.Productvalue</class>
+    <class>com.furniture.entities.Role</class>
+    <class>com.furniture.entities.Specification</class>
+    <class>com.furniture.entities.Specificationcategory</class>
+    <class>com.furniture.entities.Specificationvalue</class>
+    <class>com.furniture.entities.Svalue</class>
+    <class>com.furniture.entities.Userroles</class>
+    <class>com.furniture.entities.Users</class>
+    <class>com.furniture.entities.Productcategory</class>    
+    <class>com.furniture.entities.Itemspecification</class>
+    <class>com.furniture.entities.Videoproduct</class>
+    
+    <shared-cache-mode>DISABLE_SELECTIVE</shared-cache-mode>
+    <properties>
+      <property name="eclipselink.jdbc.native-sql" value="true"/>
+      <property name="eclipselink.target-database" value="Oracle"/>
+     <!--<property name="eclipselink.logging.level" value="FINE"/> 
+      <property name="eclipselink.logging.parameters" value="true"/> -->
+    </properties>
+  </persistence-unit>
+</persistence>

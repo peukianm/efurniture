@@ -1,0 +1,407 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="templates/uiBackend.xhtml"> 
+
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-confirm-dialog-severity {
+                margin: 0 7px 7px 0;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <p:growl autoUpdate="true"/> 
+        <div class="entry" style="line-height:100%;" >
+            <h:form id="searchProductForm">                		         		   
+                <p:panel id="searchProductPanel" header="#{bundle.searchCriteria} " toggleable="false" style="padding:0px ! important; width:auto;white-space: nowrap;margin:  5px" > 
+                    <table  cellpadding="1" class="content1" style="margin-bottom: 10px" >  
+                        <tr>
+                            <td style="width: 1px;white-space: nowrap;"> <h:outputLabel value="#{bundle.company}:"  style="font-weight: bold" /></td>
+                            <td style="width: 1px;white-space: nowrap;">
+                                <p:selectOneMenu value="#{productSearchBean.searchByCompany}" converter="CompanyConverter" >						 
+                                    <f:selectItem itemLabel="" itemValue=""  />
+                                    <f:selectItems value="#{applicationBean.companies}" var="company" itemLabel="#{company.name}" itemValue="#{company}"   />						     
+                                </p:selectOneMenu>	
+                            </td>
+                            <td style="width: auto;white-space: nowrap;"><h:outputLabel value="#{bundle.catalogue}:" style="font-weight: bold" /></td>
+                            <td style="width: auto;white-space: nowrap;" >                                                            
+                                <p:selectOneMenu value="#{productSearchBean.searchByCatalogue}" converter="CatalogueConverter" id="selectCatalogue" >						 
+                                    <f:selectItem itemLabel="" itemValue=""  />                                    
+                                    <f:selectItems value="#{productSearchBean.catalogues}" var="catalogue" itemLabel="#{catalogue.name}" itemValue="#{catalogue}"   /> 
+                                </p:selectOneMenu>
+
+                            </td>
+
+                            <td style="width: auto;white-space: nowrap;"> <h:outputLabel value="#{bundle.productLine}:"  style="font-weight: bold" /></td>
+                            <td style="width: auto;white-space: nowrap;">
+                                <p:selectOneMenu value="#{productSearchBean.searchByProductline}" converter="ProductLineConverter" >						 
+                                    <f:selectItem itemLabel="" itemValue=""  />
+                                    <f:selectItems value="#{productSearchBean.productLines}" var="pl" itemLabel="#{pl.name}" itemValue="#{pl}"   />						     
+                                </p:selectOneMenu>	
+                            </td>                            
+                        </tr>
+                        <tr>
+                            <td><h:outputLabel value="#{bundle.name}:"  style="font-weight: bold" /></td>
+                            <td><p:inputText value="#{productSearchBean.searchByName}" size="15"/> </td>
+                            <td style="width: auto;white-space: nowrap;"> <h:outputLabel value="#{bundle.productCategory}:"  style="font-weight: bold" /></td>
+                            <td style="width: auto;white-space: nowrap;">
+                                <p:selectOneMenu value="#{productSearchBean.searchByProductcategory}" converter="ProductcategoryConverter" >						 
+                                    <f:selectItem itemLabel="" itemValue=""  />
+                                    <f:selectItems value="#{productSearchBean.productCategories}" var="pc" itemLabel="#{pc.name}" itemValue="#{pc}"   />						     
+                                </p:selectOneMenu>	
+                            </td>
+                        </tr>    
+
+
+                    </table>
+                    <p:commandButton value="#{bundle.search}" action="#{furnitureAction.searchProductAction()}" update="searchProductForm"  />
+                    <p:commandButton  value="#{bundle.reset}" action="#{furnitureAction.resetSearchProduct}"  ajax="false" />
+                </p:panel>  
+
+                <p:spacer height="20"/>
+
+                <p:panel id="exams" header="#{bundle.searchResults}"  toggleable="false" style="padding:0px ! important; width:100%; margin-bottom: 10px; font-weight: 7px " > 
+                    <p:dataTable id="productResults" var="product" value="#{productSearchBean.productsModel}" selection="#{productSearchBean.selectedProduct}" widgetVar="productResultss"
+                                 paginator="true" rows="10" emptyMessage="#{bundle.noRecordsFound}" rowIndexVar="tt"  rowKey="#{product}" style="font-size: 8px" 
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                 rowsPerPageTemplate="5,10,20,40,60" >  
+
+                        <!--<p:column headerText="A/A" style="width:2%;font-weight: bold">  
+                            <h:outputText value="#{tt+1}" />  
+                        </p:column> -->
+
+                        <p:column headerText="#{bundle.name}" sortBy="#{product.name}" style="width: 1px; white-space: nowrap;vertical-align: top;font-weight: bold" >                                                            
+                            <h:outputText value="#{product.name}" />                                                           
+                        </p:column>  
+
+                        <p:column headerText="#{bundle.company}"  style="width:14%;vertical-align: top">                                                            
+                            <ui:repeat var="companyProduct" value="#{product.orderedCompanies}" >
+                                <h:outputText value="#{companyProduct.name}"/><br/>                                     
+                            </ui:repeat>
+                        </p:column>
+
+                        <p:column headerText="#{bundle.catalogue}"  style="width:14%; vertical-align: top">                                                                                        
+                            <ui:repeat var="catalog" value="#{product.catalogues}" >
+                                <h:outputText value="#{catalog.name}"/><br/> 
+                            </ui:repeat>
+                        </p:column> 
+
+
+                        <p:column headerText="#{bundle.productLine}"  style="width:8%; vertical-align: top">                                                                                        
+                            <ui:repeat var="prl" value="#{product.orderedProductlines}" >
+                                <h:outputText value="#{prl.name}"/><br/> 
+                            </ui:repeat>
+                        </p:column> 
+
+                        
+                       <!-- <p:column headerText="#{bundle.productCategory}" sortBy="#{product.productcategory.name}"  style="width:8%;font-weight: bold;vertical-align: top">                                                            
+                            <h:outputText value="#{product.productcategory.name}" />
+                        </p:column> -->
+
+
+                        <p:column headerText="#{bundle.charecteristics}"  style="width:46%;vertical-align: top" >                                                            
+                            <p:dataTable  var="pss" value="#{product.productspecifications}" style="font-size: 8px"  styleClass="hide-column-names" emptyMessage="#{bundle.noSpecs}" >
+                                <p:column width="20%" >  
+                                    <p:outputLabel value="#{pss.specification.name}: " style="font-weight: bold;vertical-align: top;float: right"/> 
+                                </p:column> 
+                                <p:column width="80%">                                         
+                                    <ui:repeat var="prr" value="#{pss.productvalues}" >
+                                        <h:outputText value="#{prr.svalue.name} " rendered="#{prr.svalue!=null}" /> 
+                                        <h:outputText value="#{prr.value} " rendered="#{prr.svalue==null}" /> 
+                                    </ui:repeat>                                         
+                                </p:column>  
+
+                            </p:dataTable>                                                    
+                        </p:column>  
+
+                        <p:column headerText="#{bundle.actions}" exportable="false"  style="font-weight: bold;vertical-align: top;width: 1px; white-space: nowrap;">                                                            
+                            <p:commandButton immediate="true"  icon="ui-icon-search"  action="#{furnitureAction.showProductDetails()}" >
+                                <f:setPropertyActionListener value="#{product}" target="#{productSearchBean.selectedProduct}" />
+                            </p:commandButton>
+                            <p:commandButton id="editButton" icon="ui-icon-pencil"  title="Αλλαγή"  action="#{furnitureAction.editProduct(product)}" 
+                                             rendered="#{furnitureAction.checkProductInCompany(product)}"  />                           
+                            <p:commandButton id="deleteButton"  icon="ui-icon-closethick" title="Διαγραφή" action="#{furnitureAction.removeProduct()}" immediate="true" update="productResults"
+                                             rendered="#{furnitureAction.checkProductInCompany(product)}"> <!--oncomplete="confDeleteProductDlg.show()" -->
+                                <f:setPropertyActionListener value="#{product}" target="#{productSearchBean.selectedProduct}" />
+                            </p:commandButton>
+                        </p:column>
+
+                    </p:dataTable>  
+
+
+                    <p:confirmDialog  id="confDeleteProductDlgID" message="#{bundle.confDeleteProduct}" header="#{bundle.warning}" severity="alert" widgetVar="confDeleteProductDlg" >                                                                                             
+                        <p:commandButton action="#{furnitureAction.removeProduct()}" value="#{bundle.yes}" update="searchProductForm" onclick="confDeleteProductDlg.hide()"/>                                                       
+                        <p:commandButton value="#{bundle.no}"  onclick="confDeleteProductDlg.hide()" type="button" />                                                     
+                    </p:confirmDialog> 
+
+                    <h:commandLink rendered="#{productSearchBean.productsModel.rowCount >0}">  
+                        <p:graphicImage value="../resources/images/excel.png" /> <h:outputText  style="color:blue;text-decoration: underline;font-weight:bold;" value="#{bundle.excelExport}" /> 
+                        <p:dataExporter    type="xls" target="productResults" fileName="furnitures"/>  
+                    </h:commandLink>  
+                   
+                    <h:commandLink rendered="#{productSearchBean.productsModel.rowCount >0}">  
+                        <p:graphicImage value="../resources/images/pdf.png" /> <h:outputText  style="color:blue;text-decoration: underline;font-weight:bold;" value="#{bundle.pdfExport}" /> 
+                        <p:dataExporter    type="pdf" target="productResults" fileName="furnitures"/>  
+                    </h:commandLink>  
+
+                </p:panel>
+
+            </h:form> 
+
+            <!--
+                        <h:form id="productPreviewForm">
+                            <p:dialog header="#{bundle.productPreview}" id="productPreviewID" position="top" widgetVar="productPreviewDialog" modal="true" resizable="false" >
+                                <p:panelGrid>
+                                    <f:facet name="header"> 
+                                        <p:row>  
+                                            <p:column colspan="1"><p:outputLabel value="#{bundle.name}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                                            <p:column colspan="3"><p:outputLabel value="#{productSearchBean.selectedProduct.name}" /></p:column>  
+                                        </p:row> 
+                                    </f:facet>
+            
+                                    <p:row>  
+                                        <p:column ><p:outputLabel value="#{bundle.images}: " style="font-weight: bold;vertical-align: top;float: right" /></p:column> 
+                                        <p:column colspan="3">
+                                            <p:galleria id="imageGaler" value="#{productSearchBean.selectedProduct.imageproducts}" var="image" panelWidth="350" panelHeight="330" autoPlay="false" 
+                                                        frameWidth="50" frameHeight="50" effect="clip">  
+                                                <p:graphicImage id="produImage" value="../temp/#{image.filename}" alt="" title="#{image.description}" height="250" width="280"/>  
+                                                <f:facet name="content">  
+                                                    <h:panelGrid  columns="2" cellpadding="5" style="border-style: none">  
+                                                        <f:facet name="header">  
+                                                            <p:graphicImage value="../temp/#{image.filename}" height="250" width="280" />  
+                                                        </f:facet>  
+            
+                                                        <p:outputLabel value="#{bundle.description}: " style="font-weight: bold;" />  
+                                                        <p:outputLabel value="#{image.description}"/>  
+            
+                                                        <p:outputLabel value="#{bundle.ordered}: " style="font-weight: bold;" />  
+                                                        <p:outputLabel id="number" value="#{image.primary}"/>  
+                                                    </h:panelGrid>  
+                                                </f:facet>  
+            
+                                            </p:galleria> 
+                                        </p:column>  
+                                    </p:row>
+            
+            
+                                    <p:row>  
+                                        <p:column colspan="1"><p:outputLabel value="#{bundle.subProduct}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                                        <p:column colspan="3">
+                                            <p:outputLabel value="#{bundle.yes} " rendered="#{productSearchBean.selectedProduct.subproduct==1}" />
+                                            <p:outputLabel value=" - (#{productSearchBean.selectedProduct.product.name})" rendered="#{productSearchBean.selectedProduct.subproduct==1}" />
+                                            <p:outputLabel value="#{bundle.no} " rendered="#{productSearchBean.selectedProduct.subproduct==0}" />
+                                        </p:column>  
+                                    </p:row>
+            
+                                    <p:row>  
+                                        <p:column colspan="1"><p:outputLabel value="#{bundle.description}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                                        <p:column colspan="3"><p:outputLabel value="#{productSearchBean.selectedProduct.description}" /></p:column>  
+                                    </p:row> 
+            
+                                    <p:row>  
+                                        <p:column colspan="1"><p:outputLabel value="#{bundle.productCategory}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                                        <p:column colspan="3"><p:outputLabel value="#{productSearchBean.selectedProduct.productcategory.name}" /></p:column>  
+                                    </p:row>
+            
+                                    <p:row>  
+                                        <p:column ><p:outputLabel value="#{bundle.company}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column> 
+                                        <p:column colspan="3">
+                                            <ui:repeat var="companyProduct" value="#{productSearchBean.selectedProduct.companyproducts}" >
+                                                <p:outputLabel value="#{companyProduct.company.name} "/>                                     
+                                            </ui:repeat>
+                                        </p:column>  
+                                    </p:row>
+            
+                                    <p:row>  
+                                        <p:column ><p:outputLabel value="#{bundle.productLine}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column> 
+                                        <p:column colspan="3">
+                                            <ui:repeat var="productLineProduct" value="#{productSearchBean.selectedProduct.productlineproducts}" >
+                                                <p:outputLabel value="#{productLineProduct.productline.name} "/>                                     
+                                            </ui:repeat>
+                                        </p:column>  
+                                    </p:row>
+            
+                                    <p:row>  
+                                        <p:column colspan="4" styleClass="ui-widget-header">  
+                                            <p:outputLabel value="#{bundle.productCharacteristics} "/>    
+                                        </p:column>  
+                                    </p:row>
+            
+                                    <p:row>
+                                        <p:column colspan="4">                           
+                                            <p:dataTable var="pss" value="#{productSearchBean.selectedProduct.productspecifications}" id="table" styleClass="hide-column-names">
+                                                <p:column width="20%" >  
+                                                    <p:outputLabel value="#{pss.specification.name}: " style="font-weight: bold;vertical-align: top;float: right"/> 
+                                                </p:column> 
+                                                <p:column width="80%">                                         
+                                                    <ui:repeat var="prr" value="#{pss.productvalues}" >
+                                                        <h:outputText value="#{prr.svalue.name}" rendered="#{prr.svalue!=null}" /> 
+                                                        <h:outputText value="#{prr.value}" rendered="#{prr.svalue==null}" /> 
+                                                    </ui:repeat>                                         
+                                                </p:column>  
+            
+                                            </p:dataTable>                           
+                                        </p:column>                       
+                                    </p:row>                                                         
+                                </p:panelGrid><br/>                    
+                            </p:dialog>                                
+                        </h:form> 
+                        
+            -->        
+
+
+            <h:form id="productPreviewForm">
+                <p:dialog header="#{bundle.productPreview}" id="productPreviewID" position="top" widgetVar="productPreviewDialog" modal="true" resizable="false" >
+                    <p:panelGrid>
+                        <f:facet name="header"> 
+                            <p:row>  
+                                <p:column colspan="1"><p:outputLabel value="#{bundle.name}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                                <p:column colspan="5"><p:outputLabel value="#{productSearchBean.selectedProduct.name}" /></p:column>  
+                            </p:row> 
+                        </f:facet>
+
+
+
+                        <p:row>  
+                            <p:column colspan="1"><p:outputLabel value="#{bundle.subProduct}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                            <p:column colspan="3">
+                                <p:outputLabel value="#{bundle.yes} " rendered="#{productSearchBean.selectedProduct.subproduct==1}" />
+                                <p:outputLabel value=" - (#{productSearchBean.selectedProduct.product.name})" rendered="#{productSearchBean.selectedProduct.subproduct==1}" />
+                                <p:outputLabel value="#{bundle.no} " rendered="#{productSearchBean.selectedProduct.subproduct==0}" />
+                            </p:column> 
+
+                            <p:column rowspan="8"  ><p:outputLabel value="#{bundle.images}: " style="font-weight: bold;vertical-align: top;float: right" /></p:column> 
+                            <p:column rowspan="8">
+                                <p:galleria id="imageGaler" value="#{productSearchBean.selectedProduct.imageproducts}" var="image" panelWidth="350" panelHeight="300" autoPlay="false" 
+                                            frameWidth="40" frameHeight="40" effect="clip">  
+                                    <p:graphicImage id="produImage" value="../temp/#{image.filename}" alt="TEST!!!" title="#{image.description}" height="50" width="50"/>  
+                                    <f:facet name="content">  
+                                        <h:panelGrid  columns="2" cellpadding="0" style="border-style: none; font-weight: 8px; border-width:1px ! important;
+                                                      border-style:none ! important;">  
+                                            <f:facet name="header">  
+                                                <p:graphicImage value="../temp/#{image.filename}" height="250" width="350" />  
+                                            </f:facet>  
+
+                                            <p:outputLabel value="#{bundle.description}: " style="font-weight: bold;" />  
+                                            <p:outputLabel value="#{image.description}"/>  
+
+                                            <p:outputLabel value="#{bundle.ordered}: " style="font-weight: bold;" />  
+                                            <p:outputLabel id="number" value="#{image.primary}"/>  
+                                        </h:panelGrid>  
+                                    </f:facet>  
+
+                                </p:galleria> 
+                            </p:column>  
+
+
+
+                        </p:row>
+
+                        <p:row>  
+                            <p:column ><p:outputLabel value="#{bundle.company}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column> 
+                            <p:column colspan="3">
+                                <ui:repeat var="companyProduct" value="#{productSearchBean.selectedProduct.orderedCompanies}" >
+                                    <p:outputLabel value="#{companyProduct.name} "/>                                     
+                                </ui:repeat>
+                            </p:column>  
+                        </p:row>
+
+                        <p:row>  
+                            <p:column colspan="1"><p:outputLabel value="#{bundle.description}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                            <p:column colspan="3"><p:outputLabel value="#{productSearchBean.selectedProduct.description}" /></p:column>  
+                        </p:row> 
+
+                        <p:row>  
+                            <p:column colspan="1"><p:outputLabel value="#{bundle.insertDate}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                            <p:column colspan="3"><h:outputLabel  converter="DateConverter"  value="#{productSearchBean.selectedProduct.createddate}"   /></p:column>  
+                        </p:row>
+
+                        <p:row>  
+                            <p:column colspan="1"><p:outputLabel value="#{bundle.productCategory}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                            <p:column colspan="3"><p:outputLabel value="#{productSearchBean.selectedProduct.productcategory.name}" /></p:column>  
+                        </p:row>
+
+
+
+                        <p:row>  
+                            <p:column ><p:outputLabel value="#{bundle.productLine}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column> 
+                            <p:column colspan="3">
+                                <ui:repeat var="productLineProduct" value="#{productSearchBean.selectedProduct.orderedProductlines}" >
+                                    <p:outputLabel value="#{productLineProduct.name} "/>                                     
+                                </ui:repeat>
+                            </p:column>  
+                        </p:row>
+
+                        <p:row>  
+                            <p:column colspan="1"><p:outputLabel value="#{bundle.productTemplate}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                            <p:column colspan="3"><p:outputLabel value="#{productSearchBean.selectedProduct.item.name}" rendered="#{productSearchBean.selectedProduct.item!=null}" /></p:column>  
+                        </p:row>
+
+
+                        <p:row>  
+                            <p:column colspan="1"><p:outputLabel value="Video:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                            <p:column colspan="3">                            
+                                <p:commandButton id="vidBtn" type="button"  rendered="#{productSearchBean.selectedProduct.videoproducts.size()>0}"  
+                                                 value="#{bundle.view}" onclick="videoDlg.show()" />
+
+                                <!--<p:overlayPanel id="vidPanel" for="vidBtn" hideEffect="fade"  >  
+                                     <p:dataTable value="#{newProductBean.newProduct.videoproducts}" var="video" rows="1" paginator="true"> 
+                                        <p:column> 
+                                            <p:media value="../temp/#{video.filename}" width="480" height="450"   >  
+                                                <f:param name="autoPlay" value="false" />  
+                                            </p:media>
+                                            <p:outputLabel style="font-weight: bold" value="#{video.description}" />
+                                        </p:column>                
+                                    </p:dataTable>
+                                </p:overlayPanel>   -->
+
+                            </p:column>  
+                        </p:row>
+
+                        <p:row>  
+                            <p:column colspan="6" styleClass="ui-widget-header">  
+                                <p:outputLabel value="#{bundle.productCharacteristics} "/>    
+                            </p:column>  
+                        </p:row>
+
+                        <p:row>
+                            <p:column colspan="6">                           
+                                <p:dataTable var="pss" value="#{productSearchBean.selectedProduct.productspecifications}" styleClass="hide-column-names" >
+                                    <p:column width="20%" >  
+                                        <p:outputLabel value="#{pss.specification.name}: " style="font-weight: bold;vertical-align: top;float: right"/> 
+                                    </p:column> 
+                                    <p:column width="80%">                                         
+                                        <ui:repeat var="prr" value="#{pss.productvalues}" >
+                                            <h:outputText value="#{prr.svalue.name}" rendered="#{prr.svalue!=null}" /> 
+                                            <h:outputText value="#{prr.value}" rendered="#{prr.svalue==null}" /> 
+                                        </ui:repeat>                                         
+                                    </p:column>  
+
+                                </p:dataTable>                           
+                            </p:column>                       
+                        </p:row>                                                         
+                    </p:panelGrid>
+                </p:dialog>
+
+
+                <p:dialog header="Videos" id="videoDlgID" position="top" widgetVar="videoDlg" modal="true" resizable="false" >
+                    <p:dataTable value="#{productSearchBean.selectedProduct.videoproducts}" var="video" rows="1" paginator="true"> 
+                        <p:column> 
+                            <p:media value="../temp/#{video.filename}" width="480" height="450"   >  
+                                <f:param name="autoPlay" value="false" />  
+                            </p:media>
+                            <br/>
+                            <p:outputLabel style="font-weight: bold" value="#{video.description}" />
+                        </p:column>                
+                    </p:dataTable>                
+                </p:dialog>
+
+            </h:form>
+        </div>
+    </ui:define>
+
+</ui:composition>
