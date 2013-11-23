@@ -11,6 +11,7 @@ import com.furniture.bean.ProductSearchBean;
 import com.furniture.bean.SessionBean;
 import com.furniture.bean.UpdateProductBean;
 import com.furniture.bean.UserBean;
+import com.furniture.dao.CompanyDAO;
 import com.furniture.dao.CompanyproductDAO;
 import com.furniture.dao.ItemDAO;
 import com.furniture.dao.ItemspecificationDAO;
@@ -19,6 +20,7 @@ import com.furniture.dao.ProductDAO;
 import com.furniture.dao.SpecificationDAO;
 import com.furniture.dao.SpecificationvalueDAO;
 import com.furniture.entities.Catalogue;
+import com.furniture.entities.Category;
 import com.furniture.entities.Company;
 import com.furniture.entities.Companyproduct;
 import com.furniture.entities.Imageproduct;
@@ -57,6 +59,7 @@ import javax.transaction.UserTransaction;
 import org.apache.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.model.TreeNode;
 import org.primefaces.model.UploadedFile;
 
 /**
@@ -144,24 +147,37 @@ public class FurnitureAction {
 
     public void handleCompanySelect() {
         System.out.println("HANDLING CHANGE COMPAMNY !!!!");
+        try {
         NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
-
-        Set<Productline> productLines = new HashSet<Productline>(0);
-
-        for (int i = 0; i < newProductBean.getSelectedCompanies().size(); i++) {
-            Company company = newProductBean.getSelectedCompanies().get(i);
-            productLines.addAll(FurnitureUtil.getProductLineFromCompany(company));
-
+        Company company = newProductBean.getSelectedCompany();
+        if (company!=null) {
+            CompanyDAO dao = new CompanyDAO();
+            List<Category> categories = dao.getCompanyRootCategories(company, Boolean.TRUE);
+            TreeNode root = FurnitureUtil.getCategoriesTree(categories);
+            newProductBean.setRoot(root);            
+        }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            FacesUtils.goError(ex, logger, sessionBean.getUsers(), sessionBean.getErrorMsgKey());
         }
 
-        List<Productline> pl = new ArrayList<Productline>(productLines);
-        Collections.sort(pl, new Comparator<Productline>() {
-            public int compare(Productline one, Productline other) {
-                return one.getName().compareTo(other.getName());
-            }
-        });
-        newProductBean.setProductLines(pl);
-        System.out.println("LINE=" + productLines.size());
+//        Set<Productline> productLines = new HashSet<Productline>(0);
+//
+//        for (int i = 0; i < newProductBean.getSelectedCompanies().size(); i++) {
+//            Company company = newProductBean.getSelectedCompanies().get(i);
+//            productLines.addAll(FurnitureUtil.getProductLineFromCompany(company));
+//
+//        }
+//
+//        List<Productline> pl = new ArrayList<Productline>(productLines);
+//        Collections.sort(pl, new Comparator<Productline>() {
+//            public int compare(Productline one, Productline other) {
+//                return one.getName().compareTo(other.getName());
+//            }
+//        });
+//        newProductBean.setProductLines(pl);
+//        System.out.println("LINE=" + productLines.size());
     }
 
     public void handleFileUpload(FileUploadEvent event) {
@@ -395,25 +411,110 @@ public class FurnitureAction {
             goError(e);
         }
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public void showDimensionSpecifications() {
+        try {
+            NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
+            Item item = newProductBean.getSelectedItem();
+            ItemspecificationDAO dao = new ItemspecificationDAO();
+            List<Specification> specs = dao.fetchItemDimensionSpecifications(item, Boolean.TRUE);
+            newProductBean.setSpecifications(specs);
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+    public void deleteProductDimensionSpecification() {
+        try {
+            NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
+            List<Productspecification> productDimensionSpecifications = newProductBean.getDimesionProductSpecifications();
+            Productspecification productSpecification = newProductBean.getProductSpecification();
+            productDimensionSpecifications.remove(productSpecification);
+            System.out.println("size=" + productDimensionSpecifications.size());
+            newProductBean.setDimesionProductSpecifications(productDimensionSpecifications);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+    public void insertPriceCreateProduct() {
+        try {
+            NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
+            Price newPrice = new Price();
+            newPrice.setAmount(newProductBean.getAmount());
+            newPrice.setInitialprice(newProductBean.getInitialAmount());
+            newPrice.setDiscount(newProductBean.getDiscount());
+            newPrice.setCompany(newProductBean.getSelectedCompany());
+            
+            newPrice.setActive(BigDecimal.ONE);
+            newPrice.setProduct(newProductBean.getNewProduct());
+            newPrice.setPricedate(newProductBean.getPriceDate());
+            newPrice.setCurrency(newProductBean.getCurrency());
+
+            newProductBean.getPrices().add(newPrice);
+            
+            newProductBean.setAmount(null);
+            newProductBean.setInitialAmount(null);
+            newProductBean.setDiscount(null);
+            newProductBean.setPriceDate(null);
+            newProductBean.setCurrency(null);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    public void resetPriceCreateProduct() {
+        try {
+            NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
+            newProductBean.setAmount(null);
+            newProductBean.setInitialAmount(null);
+            newProductBean.setDiscount(null);
+            newProductBean.setPriceDate(null);
+            newProductBean.setCurrency(null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+                
+            
     public void handleSubproductSelect() {
         try {
             NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
             Product newProduct = newProductBean.getNewProduct();
 
             if (newProduct.getSubproduct().equals(BigDecimal.ONE)) {
-
-                List<Company> companies = newProductBean.getSelectedCompanies();
-                newProduct.setSubproduct(BigDecimal.ONE);
-                if (companies == null || companies.size() == 0) {
+                Company company = newProductBean.getSelectedCompany();                
+                if (company == null) {
                     sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noCompanySelected"));
                     sessionBean.setShowGeneralDialog(Boolean.TRUE);
                     return;
                 } else {
                     List<Product> products = new ArrayList<Product>(0);
-
+                    newProduct.setSubproduct(BigDecimal.ONE);
                     CompanyproductDAO dao = new CompanyproductDAO();
-                    products = dao.getCompanyProducts(companies, Boolean.TRUE);
+                    products = dao.getCompanyProducts(company, Boolean.TRUE);
 
                     Collections.sort(products, new Comparator<Product>() {
                         public int compare(Product one, Product other) {
@@ -457,30 +558,27 @@ public class FurnitureAction {
             product.setActive(BigDecimal.ONE);
 
 
-            List<Company> companies = newProductBean.getSelectedCompanies();
-            List<Companyproduct> companyproducts = new ArrayList<Companyproduct>(0);
-            for (int i = 0; i < companies.size(); i++) {
-                Company company = companies.get(i);
-                Companyproduct companyproduct = new Companyproduct();
-                companyproduct.setActive(BigDecimal.ONE);
-                companyproduct.setCompany(company);
-                companyproduct.setProduct(product);
-                companyproducts.add(companyproduct);
-            }
+            Company company = newProductBean.getSelectedCompany();
+            List<Companyproduct> companyproducts = new ArrayList<Companyproduct>(0);            
+            Companyproduct companyproduct = new Companyproduct();
+            companyproduct.setActive(BigDecimal.ONE);
+            companyproduct.setCompany(company);
+            companyproduct.setProduct(product);
+            companyproducts.add(companyproduct);            
             product.setCompanyproducts(companyproducts);
 
 
-            List<Productline> productlines = newProductBean.getSelectedProductLines();
-            List<Productlineproduct> productlineproducts = new ArrayList<Productlineproduct>(0);
-            for (int i = 0; i < productlines.size(); i++) {
-                Productline productline = productlines.get(i);
-                Productlineproduct productlineproduct = new Productlineproduct();
-                productlineproduct.setActive(BigDecimal.ONE);
-                productlineproduct.setProduct(product);
-                productlineproduct.setProductline(productline);
-                productlineproducts.add(productlineproduct);
-            }
-            product.setProductlineproducts(productlineproducts);
+//            List<Productline> productlines = newProductBean.getSelectedProductLines();
+//            List<Productlineproduct> productlineproducts = new ArrayList<Productlineproduct>(0);
+//            for (int i = 0; i < productlines.size(); i++) {
+//                Productline productline = productlines.get(i);
+//                Productlineproduct productlineproduct = new Productlineproduct();
+//                productlineproduct.setActive(BigDecimal.ONE);
+//                productlineproduct.setProduct(product);
+//                productlineproduct.setProductline(productline);
+//                productlineproducts.add(productlineproduct);
+//            }
+//            product.setProductlineproducts(productlineproducts);
 
 
 
@@ -864,7 +962,49 @@ public class FurnitureAction {
             goError(e);
         }
     }
+    
+    
+    public void insertDimensionAction() {
+        try {
+            NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
+             
+            Product newProduct = newProductBean.getNewProduct();
+            Specification spec = newProductBean.getSpecification();
 
+            List<Productspecification> dimensionProductSpecifications = newProductBean.getDimesionProductSpecifications();
+            Productspecification productSpecification = new Productspecification();
+            productSpecification.setSpecification(spec);
+            productSpecification.setProduct(newProduct);
+            productSpecification.setActive(BigDecimal.ONE);
+            dimensionProductSpecifications.add(productSpecification);
+            
+            
+            
+            List<Productvalue> productValues = newProductBean.getProductValues();
+            String svalue = newProductBean.getSvalue();               
+            Productvalue productvalue = new Productvalue();
+            productvalue.setProductspecification(productSpecification);
+            productvalue.setValue(svalue);
+            productValues.add(productvalue);
+            productvalue.setActive(BigDecimal.ONE);
+            productSpecification.getProductvalues().add(productvalue);
+            
+            newProductBean.setDimesionProductSpecifications(dimensionProductSpecifications);
+            newProductBean.setProductValues(productValues);
+
+            FacesUtils.callRequestContext("selectDimensionValueDialog.hide();");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+    
+    
+    
     public String confirmInsertProduct() {
 
         UserTransaction userTransaction = null;
@@ -1230,6 +1370,20 @@ public class FurnitureAction {
     public void updateFinalPrice() {
         try {
             PriceBean priceBean = (PriceBean) FacesUtils.getManagedBean("priceBean");
+            if (priceBean.getInitialAmount() != null && priceBean.getInitialAmount() != null) {
+                Double finalPrice = priceBean.getInitialAmount() * (100 - priceBean.getDiscount()) / 100;
+                priceBean.setAmount(finalPrice);
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+            //sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            //goError(e);
+        }
+    }
+    
+     public void updateFinalPriceCreateProduct() {
+        try {
+            NewProductBean priceBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
             if (priceBean.getInitialAmount() != null && priceBean.getInitialAmount() != null) {
                 Double finalPrice = priceBean.getInitialAmount() * (100 - priceBean.getDiscount()) / 100;
                 priceBean.setAmount(finalPrice);

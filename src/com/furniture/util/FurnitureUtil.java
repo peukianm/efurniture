@@ -6,6 +6,7 @@ package com.furniture.util;
 
 import com.furniture.entities.Catalogue;
 import com.furniture.entities.Catalogueproductline;
+import com.furniture.entities.Category;
 import com.furniture.entities.Company;
 import com.furniture.entities.Companycatalogue;
 import com.furniture.entities.Productline;
@@ -14,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
 
 /**
  *
@@ -49,4 +52,25 @@ public class FurnitureUtil {
         });
         return retValue;
     }
+    
+    public static TreeNode getCategoriesTree(List<Category> categories){
+        TreeNode  root = new DefaultTreeNode("Root", null); 
+        for (int i = 0; i < categories.size(); i++) {
+            Category category = categories.get(i);
+            TreeNode node = getCategoryTree(root, category);                        
+        }
+        return root;
+    }
+    
+    
+    private static TreeNode getCategoryTree(TreeNode root, Category category) {
+        TreeNode node = new DefaultTreeNode(category, root); 
+        List<Category> childCategories = category.getCategories();
+        for (int i = 0; i < childCategories.size(); i++) {
+            Category childCategory = childCategories.get(i);
+            getCategoryTree(node,childCategory);            
+        }
+        return node;
+    }
+    
 }

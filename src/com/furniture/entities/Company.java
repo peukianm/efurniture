@@ -49,6 +49,7 @@ public class Company implements java.io.Serializable {
     private Set<Companycatalogue> companycatalogues = new HashSet<Companycatalogue>(0);
     private Set<Price> prices = new HashSet<Price>(0);
     private List<Catalogue> catalogues = new ArrayList<Catalogue>(0);
+    private List<Category> categories = new ArrayList<Category>(0);
     
     // Constructors
     /**
@@ -68,7 +69,7 @@ public class Company implements java.io.Serializable {
     /**
      * full constructor
      */
-    public Company(BigDecimal companyid, String name, String description, String email, String afm, String contactperson, Timestamp createdTimestamp,
+    public Company(BigDecimal companyid, String name, String description, String email, String afm, String contactperson, Timestamp createdTimestamp, List<Category> categories,
             Timestamp modifiedTimestamp, String phone1, String phone2, Set<Companyproduct> companyproducts, Set<Address> addresses, Set<Auditing> auditings,
             Set<Companycatalogue> companycatalogues, Set<Users> useres, Set<Price> prices, BigDecimal active, Date createddate, List<Catalogue> catalogues) {
         this.companyid = companyid;
@@ -90,6 +91,7 @@ public class Company implements java.io.Serializable {
         this.prices = prices;
         this.createddate = createddate;
         this.catalogues = catalogues;
+        this.categories = categories;
     }
 
     // Property accessors
@@ -271,6 +273,31 @@ public class Company implements java.io.Serializable {
         this.catalogues = catalogues;
     }
 
+    
+    
+    
+    /**
+     * @return the categories
+     */
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "COMPCAT",
+    joinColumns = {
+        @JoinColumn(name = "COMPANYID")
+    },
+    inverseJoinColumns = {
+        @JoinColumn(name = "CATEGORYID")
+    })
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    /**
+     * @param categories the books to set
+     */
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+    }
+    
     
     
     @Temporal(TemporalType.DATE)

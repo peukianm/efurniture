@@ -35,6 +35,10 @@
     <class>com.furniture.entities.Productcategory</class>    
     <class>com.furniture.entities.Itemspecification</class>
     <class>com.furniture.entities.Videoproduct</class>
+    <class>com.furniture.entities.Measurment</class>
+    <class>com.furniture.entities.Category</class>
+    
+    
     
     <shared-cache-mode>DISABLE_SELECTIVE</shared-cache-mode>
     <properties>

@@ -200,4 +200,24 @@ public class ItemspecificationDAO {
             throw re;
         }
      }
+    
+    
+     @SuppressWarnings("unchecked")    
+    public List<Specification> fetchItemDimensionSpecifications(Item item, Boolean showOnlyEnabled) {
+        try {
+            Query query = getEntityManager().createQuery("Select model.specification from Itemspecification model where "
+                    + " model.item = :item "
+                    + " and model.specification.dimension = 1  "
+                    + (showOnlyEnabled ? " and model.active = 1 " : " "));
+              
+            query.setParameter("item", item);
+            return query.getResultList();
+        } catch (RuntimeException re){
+            logger.error("Error on finding entity", re);
+            throw re;
+        }
+     }
+    
+    
+    
 }

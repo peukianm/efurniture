@@ -98,6 +98,11 @@
   <converter-class>com.furniture.converter.ItemConverter</converter-class>
  </converter>
  
+ <converter>
+  <converter-id>MeasurmentConverter</converter-id>
+  <converter-class>com.furniture.converter.MeasurmentConverter</converter-class>
+ </converter>
+ 
  
  
  

@@ -65,6 +65,7 @@ public class SecurityFilter implements Filter {
 
 
         //System.out.println("Checking for="+checkforloginpage);
+        
         if ((request.getAttribute(FILTER_APPLIED) == null)
                 && (!checkforloginpage.endsWith("index.jsp"))                
                 && (!checkforloginpage.endsWith("loginPage.jsf"))
@@ -95,8 +96,7 @@ public class SecurityFilter implements Filter {
                 return;
             }
         }
-        //deliver request to next filter
-
+        
 
 //        if (!hreq.getRequestURI().startsWith(hreq.getContextPath() + ResourceHandler.RESOURCE_IDENTIFIER)) { // Skip JSF resources (CSS/JS/Images/etc)
 //            hres.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.

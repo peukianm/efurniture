@@ -4,10 +4,15 @@
  */
 package com.furniture.bean;
 
+import com.furniture.dao.CompanyDAO;
+import com.furniture.entities.Category;
 import com.furniture.entities.Company; 
 import com.furniture.entities.Companyproduct;
+import com.furniture.entities.Currency;
 import com.furniture.entities.Imageproduct;
 import com.furniture.entities.Item;
+import com.furniture.entities.Measurment;
+import com.furniture.entities.Price;
 import com.furniture.entities.Product;
 import com.furniture.entities.Productline;
 import com.furniture.entities.Productspecification;
@@ -22,12 +27,14 @@ import com.furniture.util.FurnitureUtil;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import org.apache.log4j.Logger;
+import org.primefaces.model.TreeNode;
 
 /**
  *  
@@ -39,11 +46,34 @@ public class NewProductBean implements Serializable {
 
     @ManagedProperty(value = "#{sessionBean}")
     private SessionBean sessionBean;
-    private static final Logger logger = Logger.getLogger(NewProductBean.class);
+    
     private Product newProduct = new Product();
-    private List<Company> selectedCompanies = new ArrayList<Company>(0);
-    private List<Productline> productLines = new ArrayList<Productline>(0);
-    private List<Productline> selectedProductLines = new ArrayList<Productline>(0);
+    
+    private Company selectedCompany;
+    private Category selectedCategory;
+    
+    private TreeNode root;
+    private TreeNode selectedNode;
+       
+    private Specification selectedDimensionSpecidifcation ;
+    private List<Productspecification> dimesionProductSpecifications = new ArrayList<Productspecification>(0);
+    private Measurment selectedMeasurment;
+    
+    private Price newPrice;
+    private List<Price> prices = new ArrayList<Price>(0);
+    private Double amount;
+    private Double discount;
+    private Double initialAmount;
+    private Currency currency;
+    private Date priceDate;
+    
+     
+    
+    
+    //private List<Company> selectedCompanies = new ArrayList<Company>(0);
+    //private List<Productline> productLines = new ArrayList<Productline>(0);
+    //private List<Productline> selectedProductLines = new ArrayList<Productline>(0);
+    
     private List<Imageproduct> images = new ArrayList<Imageproduct>(0);
     private Imageproduct newImage = new Imageproduct();
     private List<Videoproduct> videos = new ArrayList<Videoproduct>(0);
@@ -74,27 +104,145 @@ public class NewProductBean implements Serializable {
 
         Company company = user.getCompany();
         if (company != null) {
-            selectedCompanies.add(company);
+            selectedCompany= company;
             Companyproduct companyProduct = new Companyproduct();
             companyProduct.setCompany(company);
             newProduct.getCompanyproducts().add(companyProduct);
             newProduct.setSubproduct(BigDecimal.ZERO);
-            productLines = FurnitureUtil.getProductLineFromCompany(company);
+            CompanyDAO dao = new CompanyDAO();
+            List<Category> categories = dao.getCompanyRootCategories(company, Boolean.TRUE);
+            root = FurnitureUtil.getCategoriesTree(categories);            
         }
     } 
 
-    //PreDestroy
-    public void reset() {
-        newProduct = new Product();
-        //selectedCompanies = new ArrayList<Company>(0);
-        productLines = new ArrayList<Productline>(0);
-        selectedProductLines = new ArrayList<Productline>(0);
+    public Measurment getSelectedMeasurment() {
+        return selectedMeasurment;
+    }
 
-        images = new ArrayList<Imageproduct>(0);
-        newImage = new Imageproduct();
+    public void setSelectedMeasurment(Measurment selectedMeasurment) {
+        this.selectedMeasurment = selectedMeasurment;
+    }
+    
+    
+    public List<Productspecification> getDimesionProductSpecifications() {
+        return dimesionProductSpecifications;
+    }
+
+    public void setDimesionProductSpecifications(List<Productspecification> dimesionProductSpecifications) {
+        this.dimesionProductSpecifications = dimesionProductSpecifications;
+    }
+    
+    public Specification getSelectedDimensionSpecidifcation() {
+        return selectedDimensionSpecidifcation;
+    }
+
+    public void setSelectedDimensionSpecidifcation(Specification selectedDimensionSpecidifcation) {
+        this.selectedDimensionSpecidifcation = selectedDimensionSpecidifcation;
+    }
+
+    public Price getNewPrice() {
+        return newPrice;
+    }
+
+    public void setNewPrice(Price newPrice) {
+        this.newPrice = newPrice;
+    }
+
+    public List<Price> getPrices() {
+        return prices;
+    }
+
+    public void setPrices(List<Price> prices) {
+        this.prices = prices;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public Double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Double discount) {
+        this.discount = discount;
+    }
+
+    public Double getInitialAmount() {
+        return initialAmount;
+    }
+
+    public void setInitialAmount(Double initialAmount) {
+        this.initialAmount = initialAmount;
+    }
+
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+
+    public Date getPriceDate() {
+        return priceDate;
+    }
+
+    public void setPriceDate(Date priceDate) {
+        this.priceDate = priceDate;
     }
 
     
+    
+    
+    
+    
+    //PreDestroy
+    public void reset() {        
+    }
+
+    
+    
+    
+    
+    public TreeNode getRoot() {
+        return root;
+    }
+
+    public void setRoot(TreeNode root) {
+        this.root = root;
+    }
+
+    public TreeNode getSelectedNode() {
+        return selectedNode;
+    }
+
+    public void setSelectedNode(TreeNode selectedNode) {
+        this.selectedNode = selectedNode;
+    }
+
+    
+    public Company getSelectedCompany() {
+        return selectedCompany;
+    }
+
+    public void setSelectedCompany(Company selectedCompany) {
+        this.selectedCompany = selectedCompany;
+    }
+
+    public Category getSelectedCategory() {
+        return selectedCategory;
+    }
+
+    public void setSelectedCategory(Category selectedCategory) {
+        this.selectedCategory = selectedCategory;
+    }
+
+        
     public List<Imageproduct> getImages() {
         return images;
     }
@@ -150,29 +298,29 @@ public class NewProductBean implements Serializable {
 //    public void setSelectedProductLines(List<Catalogueproductline> selectedProductLines) {
 //        this.selectedProductLines = selectedProductLines;
 //    }
-    public List<Company> getSelectedCompanies() {
-        return selectedCompanies;
-    }
-
-    public void setSelectedCompanies(List<Company> selectedCompanies) {
-        this.selectedCompanies = selectedCompanies;
-    }
-
-    public List<Productline> getProductLines() {
-        return productLines;
-    }
-
-    public void setProductLines(List<Productline> productLines) {
-        this.productLines = productLines;
-    }
-
-    public List<Productline> getSelectedProductLines() {
-        return selectedProductLines;
-    }
-
-    public void setSelectedProductLines(List<Productline> selectedProductLines) {
-        this.selectedProductLines = selectedProductLines;
-    }
+//    public List<Company> getSelectedCompanies() {
+//        return selectedCompanies;
+//    }
+//
+//    public void setSelectedCompanies(List<Company> selectedCompanies) {
+//        this.selectedCompanies = selectedCompanies;
+//    }
+//
+//    public List<Productline> getProductLines() {
+//        return productLines;
+//    }
+//
+//    public void setProductLines(List<Productline> productLines) {
+//        this.productLines = productLines;
+//    }
+//
+//    public List<Productline> getSelectedProductLines() {
+//        return selectedProductLines;
+//    }
+//
+//    public void setSelectedProductLines(List<Productline> selectedProductLines) {
+//        this.selectedProductLines = selectedProductLines;
+//    }
 
 //    private StreamedContent imagem = new DefaultStreamedContent();
 //    public StreamedContent getImagem() {

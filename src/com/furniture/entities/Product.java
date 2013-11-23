@@ -18,6 +18,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
@@ -61,6 +63,8 @@ public class Product implements java.io.Serializable {
     private List<Company> orderedCompanies = new ArrayList<Company>(0);
     private List<Productline> orderedProductlines = new ArrayList<Productline>(0);
     private List<Videoproduct> videoproducts = new ArrayList<Videoproduct>(0);
+    private List<Category> categories = new ArrayList<Category>(0);
+
     
 
     // Constructors
@@ -83,7 +87,7 @@ public class Product implements java.io.Serializable {
      */
     public Product(BigDecimal productid, Product product, Item item, String name, String description, BigDecimal active, Timestamp createdTimestamp, Productcategory productcategory,
             Timestamp modifiedTimestamp, BigDecimal subproduct, List<Companyproduct> companyproducts, List<Productspecification> productspecifications, Date createddate,
-            List<Productlineproduct> productlineproducts, List<Imageproduct> imageproducts, List<Product> products, Set<Auditing> auditings, List<Price> prices) {
+            List<Productlineproduct> productlineproducts, List<Imageproduct> imageproducts, List<Product> products, Set<Auditing> auditings, List<Price> prices, List<Category> categories) {
         this.productid = productid;
         this.product = product;
         this.item = item;
@@ -102,6 +106,7 @@ public class Product implements java.io.Serializable {
         this.prices = prices;
         this.productcategory = productcategory;
         this.createddate = createddate;
+        this.categories = categories;
     }
 
     // Property accessors
@@ -273,7 +278,7 @@ public class Product implements java.io.Serializable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PRODUCTCATEGORYID", nullable = false)
+    @JoinColumn(name = "PRODUCTCATEGORYID", nullable = true)
     public Productcategory getProductcategory() {
         return this.productcategory;
     }
@@ -315,6 +320,30 @@ public class Product implements java.io.Serializable {
         this.catalogues = catalogues;
     }
 
+    
+    
+    /**
+     * @return the catalogues
+     */
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "CATPROD",
+    joinColumns = {
+        @JoinColumn(name = "PRODUCTID")
+    },
+    inverseJoinColumns = {
+        @JoinColumn(name = "CATEGORYID")
+    })
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    /**
+     * @param categories the books to set
+     */
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+    }
+    
     
     
     @Transient

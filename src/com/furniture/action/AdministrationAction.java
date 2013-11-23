@@ -15,6 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
+import javax.transaction.UserTransaction;
 import org.apache.log4j.Logger;
 
 public class AdministrationAction implements Serializable {
@@ -25,6 +26,9 @@ public class AdministrationAction implements Serializable {
     @EJB
     private PersistenceUtil persistenceUtil;
 
+     @EJB
+    private PersistenceHelper persistenceHelper;
+    
     public AdministrationAction() {
     }
 
@@ -76,20 +80,34 @@ public class AdministrationAction implements Serializable {
     }
 
     private String mainPageForward(Users temp) {
+        
+        UserTransaction userTransaction = null; 
         try {
+            
+           //userTransaction = persistenceHelper.getUserTransaction();
+           //userTransaction.begin();
+            
+            
             // furniture Editor
             if (temp.getRole().getRoleid().intValue() == 1 || temp.getRole().getRoleid().intValue() == 2 || temp.getRole().getRoleid().intValue() == 3) {
-                System.out.println("Catalogues="+temp.getCompany().getCatalogues().size());
+                
                 persistenceUtil.audit(temp, new BigDecimal(SystemParameters.getInstance().getProperty("ACT_LOGINUSER")), null);
+                                
                 sessionBean.setPageCode(SystemParameters.getInstance().getProperty("PAGE_FURNITURE_HOME"));
                 sessionBean.setPageName(MessageBundleLoader.getMessage("homePage"));
                 return "backend/main?faces-redirect=true";
             }
 
 
-
+            //userTransaction.commit();
             return "";
         } catch (Exception e) {
+            e.printStackTrace();
+//            try {
+//                userTransaction.rollback();
+//            } catch (Exception ex) {
+//                ex.printStackTrace();
+//            }
             e.printStackTrace();
             sessionBean.setErrorMsgKey("errMsg_GeneralError");
             goError(e);

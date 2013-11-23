@@ -28,6 +28,7 @@ public class Productvalue implements java.io.Serializable {
     private BigDecimal active;
     private Timestamp createdTimestamp;
     private Timestamp modifiedTimestamp;
+    private Measurment measurment;
     
     // Constructors
     /**
@@ -48,7 +49,8 @@ public class Productvalue implements java.io.Serializable {
     /**
      * full constructor
      */
-    public Productvalue(BigDecimal id, Productspecification productspecification, Svalue svalue, String value, BigDecimal ordered, BigDecimal active, Timestamp createdTimestamp, Timestamp modifiedTimestamp) {
+    public Productvalue(BigDecimal id, Productspecification productspecification, Svalue svalue, String value, BigDecimal ordered, BigDecimal active, 
+            Timestamp createdTimestamp, Timestamp modifiedTimestamp, Measurment measurment) {
         this.id = id;
         this.productspecification = productspecification;
         this.svalue = svalue;
@@ -57,6 +59,7 @@ public class Productvalue implements java.io.Serializable {
         this.active = active;
         this.createdTimestamp = createdTimestamp;
         this.modifiedTimestamp = modifiedTimestamp;
+        this.measurment = measurment;
     }
 
     // Property accessors
@@ -78,6 +81,17 @@ public class Productvalue implements java.io.Serializable {
 
     public void setProductspecification(Productspecification productspecification) {
         this.productspecification = productspecification;
+    }
+    
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MEASURMENT", nullable = false)
+    public Measurment getMeasurment() {
+        return this.measurment;
+    }
+
+    public void setMeasurment(Measurment measurment) {
+        this.measurment = measurment;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

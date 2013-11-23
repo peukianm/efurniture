@@ -156,7 +156,7 @@ public class Price implements java.io.Serializable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CATALOGUEID", nullable = false)
+    @JoinColumn(name = "CATALOGUEID", nullable = true)
     public Catalogue getCatalogue() {
         return this.catalogue;
     }

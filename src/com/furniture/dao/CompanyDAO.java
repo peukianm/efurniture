@@ -1,6 +1,8 @@
 package com.furniture.dao;
 
+import com.furniture.entities.Category;
 import com.furniture.entities.Company;
+import com.furniture.entities.Product;
 import com.furniture.util.EJBUtil;
 import com.furniture.util.PersistenceHelper;
 import java.math.BigDecimal;
@@ -11,6 +13,7 @@ import java.util.logging.Level;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import org.apache.log4j.Logger;
+import org.omnifaces.util.Ajax;
 
 /**
  * A data access object (DAO) providing persistence and search support for Company entities. Transaction control of the save(), update() and delete() operations
@@ -230,5 +233,40 @@ public class CompanyDAO {
             throw re;
         }
     }
+    
+    
+    public List<Category> getAllRootCategories(Boolean showEnable) {
+        try {                        
+            String queryString = " Select cat from Category cat "
+                    + " where cat.depth=0 "
+                    + (showEnable ? " and cat.active = 1 " :" ")
+                    + " order by cat.ordered ";            
+            Query query = getEntityManager().createQuery(queryString);        
+            return query.getResultList();            
+        } catch (RuntimeException re) {
+            logger.error("Error on finding entity", re);
+            throw re;
+        }
+    }    
+    
+    public List<Category> getCompanyRootCategories(Company company, Boolean showEnable) {
+        try {                        
+           
+            String queryString = " Select cat from Category cat  "
+                    + (company != null ? " JOIN cat.companies comp " : " ")
+                    + " where cat.depth=0 "
+                    + (showEnable ? " and cat.active = 1 " :" ")
+                    + (company!=null ? " and comp= :company " :" ")
+                    + " order by cat.ordered ";            
+                       
+            Query query = getEntityManager().createQuery(queryString);   
+            if (company!=null) query.setParameter("company", company);
+            
+            return query.getResultList();            
+        } catch (RuntimeException re) {
+            logger.error("Error on finding entity", re);
+            throw re;
+        }
+    }    
     
 }

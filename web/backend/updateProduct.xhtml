@@ -154,7 +154,7 @@
 
                                             <td style="vertical-align: top"><p:outputLabel style="font-weight: bold;color: black" value="#{bundle.selectSpecCat}:  " /> </td>
                                             <td><p:selectCheckboxMenu value="#{updateProductBean.selectedSpecificationCat}" label="#{bundle.categories}" filter="true" 
-                                                                      filterText="Filter" filterMatchMode="startsWith"   converter="SpecificationcategoryConverter"
+                                                                       filterMatchMode="startsWith"   converter="SpecificationcategoryConverter"
                                                                       style="">  
                                                     <f:selectItems value="#{applicationBean.specificationCategories}" var="category" itemLabel="#{category.name}" itemValue="#{category}" />
                                                     <p:ajax    update="showSpecsButton"   /> 
@@ -291,7 +291,7 @@
                         <h:outputText style="font-weight: bold" value="#{bundle.ordered}*" rendered="#{updateProductBean.newImage.filename!=null}" />
                         <p:inputMask mask="9" value="#{updateProductBean.newImage.primary}" size="5" required="true" requiredMessage="#{bundle.ordered}: #{bundle.mandatoryField}" rendered="#{updateProductBean.newImage.filename!=null}" />
                         <h:outputText style="font-weight: bold" value="#{bundle.description}" rendered="#{updateProductBean.newImage.filename!=null}"/>
-                        <p:inputTextarea  rows="5" cols="50" value="#{updateProductBean.newImage.description}" size="49" rendered="#{updateProductBean.newImage.filename!=null}" />                        
+                        <p:inputTextarea  rows="5" cols="50" value="#{updateProductBean.newImage.description}" rendered="#{updateProductBean.newImage.filename!=null}" />                        
                     </h:panelGrid>
                 </p:outputPanel>
                 <p:commandButton value="#{bundle.insert}" action="#{furnitureAction.savePhotoUpdate}" update="productPhoto :createProductForm:imageDataAdmin @this" rendered="#{updateProductBean.newImage.filename!=null}" />            
@@ -349,7 +349,7 @@
                                 </td>
                                 <td style="vertical-align: middle">
                                     <h:outputText  style="font-weight: bold; " value="#{bundle.description}:" rendered="#{updateProductBean.newVideo.filename!=null}"/>
-                                    <p:inputTextarea  rows="4" cols="40" value="#{updateProductBean.newVideo.description}" size="49" rendered="#{updateProductBean.newVideo.filename!=null}" />                                                                              
+                                    <p:inputTextarea  rows="4" cols="40" value="#{updateProductBean.newVideo.description}" rendered="#{updateProductBean.newVideo.filename!=null}" />                                                                              
                                 </td>
                                
                             </tr>

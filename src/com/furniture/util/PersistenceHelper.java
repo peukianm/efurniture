@@ -8,6 +8,9 @@ import java.io.Serializable;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import static javax.ejb.TransactionManagementType.BEAN;
+import static javax.ejb.TransactionManagementType.CONTAINER;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
@@ -21,7 +24,6 @@ public class PersistenceHelper implements Serializable {
 
     @PersistenceContext(unitName = "efurniture")
     private EntityManager entityManager;
-    
     @Resource
     private UserTransaction userTransaction;
 
@@ -38,7 +40,6 @@ public class PersistenceHelper implements Serializable {
         return userTransaction;
     }
 
-    
     public void setUserTransaction(UserTransaction userTransaction) {
         this.userTransaction = userTransaction;
     }
@@ -99,8 +100,6 @@ public class PersistenceHelper implements Serializable {
 
         return ((Long) q.getSingleResult()).intValue();
     }
-    
-    
     //
 //    public void beginTransaction() {
 //        
@@ -127,5 +126,4 @@ public class PersistenceHelper implements Serializable {
 //            ex.printStackTrace();
 //        }
 //    }
-
 }

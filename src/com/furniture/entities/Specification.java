@@ -33,6 +33,8 @@ public class Specification implements java.io.Serializable {
     private Timestamp modifiedTimestamp;
     private BigDecimal freetext;
     private BigDecimal multiplevalues;
+    private BigDecimal color;
+    private BigDecimal dimension;
     private Set<Specificationvalue> specificationvalues = new HashSet<Specificationvalue>(0);
     private Set<Productspecification> productspecifications = new HashSet<Productspecification>(0);
     private Set<Auditing> auditings = new HashSet<Auditing>(0);
@@ -187,16 +189,34 @@ public class Specification implements java.io.Serializable {
     public void setAuditings(Set<Auditing> auditings) {
         this.auditings = auditings;
     }
-    
+
+    @Column(name = "COLOR", precision = 22, scale = 0)
+    public BigDecimal getColor() {
+        return this.color;
+    }
+
+    public void setColor(BigDecimal color) {
+        this.color = color;
+    }
+
+    @Column(name = "DIMENSION", precision = 22, scale = 0)
+    public BigDecimal getDimension() {
+        return this.dimension;
+    }
+
+    public void setDimension(BigDecimal dimension) {
+        this.dimension = dimension;
+    }
+
+   
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "specification")
-	public Set<Itemspecification> getItemspecifications() {
-		return this.itemspecifications;
-	}
+    public Set<Itemspecification> getItemspecifications() {
+        return this.itemspecifications;
+    }
 
-	public void setItemspecifications(Set<Itemspecification> itemspecifications) {
-		this.itemspecifications = itemspecifications;
-	}
-
+    public void setItemspecifications(Set<Itemspecification> itemspecifications) {
+        this.itemspecifications = itemspecifications;
+    }
 
     @Override
     public boolean equals(Object obj) {

@@ -1,6 +1,7 @@
 package com.furniture.converter;
 
 import com.furniture.entities.Catalogueproductline;
+import com.furniture.entities.Measurment;
 import com.furniture.entities.Specification;
 import com.furniture.entities.Specificationcategory;
 import java.math.BigDecimal;
@@ -15,8 +16,8 @@ import javax.faces.convert.ConverterException;
 import com.furniture.util.EJBUtil;
 import com.furniture.util.PersistenceHelper;
 
-public class SpecificationConverter implements Converter {
-        
+public class MeasurmentConverter implements Converter {
+    
     private PersistenceHelper persistenceHelper = EJBUtil.lookupPersistenceHelperBean();
 
     public Object getAsObject(FacesContext facesContext, UIComponent component, String submittedValue) {
@@ -25,8 +26,8 @@ public class SpecificationConverter implements Converter {
         } else {
             try {
                 BigDecimal number = new BigDecimal(submittedValue);
-                Specification specification = persistenceHelper.getEntityManager().find(Specification.class, number);
-                return specification;
+                Measurment measurment = persistenceHelper.getEntityManager().find(Measurment.class, number);
+                return measurment;
 
 
             } catch (Exception exception) {
@@ -44,7 +45,7 @@ public class SpecificationConverter implements Converter {
                 return "";
             } else {
 
-                return String.valueOf(((Specification) value).getSpecificationid());
+                return String.valueOf(((Measurment) value).getMeasurmentid());
             }
         } catch (Exception e) {
             e.printStackTrace();
