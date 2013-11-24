@@ -184,7 +184,7 @@ public class ItemspecificationDAO {
             throw re;
         }
     }
-    
+     
     
     @SuppressWarnings("unchecked")    
     public List<Specification> fetchItemSpecifications(Item item, Boolean showOnlyEnabled) {

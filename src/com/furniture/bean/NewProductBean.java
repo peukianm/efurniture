@@ -5,8 +5,9 @@
 package com.furniture.bean;
 
 import com.furniture.dao.CompanyDAO;
+import com.furniture.dao.CompanyproductDAO;
 import com.furniture.entities.Category;
-import com.furniture.entities.Company; 
+import com.furniture.entities.Company;
 import com.furniture.entities.Companyproduct;
 import com.furniture.entities.Currency;
 import com.furniture.entities.Imageproduct;
@@ -22,11 +23,13 @@ import com.furniture.entities.Specificationcategory;
 import com.furniture.entities.Specificationvalue;
 import com.furniture.entities.Users;
 import com.furniture.entities.Videoproduct;
-import com.furniture.util.FacesUtils;  
+import com.furniture.util.FacesUtils;
 import com.furniture.util.FurnitureUtil;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -34,10 +37,11 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import org.apache.log4j.Logger;
+import org.primefaces.model.DualListModel;
 import org.primefaces.model.TreeNode;
 
 /**
- *  
+ *
  * @author peukianm
  */
 @ManagedBean
@@ -46,19 +50,15 @@ public class NewProductBean implements Serializable {
 
     @ManagedProperty(value = "#{sessionBean}")
     private SessionBean sessionBean;
-    
     private Product newProduct = new Product();
-    
     private Company selectedCompany;
     private Category selectedCategory;
-    
     private TreeNode root;
     private TreeNode selectedNode;
-       
-    private Specification selectedDimensionSpecidifcation ;
+    
+    private Specification selectedDimensionSpecidifcation;
     private List<Productspecification> dimesionProductSpecifications = new ArrayList<Productspecification>(0);
     private Measurment selectedMeasurment;
-    
     private Price newPrice;
     private List<Price> prices = new ArrayList<Price>(0);
     private Double amount;
@@ -67,12 +67,12 @@ public class NewProductBean implements Serializable {
     private Currency currency;
     private Date priceDate;
     
-     
-    
-    
+    private DualListModel<Product> products;
+    private DualListModel<Product> subProducts;
     //private List<Company> selectedCompanies = new ArrayList<Company>(0);
     //private List<Productline> productLines = new ArrayList<Productline>(0);
     //private List<Productline> selectedProductLines = new ArrayList<Productline>(0);
+    
     
     private List<Imageproduct> images = new ArrayList<Imageproduct>(0);
     private Imageproduct newImage = new Imageproduct();
@@ -81,8 +81,7 @@ public class NewProductBean implements Serializable {
     private List<Specification> specifications = new ArrayList<Specification>(0);
     private List<Specification> selectedSpecification = new ArrayList<Specification>(0);
     private List<Specificationcategory> selectedSpecificationCat = new ArrayList<Specificationcategory>(0);
-    private Specification specification = new Specification();    
-    
+    private Specification specification = new Specification();
     //Value attributes  
     private List<Specificationvalue> svalues = new ArrayList<Specificationvalue>(0);
     private List<Specificationvalue> selectedSvalues = new ArrayList<Specificationvalue>(0);
@@ -91,11 +90,10 @@ public class NewProductBean implements Serializable {
     private List<Productspecification> productSpecifications = new ArrayList<Productspecification>(0);
     private List<Productvalue> productValues = new ArrayList<Productvalue>(0);
     private Productspecification productSpecification;
-    private List<Product> parentProductList = new ArrayList<Product>(0);
+    //private List<Product> parentProductList = new ArrayList<Product>(0);
     private List<Item> items = new ArrayList<Item>(0);
     private Item selectedItem;
-    
-   
+
     @PostConstruct
     public void init() {
         reset();
@@ -104,17 +102,45 @@ public class NewProductBean implements Serializable {
 
         Company company = user.getCompany();
         if (company != null) {
-            selectedCompany= company;
+            selectedCompany = company;
             Companyproduct companyProduct = new Companyproduct();
             companyProduct.setCompany(company);
             newProduct.getCompanyproducts().add(companyProduct);
-            newProduct.setSubproduct(BigDecimal.ZERO);
+            //newProduct.setSubproduct(BigDecimal.ZERO);
             CompanyDAO dao = new CompanyDAO();
             List<Category> categories = dao.getCompanyRootCategories(company, Boolean.TRUE);
-            root = FurnitureUtil.getCategoriesTree(categories);            
-        }
-    } 
+            root = FurnitureUtil.getCategoriesTree(categories);
 
+            CompanyproductDAO dao1 = new CompanyproductDAO();
+            List<Product> pr = dao1.getCompanyProducts(company, Boolean.TRUE);
+            Collections.sort(pr, new Comparator<Product>() {
+                public int compare(Product one, Product other) {
+                    return one.getName().compareTo(other.getName());
+                }
+            });
+            products = new DualListModel<Product>(pr, new ArrayList<Product>());
+            subProducts = new DualListModel<Product>(pr, new ArrayList<Product>());
+        }
+    }
+
+    public DualListModel<Product> getSubProducts() {
+        return subProducts;
+    }
+
+    public void setSubProducts(DualListModel<Product> subProducts) {
+        this.subProducts = subProducts;
+    }
+    
+    
+    public DualListModel<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(DualListModel<Product> products) {
+        this.products = products;
+    }
+
+        
     public Measurment getSelectedMeasurment() {
         return selectedMeasurment;
     }
@@ -122,8 +148,7 @@ public class NewProductBean implements Serializable {
     public void setSelectedMeasurment(Measurment selectedMeasurment) {
         this.selectedMeasurment = selectedMeasurment;
     }
-    
-    
+
     public List<Productspecification> getDimesionProductSpecifications() {
         return dimesionProductSpecifications;
     }
@@ -131,7 +156,7 @@ public class NewProductBean implements Serializable {
     public void setDimesionProductSpecifications(List<Productspecification> dimesionProductSpecifications) {
         this.dimesionProductSpecifications = dimesionProductSpecifications;
     }
-    
+
     public Specification getSelectedDimensionSpecidifcation() {
         return selectedDimensionSpecidifcation;
     }
@@ -196,19 +221,10 @@ public class NewProductBean implements Serializable {
         this.priceDate = priceDate;
     }
 
-    
-    
-    
-    
-    
     //PreDestroy
-    public void reset() {        
+    public void reset() {
     }
 
-    
-    
-    
-    
     public TreeNode getRoot() {
         return root;
     }
@@ -225,7 +241,6 @@ public class NewProductBean implements Serializable {
         this.selectedNode = selectedNode;
     }
 
-    
     public Company getSelectedCompany() {
         return selectedCompany;
     }
@@ -242,7 +257,6 @@ public class NewProductBean implements Serializable {
         this.selectedCategory = selectedCategory;
     }
 
-        
     public List<Imageproduct> getImages() {
         return images;
     }
@@ -314,14 +328,13 @@ public class NewProductBean implements Serializable {
 //        this.productLines = productLines;
 //    }
 //
-//    public List<Productline> getSelectedProductLines() {
+//    public List<Productline> getSelectedProductLines() { 
 //        return selectedProductLines;
 //    }
 //
 //    public void setSelectedProductLines(List<Productline> selectedProductLines) {
 //        this.selectedProductLines = selectedProductLines;
 //    }
-
 //    private StreamedContent imagem = new DefaultStreamedContent();
 //    public StreamedContent getImagem() {
 //        return imagem;
@@ -340,8 +353,8 @@ public class NewProductBean implements Serializable {
     public void setNewImage(Imageproduct newImage) {
         this.newImage = newImage;
     }
-    
-     public List<Item> getItems() {
+
+    public List<Item> getItems() {
         return items;
     }
 
@@ -356,16 +369,14 @@ public class NewProductBean implements Serializable {
     public void setSelectedItem(Item selectedItem) {
         this.selectedItem = selectedItem;
     }
-        
-    
-    public List<Product> getParentProductList() {
-        return parentProductList;
-    }
 
-    public void setParentProductList(List<Product> parentProductList) {
-        this.parentProductList = parentProductList;
-    }
-
+//    public List<Product> getParentProductList() {
+//        return parentProductList;
+//    }
+//
+//    public void setParentProductList(List<Product> parentProductList) {
+//        this.parentProductList = parentProductList;
+//    }
     public Productspecification getProductSpecification() {
         return productSpecification;
     }
@@ -441,14 +452,14 @@ public class NewProductBean implements Serializable {
     public List<Specification> getSelectedSpecification() {
         return selectedSpecification;
     }
- 
+
     public void setSelectedSpecification(List<Specification> selectedSpecification) {
         this.selectedSpecification = selectedSpecification;
     }
 
     public List<Specificationcategory> getSelectedSpecificationCat() {
         return selectedSpecificationCat;
-    } 
+    }
 
     public void setSelectedSpecificationCat(List<Specificationcategory> selectedSpecificationCat) {
         this.selectedSpecificationCat = selectedSpecificationCat;
@@ -469,7 +480,4 @@ public class NewProductBean implements Serializable {
     public void setNewVideo(Videoproduct newVideo) {
         this.newVideo = newVideo;
     }
-    
-    
-
 }

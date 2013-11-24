@@ -49,13 +49,13 @@ public class Product implements java.io.Serializable {
     private BigDecimal active;
     private Timestamp createdTimestamp;
     private Timestamp modifiedTimestamp;
-    private BigDecimal subproduct;
+    //private BigDecimal subproduct;
     private Productcategory productcategory;
     private List<Companyproduct> companyproducts = new ArrayList<Companyproduct>(0);
     private List<Productspecification> productspecifications = new ArrayList<Productspecification>(0);
     private List<Productlineproduct> productlineproducts = new ArrayList<Productlineproduct>(0);
     private List<Imageproduct> imageproducts = new ArrayList<Imageproduct>(0);
-    private List<Product> products = new ArrayList<Product>(0);
+    //private List<Product> products = new ArrayList<Product>(0);
     private Date createddate;
     private Set<Auditing> auditings = new HashSet<Auditing>(0);
     private List<Price> prices = new ArrayList<Price>(0);
@@ -64,6 +64,8 @@ public class Product implements java.io.Serializable {
     private List<Productline> orderedProductlines = new ArrayList<Productline>(0);
     private List<Videoproduct> videoproducts = new ArrayList<Videoproduct>(0);
     private List<Category> categories = new ArrayList<Category>(0);
+    private List<Product> subproducts = new ArrayList<Product>(0);
+    private List<Product> parentproducts = new ArrayList<Product>(0);
 
     
 
@@ -86,8 +88,8 @@ public class Product implements java.io.Serializable {
      * full constructor
      */
     public Product(BigDecimal productid, Product product, Item item, String name, String description, BigDecimal active, Timestamp createdTimestamp, Productcategory productcategory,
-            Timestamp modifiedTimestamp, BigDecimal subproduct, List<Companyproduct> companyproducts, List<Productspecification> productspecifications, Date createddate,
-            List<Productlineproduct> productlineproducts, List<Imageproduct> imageproducts, List<Product> products, Set<Auditing> auditings, List<Price> prices, List<Category> categories) {
+            Timestamp modifiedTimestamp, List<Companyproduct> companyproducts, List<Productspecification> productspecifications, Date createddate, List<Product> parentproducts,
+            List<Productlineproduct> productlineproducts, List<Imageproduct> imageproducts, Set<Auditing> auditings, List<Price> prices, List<Category> categories) {
         this.productid = productid;
         this.product = product;
         this.item = item;
@@ -96,17 +98,19 @@ public class Product implements java.io.Serializable {
         this.active = active;
         this.createdTimestamp = createdTimestamp;
         this.modifiedTimestamp = modifiedTimestamp;
-        this.subproduct = subproduct;
+        //this.subproduct = subproduct;
         this.companyproducts = companyproducts;
         this.productspecifications = productspecifications;
         this.productlineproducts = productlineproducts;
         this.imageproducts = imageproducts;
-        this.products = products;
+        //this.products = products;
         this.auditings = auditings;
         this.prices = prices;
         this.productcategory = productcategory;
         this.createddate = createddate;
         this.categories = categories;
+        this.parentproducts = parentproducts;
+        this.subproducts = subproducts;
     }
 
     // Property accessors
@@ -196,14 +200,14 @@ public class Product implements java.io.Serializable {
         this.modifiedTimestamp = modifiedTimestamp;
     }
 
-    @Column(name = "SUBPRODUCT", precision = 22, scale = 0)
-    public BigDecimal getSubproduct() {
-        return this.subproduct;
-    }
-
-    public void setSubproduct(BigDecimal subproduct) {
-        this.subproduct = subproduct;
-    }
+//    @Column(name = "SUBPRODUCT", precision = 22, scale = 0)
+//    public BigDecimal getSubproduct() {
+//        return this.subproduct;
+//    }
+//
+//    public void setSubproduct(BigDecimal subproduct) {
+//        this.subproduct = subproduct;
+//    }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
     public List<Companyproduct> getCompanyproducts() {
@@ -250,14 +254,14 @@ public class Product implements java.io.Serializable {
         this.imageproducts = imageproducts;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
-    public List<Product> getProducts() {
-        return this.products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
+//    public List<Product> getProducts() {
+//        return this.products;
+//    }
+//
+//    public void setProducts(List<Product> products) {
+//        this.products = products;
+//    }
     
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
     public List<Videoproduct> getVideoproducts() {
@@ -344,6 +348,46 @@ public class Product implements java.io.Serializable {
         this.categories = categories;
     }
     
+    
+    
+    
+    
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "CONNPRODUCT",
+    joinColumns = {
+        @JoinColumn(name = "SUBPRODUCTID")
+    },
+    inverseJoinColumns = {
+        @JoinColumn(name = "PARENTPRODUCTID")
+    })
+    public List<Product> getParentproducts() {
+        return parentproducts;
+    }
+
+    
+    public void setParentproducts(List<Product> parentproducts) {
+        this.parentproducts = parentproducts;
+    }
+    
+    
+    
+    
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "CONNPRODUCT",
+    joinColumns = {
+        @JoinColumn(name = "PARENTPRODUCTID")
+    },
+    inverseJoinColumns = {
+        @JoinColumn(name = "SUBPRODUCTID")
+    })
+    public List<Product> getSubproducts() {
+        return subproducts;
+    }
+
+    
+    public void setSubproducts(List<Product> subproducts) {
+        this.subproducts = subproducts;
+    }
     
     
     @Transient

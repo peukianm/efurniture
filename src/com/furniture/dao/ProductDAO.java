@@ -193,7 +193,7 @@ public class ProductDAO {
             }
             return query.getResultList();
         } catch (RuntimeException re) {
-            logger.error("Error on finding entity", re);
+            logger.error("Error on finding entity", re); 
             throw re;
         }
     }

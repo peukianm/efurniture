@@ -59,6 +59,8 @@ import javax.transaction.UserTransaction;
 import org.apache.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.TransferEvent;
+import org.primefaces.model.DualListModel;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.UploadedFile;
 
@@ -154,7 +156,17 @@ public class FurnitureAction {
             CompanyDAO dao = new CompanyDAO();
             List<Category> categories = dao.getCompanyRootCategories(company, Boolean.TRUE);
             TreeNode root = FurnitureUtil.getCategoriesTree(categories);
-            newProductBean.setRoot(root);            
+            newProductBean.setRoot(root);     
+            CompanyproductDAO dao1 = new CompanyproductDAO();
+            List<Product> products = dao1.getCompanyProducts(company, Boolean.TRUE);
+            Collections.sort(products, new Comparator<Product>() {
+                public int compare(Product one, Product other) {
+                    return one.getName().compareTo(other.getName());
+                }
+            });
+             
+            newProductBean.setProducts(new DualListModel<Product>(products, new ArrayList<Product>()));
+            newProductBean.setSubProducts(new DualListModel<Product>(products, new ArrayList<Product>()));
         }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -162,22 +174,6 @@ public class FurnitureAction {
             FacesUtils.goError(ex, logger, sessionBean.getUsers(), sessionBean.getErrorMsgKey());
         }
 
-//        Set<Productline> productLines = new HashSet<Productline>(0);
-//
-//        for (int i = 0; i < newProductBean.getSelectedCompanies().size(); i++) {
-//            Company company = newProductBean.getSelectedCompanies().get(i);
-//            productLines.addAll(FurnitureUtil.getProductLineFromCompany(company));
-//
-//        }
-//
-//        List<Productline> pl = new ArrayList<Productline>(productLines);
-//        Collections.sort(pl, new Comparator<Productline>() {
-//            public int compare(Productline one, Productline other) {
-//                return one.getName().compareTo(other.getName());
-//            }
-//        });
-//        newProductBean.setProductLines(pl);
-//        System.out.println("LINE=" + productLines.size());
     }
 
     public void handleFileUpload(FileUploadEvent event) {
@@ -400,17 +396,41 @@ public class FurnitureAction {
         try {
             NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
             List<Productspecification> productSpecifications = newProductBean.getProductSpecifications();
-            Productspecification productSpecification = newProductBean.getProductSpecification();
-            productSpecifications.remove(productSpecification);
-            System.out.println("size=" + productSpecifications.size());
-            newProductBean.setProductSpecifications(productSpecifications);
-
+            Productspecification productSpecification = newProductBean.getProductSpecification();                        
+            productSpecifications.remove(productSpecification);            
+            newProductBean.setProductSpecifications(productSpecifications);            
         } catch (Exception e) {
             e.printStackTrace();
             sessionBean.setErrorMsgKey("errMsg_GeneralError");
             goError(e);
         }
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -423,28 +443,10 @@ public class FurnitureAction {
     public void showDimensionSpecifications() {
         try {
             NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
-            Item item = newProductBean.getSelectedItem();
+            Item item = newProductBean.getNewProduct().getItem();
             ItemspecificationDAO dao = new ItemspecificationDAO();
             List<Specification> specs = dao.fetchItemDimensionSpecifications(item, Boolean.TRUE);
             newProductBean.setSpecifications(specs);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            sessionBean.setErrorMsgKey("errMsg_GeneralError");
-            goError(e);
-        }
-    }
-    
-    
-    public void deleteProductDimensionSpecification() {
-        try {
-            NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
-            List<Productspecification> productDimensionSpecifications = newProductBean.getDimesionProductSpecifications();
-            Productspecification productSpecification = newProductBean.getProductSpecification();
-            productDimensionSpecifications.remove(productSpecification);
-            System.out.println("size=" + productDimensionSpecifications.size());
-            newProductBean.setDimesionProductSpecifications(productDimensionSpecifications);
-
         } catch (Exception e) {
             e.printStackTrace();
             sessionBean.setErrorMsgKey("errMsg_GeneralError");
@@ -467,13 +469,16 @@ public class FurnitureAction {
             newPrice.setPricedate(newProductBean.getPriceDate());
             newPrice.setCurrency(newProductBean.getCurrency());
 
-            newProductBean.getPrices().add(newPrice);
+            List<Price> prices = new ArrayList<Price>(0);
+            prices.add(newPrice);
+            newProductBean.setPrices(prices);
             
             newProductBean.setAmount(null);
             newProductBean.setInitialAmount(null);
             newProductBean.setDiscount(null);
             newProductBean.setPriceDate(null);
             newProductBean.setCurrency(null);
+            System.out.println("PROCES.size="+newProductBean.getPrices().size());
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -490,6 +495,7 @@ public class FurnitureAction {
             newProductBean.setDiscount(null);
             newProductBean.setPriceDate(null);
             newProductBean.setCurrency(null);
+            System.out.println("RESET!!!!!!!!!!!!!!!");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -497,43 +503,170 @@ public class FurnitureAction {
             goError(e);
         }
     }
-                
-            
-    public void handleSubproductSelect() {
+    
+    public void resetPriceValue() {
         try {
             NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
-            Product newProduct = newProductBean.getNewProduct();
-
-            if (newProduct.getSubproduct().equals(BigDecimal.ONE)) {
-                Company company = newProductBean.getSelectedCompany();                
-                if (company == null) {
-                    sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noCompanySelected"));
-                    sessionBean.setShowGeneralDialog(Boolean.TRUE);
-                    return;
-                } else {
-                    List<Product> products = new ArrayList<Product>(0);
-                    newProduct.setSubproduct(BigDecimal.ONE);
-                    CompanyproductDAO dao = new CompanyproductDAO();
-                    products = dao.getCompanyProducts(company, Boolean.TRUE);
-
-                    Collections.sort(products, new Comparator<Product>() {
-                        public int compare(Product one, Product other) {
-                            return one.getName().compareTo(other.getName());
-                        }
-                    });
-
-                    newProductBean.setParentProductList(products);
-                    FacesUtils.updateHTMLComponnetWIthJS("selectParentProduct");
-                }
-            } else {
-                newProduct.setSubproduct(BigDecimal.ZERO);
-            }
+            newProductBean.setPrices(new ArrayList<Price>(0));            
         } catch (Exception e) {
             e.printStackTrace();
             sessionBean.setErrorMsgKey("errMsg_GeneralError");
             goError(e);
         }
     }
+    
+    
+    
+    
+            
+     public void insertDimensionAction() {
+        try {
+            NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
+             
+            Product newProduct = newProductBean.getNewProduct();
+            Specification spec = newProductBean.getSpecification();
+
+            
+            List<Productspecification> dimensionProductSpecifications = newProductBean.getDimesionProductSpecifications();
+            System.out.println("SPECIFICATIO PRIN TO ADD="+dimensionProductSpecifications.size());
+            
+            
+            Productspecification productSpecification = new Productspecification();
+            productSpecification.setSpecification(spec);
+            productSpecification.setProduct(newProduct);
+            productSpecification.setActive(BigDecimal.ONE);
+            
+            
+            
+            
+            List<Productvalue> productValues = newProductBean.getProductValues();
+            String svalue = newProductBean.getSvalue();               
+            Productvalue productvalue = new Productvalue();
+            productvalue.setProductspecification(productSpecification);
+            productvalue.setValue(svalue);            
+            productvalue.setActive(BigDecimal.ONE);
+            productvalue.setMeasurment(newProductBean.getSelectedMeasurment());
+            productValues.add(productvalue);            
+            productSpecification.getProductvalues().add(productvalue);
+            
+            dimensionProductSpecifications.add(productSpecification);
+            
+            System.out.println("SPECIFICATIO META TO ADD="+dimensionProductSpecifications.size());
+            newProductBean.setDimesionProductSpecifications(dimensionProductSpecifications);
+            newProductBean.setProductValues(productValues);
+
+            FacesUtils.callRequestContext("selectDimensionValueDialog.hide();");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+    public void deleteProductDimensionSpecification() {
+        try {
+            NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
+            List<Productspecification> productDimensionSpecifications = newProductBean.getDimesionProductSpecifications();
+            Productspecification productSpecification = newProductBean.getProductSpecification();            
+            productDimensionSpecifications.remove(productSpecification);            
+            newProductBean.setDimesionProductSpecifications(productDimensionSpecifications);
+            FacesUtils.updateHTMLComponnetWIthJS("dimensionForm");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+   
+    public void selectPProduct(TransferEvent event) {
+        try {
+            NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
+             for(Object item : event.getItems()) {  
+                  System.out.println(item);
+            }    
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+            
+//    public void handleSubproductSelect() {
+//        try {
+//            NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
+//            Product newProduct = newProductBean.getNewProduct();
+//
+//            if (newProduct.getSubproduct().equals(BigDecimal.ONE)) {
+//                Company company = newProductBean.getSelectedCompany();                
+//                if (company == null) {
+//                    sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noCompanySelected"));
+//                    sessionBean.setShowGeneralDialog(Boolean.TRUE);
+//                    return;
+//                } else {
+//                    List<Product> products = new ArrayList<Product>(0);
+//                    newProduct.setSubproduct(BigDecimal.ONE);
+//                    CompanyproductDAO dao = new CompanyproductDAO();
+//                    products = dao.getCompanyProducts(company, Boolean.TRUE);
+//
+//                    Collections.sort(products, new Comparator<Product>() {
+//                        public int compare(Product one, Product other) {
+//                            return one.getName().compareTo(other.getName());
+//                        }
+//                    });
+//
+//                    newProductBean.setParentProductList(products);
+//                    FacesUtils.updateHTMLComponnetWIthJS("selectParentProduct");
+//                }
+//            } else {
+//                newProduct.setSubproduct(BigDecimal.ZERO);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+//            goError(e);
+//        }
+//    }
 
     public void insertProduct() {
         try {
@@ -855,43 +988,43 @@ public class FurnitureAction {
         }
     }
 
-    public void handleSubproductSelectUpdate() {
-        try {
-            UpdateProductBean updateProductBean = (UpdateProductBean) FacesUtils.getManagedBean("updateProductBean");
-            Product newProduct = updateProductBean.getUpdateProduct();
-
-            if (newProduct.getSubproduct().equals(BigDecimal.ONE)) {
-
-                List<Company> companies = updateProductBean.getSelectedCompanies();
-                newProduct.setSubproduct(BigDecimal.ONE);
-                if (companies == null || companies.size() == 0) {
-                    sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noCompanySelected"));
-                    sessionBean.setShowGeneralDialog(Boolean.TRUE);
-                    return;
-                } else {
-                    List<Product> products = new ArrayList<Product>(0);
-
-                    CompanyproductDAO dao = new CompanyproductDAO();
-                    products = dao.getCompanyProducts(companies, Boolean.TRUE);
-
-                    Collections.sort(products, new Comparator<Product>() {
-                        public int compare(Product one, Product other) {
-                            return one.getName().compareTo(other.getName());
-                        }
-                    });
-
-                    updateProductBean.setParentProductList(products);
-                    FacesUtils.updateHTMLComponnetWIthJS("selectParentProduct");
-                }
-            } else {
-                newProduct.setSubproduct(BigDecimal.ZERO);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            sessionBean.setErrorMsgKey("errMsg_GeneralError");
-            goError(e);
-        }
-    }
+//    public void handleSubproductSelectUpdate() {
+//        try {
+//            UpdateProductBean updateProductBean = (UpdateProductBean) FacesUtils.getManagedBean("updateProductBean");
+//            Product newProduct = updateProductBean.getUpdateProduct();
+//
+//            if (newProduct.getSubproduct().equals(BigDecimal.ONE)) {
+//
+//                List<Company> companies = updateProductBean.getSelectedCompanies();
+//                newProduct.setSubproduct(BigDecimal.ONE);
+//                if (companies == null || companies.size() == 0) {
+//                    sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noCompanySelected"));
+//                    sessionBean.setShowGeneralDialog(Boolean.TRUE);
+//                    return;
+//                } else {
+//                    List<Product> products = new ArrayList<Product>(0);
+//
+//                    CompanyproductDAO dao = new CompanyproductDAO();
+//                    products = dao.getCompanyProducts(companies, Boolean.TRUE);
+//
+//                    Collections.sort(products, new Comparator<Product>() {
+//                        public int compare(Product one, Product other) {
+//                            return one.getName().compareTo(other.getName());
+//                        }
+//                    });
+//
+//                    updateProductBean.setParentProductList(products);
+//                    FacesUtils.updateHTMLComponnetWIthJS("selectParentProduct");
+//                }
+//            } else {
+//                newProduct.setSubproduct(BigDecimal.ZERO);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+//            goError(e);
+//        }
+//    }
 
     public void updateProduct() {
         try {
@@ -964,42 +1097,7 @@ public class FurnitureAction {
     }
     
     
-    public void insertDimensionAction() {
-        try {
-            NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
-             
-            Product newProduct = newProductBean.getNewProduct();
-            Specification spec = newProductBean.getSpecification();
-
-            List<Productspecification> dimensionProductSpecifications = newProductBean.getDimesionProductSpecifications();
-            Productspecification productSpecification = new Productspecification();
-            productSpecification.setSpecification(spec);
-            productSpecification.setProduct(newProduct);
-            productSpecification.setActive(BigDecimal.ONE);
-            dimensionProductSpecifications.add(productSpecification);
-            
-            
-            
-            List<Productvalue> productValues = newProductBean.getProductValues();
-            String svalue = newProductBean.getSvalue();               
-            Productvalue productvalue = new Productvalue();
-            productvalue.setProductspecification(productSpecification);
-            productvalue.setValue(svalue);
-            productValues.add(productvalue);
-            productvalue.setActive(BigDecimal.ONE);
-            productSpecification.getProductvalues().add(productvalue);
-            
-            newProductBean.setDimesionProductSpecifications(dimensionProductSpecifications);
-            newProductBean.setProductValues(productValues);
-
-            FacesUtils.callRequestContext("selectDimensionValueDialog.hide();");
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            sessionBean.setErrorMsgKey("errMsg_GeneralError");
-            goError(e);
-        }
-    }
+   
     
     
     

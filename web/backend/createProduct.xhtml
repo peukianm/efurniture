@@ -48,28 +48,28 @@
                                         </p:selectOneMenu> <br/>                                                                                
 
                                     </td> -->
-                                    
-                                    
+
+
                                     <td style="vertical-align: top; float: right"> <p:outputLabel value="#{bundle.company}* :"  style="font-weight: bold"/> </td>
                                     <td style="vertical-align: top">
 
 
                                         <p:selectOneMenu id="selectCompany" value="#{newProductBean.selectedCompany}" converter="CompanyConverter" required="true" disabled="#{sessionBean.users.role.roleid!=1}" requiredMessage="#{bundle.company}: #{bundle.mandatoryField}" >                                            
                                             <f:selectItems value="#{applicationBean.companies}" var="comp" itemLabel="#{comp.name}" itemValue="#{comp}"   /> 
-                                             <p:ajax  listener="#{furnitureAction.handleCompanySelect}"  update="categoryTree"   /> 
+                                            <p:ajax  listener="#{furnitureAction.handleCompanySelect}"  update="categoryTree"   /> 
                                         </p:selectOneMenu>
                                         <p:message for="selectCompany" display="icon"/>
-                                        
-                                        <!--<p:selectManyMenu  disabled="{sessionBean.users.role.roleid!=1}"  required="true" value="{newProductBean.selectedCompanies}" requiredMessage="#{bundle.company}: #{bundle.mandatoryField}"
-                                                           converter="CompanyConverter"  id="selectCompany" style="width:150px;height:130px" var="comp" showCheckbox="true"> 						                                                                                                                                                                              
-                                            <f:selectItems value="{applicationBean.companies}" var="company" itemLabel="{company.name}" itemValue="{company}"   />						                                      
-                                            <p:column>{comp.name}</p:column>                                
-                                            <p:ajax  listener="{furnitureAction.handleCompanySelect}"  update="selectProductLine"   /> 
-                                        </p:selectManyMenu>                                    
-                                        <p:message for="selectCompany" display="icon"/>
-                                        <p:inputText readonly="true" value="{newProductBean.selectedCompanies[0].name}" rendered="#{sessionBean.users.role.roleid!=1}"  />-->
+
+                                <!--<p:selectManyMenu  disabled="{sessionBean.users.role.roleid!=1}"  required="true" value="{newProductBean.selectedCompanies}" requiredMessage="#{bundle.company}: #{bundle.mandatoryField}"
+                                                   converter="CompanyConverter"  id="selectCompany" style="width:150px;height:130px" var="comp" showCheckbox="true"> 						                                                                                                                                                                              
+                                    <f:selectItems value="{applicationBean.companies}" var="company" itemLabel="{company.name}" itemValue="{company}"   />						                                      
+                                    <p:column>{comp.name}</p:column>                                
+                                    <p:ajax  listener="{furnitureAction.handleCompanySelect}"  update="selectProductLine"   /> 
+                                </p:selectManyMenu>                                    
+                                <p:message for="selectCompany" display="icon"/>
+                                <p:inputText readonly="true" value="{newProductBean.selectedCompanies[0].name}" rendered="#{sessionBean.users.role.roleid!=1}"  />-->
                                     </td>     
-                                    
+
                                     <td style="vertical-align: top;float: right"><h:outputLabel value="#{bundle.insertDate}: " style="font-weight: bold" /></td>
                                     <td> 
                                         <p:calendar locale="el" size="12"  readonlyInput="true"  required="false" navigator="true" showOn="button" 
@@ -77,15 +77,15 @@
                                     </td>                                                                                            
                                 </tr>                                
 
-                                
-                                
-                                
+
+
+
                                 <tr>
                                     <td style="vertical-align: top;float: right"><p:outputLabel value="#{bundle.description} :"  style="font-weight: bold"/></td>
                                     <td style="vertical-align: top;"><p:inputTextarea required="true" requiredMessage="#{bundle.productDescription}: #{bundle.mandatoryField}"  value="#{newProductBean.newProduct.description}" id="productDescription" rows="5" cols="30" />
                                         <p:message for="productDescription" display="icon"/>
                                     </td>
-                                    
+
                                     <td style="vertical-align: top;float: right"> <p:outputLabel value="#{bundle.category}* :"  style="font-weight: bold"/> </td>
                                     <td style="vertical-align: top;" colspan="3">                                       
                                         <p:tree id="categoryTree" value="#{newProductBean.root}" var="node" selectionMode="single" selection="#{newProductBean.selectedNode}">  
@@ -95,28 +95,28 @@
                                         </p:tree>                                                                                
                                     </td>
                                 </tr>
-                                
-                                
-                                
-                                
-                                
-                                <tr>
+
+
+
+
+
+                               <!-- <tr>
                                     <td><p:outputLabel value="#{bundle.subProduct} :"  style="font-weight: bold"/></td>
                                     <td>
-                                        <p:selectOneRadio id="subproduct" value="#{newProductBean.newProduct.subproduct}">  
+                                        <p:selectOneRadio id="subproduct" value="{newProductBean.newProduct.subproduct}">  
                                             <f:selectItem itemLabel="#{bundle.yes}" itemValue="1" />
                                             <f:selectItem itemLabel="#{bundle.no}" itemValue="0" />
-                                            <p:ajax  listener="#{furnitureAction.handleSubproductSelect}"  update="selectParentProduct tesss"   /> 
+                                            <p:ajax  listener="{furnitureAction.handleSubproductSelect}"  update="selectParentProduct tesss"   /> 
                                         </p:selectOneRadio> 
 
                                         <p:panel id="tesss" style="border-style: none">
-                                            <p:selectOneMenu value="#{newProductBean.newProduct.product}" id="selectParentProduct" converter="ProductConverter" 
-                                                             required="true" requiredMessage="#{bundle.subProduct}: #{bundle.mandatpryField}"  rendered="#{newProductBean.newProduct.subproduct eq 1}"  >                                                                                      
-                                                <f:selectItems value="#{newProductBean.parentProductList}" var="prod" itemLabel="#{prod.name}" itemValue="#{prod}"   /> 
+                                            <p:selectOneMenu value="{newProductBean.newProduct.product}" id="selectParentProduct" converter="ProductConverter" 
+                                                             required="true" requiredMessage="#{bundle.subProduct}: #{bundle.mandatpryField}"  rendered="{newProductBean.newProduct.subproduct eq 1}"  >                                                                                      
+                                                <f:selectItems value="{newProductBean.parentProductList}" var="prod" itemLabel="#{prod.name}" itemValue="#{prod}"   /> 
                                             </p:selectOneMenu>
                                         </p:panel>    
                                     </td>
-                                </tr>
+                                </tr> -->
                             </table>
 
                         </p:panel>   
@@ -144,169 +144,208 @@
                                         <p:commandButton icon="ui-icon-pencil" immediate="true"  disabled="#{newProductBean.videos.size()==0}" alt="#{bundle.update}"   update="" /> 
                                     </p:panel>
                                 </td>
-                                
-                                
-                                
+
+
+
                                 <td style="vertical-align: top">
-                                  <p:tabView id="tabView">    
-                                    <p:tab id="imagechar" title="#{bundle.productCharacteristics}"  style="padding:0px ! important; margin-left: 0px;  "  >
-                                        <!--<p:outputLabel style="font-weight: bold;color: black" value="#{bundle.selectSpecCategory}:" /><br/>
-                                        <p:spacer width="0" height="40" />-->
-                                        <table>
-                                            <tr>
-                                                <td style="vertical-align: top"><p:outputLabel style="font-weight: bold;color: black" value="#{bundle.selectProductTemplate}:  " /></td>
-                                                <td><p:selectOneMenu value="#{newProductBean.newProduct.item}" converter="ItemConverter" >						 
-                                                        <f:selectItem itemLabel="" itemValue=""  />
-                                                        <f:selectItems value="#{applicationBean.items}" var="itm" itemLabel="#{itm.name}" itemValue="#{itm}"   />
-                                                        <p:ajax  update="showSpecsButton dimensionForm"   /> 
-                                                    </p:selectOneMenu> </td>
-                                                <td rowspan="2" style="vertical-align: top">
-                                                    <p:commandButton  id="showSpecsButton"  disabled="#{newProductBean.selectedSpecificationCat.size()==0 and newProductBean.newProduct.item==null}"   immediate="true" 
-                                                                      value="#{bundle.selectSpec}" process="@this" action="#{furnitureAction.showSpecifications()}" update=":selectSpecForm"  />    
-                                                </td>
-                                            </tr>
+                                    <p:tabView id="tabView">    
+                                        <p:tab id="imagechar" title="#{bundle.productCharacteristics}"  style="padding:0px ! important; margin-left: 0px;  "  >
+                                            <!--<p:outputLabel style="font-weight: bold;color: black" value="#{bundle.selectSpecCategory}:" /><br/>
+                                            <p:spacer width="0" height="40" />-->
+                                            <p:panel id="specsPanel" widgetVar="specsPanelWidget">
+                                                <table>
+                                                    <tr>
+                                                        <td style="vertical-align: top"><p:outputLabel style="font-weight: bold;color: black" value="#{bundle.selectProductTemplate}:  " /></td>
+                                                        <td><p:selectOneMenu value="#{newProductBean.newProduct.item}" converter="ItemConverter" >						 
+                                                                <f:selectItem itemLabel="" itemValue=""  />
+                                                                <f:selectItems value="#{applicationBean.items}" var="itm" itemLabel="#{itm.name}" itemValue="#{itm}"   />
+                                                                <p:ajax  update="showSpecsButton dimensionForm:bt12"   /> 
+                                                            </p:selectOneMenu> </td>
+                                                        <td rowspan="2" style="vertical-align: top">
+                                                            <p:commandButton  id="showSpecsButton"  disabled="#{newProductBean.selectedSpecificationCat.size()==0 and newProductBean.newProduct.item==null}"   immediate="true" 
+                                                                              value="#{bundle.selectSpec}" process="@this" action="#{furnitureAction.showSpecifications()}" update=":selectSpecForm"  />    
+                                                        </td>
+                                                    </tr>
 
-                                            <td style="vertical-align: top"><p:outputLabel style="font-weight: bold;color: black" value="#{bundle.selectSpecCat}:  " /> </td>
-                                            <td><p:selectCheckboxMenu value="#{newProductBean.selectedSpecificationCat}" label="#{bundle.categories}" filter="true" 
-                                                                       filterMatchMode="startsWith"   converter="SpecificationcategoryConverter"
-                                                                      style="">  
-                                                    <f:selectItems value="#{applicationBean.specificationCategories}" var="category" itemLabel="#{category.name}" itemValue="#{category}" />
-                                                    <p:ajax    update="showSpecsButton"   /> 
-                                                </p:selectCheckboxMenu> </td>
-                                        </table>
-
-
-
-                                        <p:separator  /> 
+                                                    <td style="vertical-align: top"><p:outputLabel style="font-weight: bold;color: black" value="#{bundle.selectSpecCat}:  " /> </td>
+                                                    <td><p:selectCheckboxMenu value="#{newProductBean.selectedSpecificationCat}" label="#{bundle.categories}" filter="true" 
+                                                                              filterMatchMode="startsWith"   converter="SpecificationcategoryConverter"
+                                                                              style="">  
+                                                            <f:selectItems value="#{applicationBean.specificationCategories}" var="category" itemLabel="#{category.name}" itemValue="#{category}" />
+                                                            <p:ajax    update="showSpecsButton"   /> 
+                                                        </p:selectCheckboxMenu> </td>
+                                                </table>
 
 
-                                        <p:commandButton id="charBtn" immediate="true"  disabled="#{newProductBean.productSpecifications.size()==0}"   oncomplete="" update="" value="#{bundle.view}" />
 
-                                        <p:overlayPanel id="charPanel" for="charBtn" hideEffect="fade" >  
-                                            <p:dataTable id="charTable" var="char" value="#{newProductBean.productSpecifications}" rows="10" paginator="false">  
-                                                <p:column headerText="#{bundle.name}" width="20%">  
-                                                    <h:outputText value="#{char.specification.name}" />                                        
-                                                </p:column>  
-                                                <p:column headerText="#{bundle.values}" width="70%">                                         
-                                                    <ui:repeat var="pr" value="#{char.productvalues}" >
-                                                        <h:outputText value="#{pr.svalue.name} " rendered="#{pr.svalue!=null}" /> 
-                                                        <h:outputText value="#{pr.value} " rendered="#{pr.svalue==null}" /> 
-                                                    </ui:repeat>                                         
-                                                </p:column>  
+                                                <p:separator  /> 
 
-                                                <p:column headerText="#{bundle.actions}" width="10%">  
-                                                    <p:commandLink value="#{bundle.delete}" process="@this"  style="color:blue;text-decoration: underline;font-weight:bold;"  action="#{furnitureAction.deleteProductSpecification}" 
-                                                                   update="@form"   >
-                                                        <f:setPropertyActionListener value="#{char}" target="#{newProductBean.productSpecification}" />    
-                                                    </p:commandLink> 
-                                                </p:column> 
 
-                                            </p:dataTable>  
-                                        </p:overlayPanel>  
+                                                <p:commandButton id="charBtn" immediate="true"  disabled="#{newProductBean.productSpecifications.size()==0}"   oncomplete="" update="" value="#{bundle.view}" />
 
-                                        <p:spacer width="30" height="0" />
-                                        <p:outputLabel style="font-weight: bold;color: black" value="#{bundle.charecteristics}  " /> <p:outputLabel style="font-weight: bold;" value="(#{newProductBean.productSpecifications.size()})" />  
+                                                <p:overlayPanel id="charPanel" for="charBtn" hideEffect="fade" >  
+                                                    <p:dataTable id="charTable" var="char" value="#{newProductBean.productSpecifications}" rows="10" paginator="false">  
+                                                        <p:column headerText="#{bundle.name}" width="20%">  
+                                                            <h:outputText value="#{char.specification.name}" />                                        
+                                                        </p:column>  
+                                                        <p:column headerText="#{bundle.values}" width="70%">                                         
+                                                            <ui:repeat var="pr" value="#{char.productvalues}" >
+                                                                <h:outputText value="#{pr.svalue.name} " rendered="#{pr.svalue!=null}" /> 
+                                                                <h:outputText value="#{pr.value} " rendered="#{pr.svalue==null}" /> 
+                                                            </ui:repeat>                                         
+                                                        </p:column>  
+
+                                                        <p:column headerText="#{bundle.actions}" width="10%">  
+                                                            <p:commandLink value="#{bundle.delete}" process="@this"  style="color:blue;text-decoration: underline;font-weight:bold;"  action="#{furnitureAction.deleteProductSpecification}" 
+                                                                           update="@widgetVar(specsPanelWidget)"   >
+                                                                <f:setPropertyActionListener value="#{char}" target="#{newProductBean.productSpecification}" />    
+                                                            </p:commandLink> 
+                                                        </p:column> 
+
+                                                    </p:dataTable>  
+                                                </p:overlayPanel>  
+
+                                                <p:spacer width="30" height="0" />
+                                                <p:outputLabel style="font-weight: bold;color: black" value="#{bundle.charecteristics}  " /> <p:outputLabel  style="font-weight: bold;" value="(#{newProductBean.productSpecifications.size()})" />  
+
+
+                                            </p:panel>
+                                        </p:tab>
+
+
+
+                                        <p:tab id="dimensionTab" title="#{bundle.dimensions}"  style="padding:0px ! important; margin-left: 0px;  "  >
+                                            <h:form id="dimensionForm">  
+                                                <p:dataTable id="dimensionDatatable" widgetVar="dimensionDatatableWidget" value="#{newProductBean.dimesionProductSpecifications}" var="dimesionProductSpecification" rows="10" paginator="false" emptyMessage="#{bundle.noPriceInserted}"> 
+                                                    <p:column headerText="#{bundle.dimensionType}"> 
+                                                        <p:outputLabel value="#{dimesionProductSpecification.specification.name}" />                                                                    
+                                                    </p:column>
+
+                                                    <p:column headerText="#{bundle.value}">
+                                                        <ui:repeat var="prr" value="#{dimesionProductSpecification.productvalues}" >                                                        
+                                                            <h:outputText value="#{prr.value}"  /> <h:outputText value="#{prr.measurment.name}"  /> 
+                                                        </ui:repeat>                                                        
+                                                    </p:column>
+
+                                                    <p:column headerText="#{bundle.actions}" width="10%">  
+                                                        <p:commandLink value="#{bundle.delete}" immediate="true"  style="color:blue;text-decoration: underline;font-weight:bold;"  action="#{furnitureAction.deleteProductDimensionSpecification}" 
+                                                                       update="dimensionDatatable"   >
+                                                            <f:setPropertyActionListener value="#{dimesionProductSpecification}" target="#{newProductBean.productSpecification}" />    
+                                                        </p:commandLink> 
+                                                    </p:column>                                                   
+                                                </p:dataTable> 
+                                                <p:separator />
+
+                                                <p:commandButton value="#{bundle.newDimension}" disabled="#{newProductBean.newProduct.item == null}"   id="bt12" immediate="true" process="@this"
+                                                                 action="#{furnitureAction.showDimensionSpecifications()}"  onclick="selectDimensionValueDialog.show();" update=":selectDimensionValueForm:selectDimensionValuePanel" />
+                                            </h:form>  
+                                        </p:tab>
+
+
+
+
+
+
+                                        <p:tab id="priceTab" title="#{bundle.price}"  style="padding:0px ! important; margin-left: 0px;"  >
+                                            <p:panel id="pricePanel" widgetVar="pricePanelWidget">
+                                                <h:form id="priceForm">
+                                                    <p:messages autoUpdate="true"   />
+                                                    <table> 
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{bundle.initialPrice}:*" style="font-weight: bold"/></td>
+                                                            <td>
+                                                                <h:inputText id="inAmount" value="#{newProductBean.initialAmount}" size="9"  converter="DoubleConverter" required="true" requiredMessage="#{bundle.initialPrice}: #{bundle.mandatoryField}" >
+                                                                    <p:ajax event="blur" listener="#{furnitureAction.updateFinalPriceCreateProduct}" update="finalPrice"  />
+                                                                    <f:validateDoubleRange minimum="0.00" maximum="1000000.00" />
+                                                                </h:inputText> 
+                                                                <p:message for="inAmount" display="icon"/>
+                                                            </td>
+                                                            <td><h:outputLabel value="#{bundle.discount}:*" style="font-weight: bold"/></td>
+                                                            <td>
+                                                                <h:inputText id="disc" value="#{newProductBean.discount}" size="6"  converter="DoubleConverter" required="true" requiredMessage="#{bundle.discount}: #{bundle.mandatoryField}" >
+                                                                    <p:ajax event="blur" listener="#{furnitureAction.updateFinalPriceCreateProduct}" update="finalPrice"  />
+                                                                    <f:validateDoubleRange minimum="0.00" maximum="100.00" />
+                                                                </h:inputText> 
+                                                                <p:message for="disc" display="icon"/>
+                                                            </td>
+                                                            <td >
+                                                                <h:outputLabel value="#{bundle.date}:" style="font-weight: bold"/>
+                                                            </td>
+                                                            <td>
+                                                                <p:calendar locale="el" size="12"  readonlyInput="true"   navigator="true" showOn="button" required="true"
+                                                                            requiredMessage="#{bundle.date}:#{bundle.mandatoryField}" pattern="dd/MM/yyyy" value="#{newProductBean.priceDate}" id="pricedate"/> 
+                                                                <p:message for="pricedate" display="icon"/>
+                                                            </td>
+
+                                                        </tr>
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{bundle.finalPrice}:*" style="font-weight: bold"/></td>
+                                                            <td>
+                                                                <h:inputText id="finalPrice" readonly="true"  value="#{newProductBean.amount}" size="9"  converter="DoubleConverter" required="true" requiredMessage="#{bundle.finalPrice}: #{bundle.mandatoryField}" />
+                                                                <p:message for="finalPrice" display="icon"/>
+                                                            </td>
+                                                            <td><h:outputLabel value="#{bundle.currency}:*"  style="font-weight: bold"/></td>   			 		 
+                                                            <td colspan="1"> 
+                                                                <p:selectOneMenu value="#{newProductBean.currency}" converter="CurrencyConverter"  id="selectCurrency">						 
+                                                                    <f:selectItems value="#{applicationBean.currencies}" var="currency" itemLabel="#{currency.name}" itemValue="#{currency}"   />						     
+                                                                </p:selectOneMenu>
+                                                                <p:message for="selectCurrency" display="icon"/>
+                                                            </td>
+
+                                                        </tr>                                             
+                                                    </table>
+                                                    <br/>
+                                                    <p:commandButton value="#{bundle.insertPrice}" style="font-weight: bold" update="@widgetVar(pricePanelWidget)" process="priceForm"  action="#{furnitureAction.insertPriceCreateProduct}" />                                        
+                                                    <p:commandButton value="#{bundle.reset}" style="font-weight: bold" update="@widgetVar(pricePanelWidget)" process="priceForm" action="#{furnitureAction.resetPriceCreateProduct}"/>
+
+                                                    <p:separator />                                            
+                                                    <p:outputLabel rendered="#{newProductBean.prices.size()>0}" style="font-weight: bold;color: black;font-size: 150%" value="#{bundle.productPrice}:" /> 
+                                                    <p:spacer width="10" height="0" />
+                                                    <p:outputLabel rendered="#{newProductBean.prices.size()>0}" style="font-weight: bold;font-size: 150%; color: red" value="#{newProductBean.prices.get(0).amount} #{newProductBean.prices.get(0).currency.name}" />  
+                                                    <p:spacer width="30" height="0" />
+                                                    <p:commandButton rendered="#{newProductBean.prices.size()>0}" value="#{bundle.resetPrice}" style="font-weight: bold" update="@widgetVar(pricePanelWidget)" process="@this" action="#{furnitureAction.resetPriceValue}"/>
+
+                                                </h:form>
+                                            </p:panel>
+                                        </p:tab> 
+
 
                                         
                                         
-                                    </p:tab>
-                                      
-                                      
-                                      
-                                      <p:tab id="dimensionTab" title="#{bundle.dimensions}"  style="padding:0px ! important; margin-left: 0px;  "  >
-                                          <h:form id="dimensionForm">  
-                                              <p:dataTable value="#{newProductBean.dimesionProductSpecifications}" var="dimesionProductSpecification" rows="10" paginator="false" emptyMessage="#{bundle.noPriceInserted}"> 
-                                                  <p:column headerText="#{bundle.dimensionType}"> 
-                                                      <p:outputLabel value="#{dimesionProductSpecification.specification.name}" />                                                                    
-                                                  </p:column>
-                                                  
-                                                  <p:column headerText="#{bundle.value}"> 
-                                                      <p:outputLabel value="#{dimesionProductSpecification.productvalues(0).value}" />                                                                     
-                                                      <p:outputLabel value="#{dimesionProductSpecification.productvalues(0).measurment.name}" /> 
-                                                  </p:column>
-                                                  
-                                                  <p:column headerText="#{bundle.actions}" width="10%">  
-                                                    <p:commandLink value="#{bundle.delete}" process="@this"  style="color:blue;text-decoration: underline;font-weight:bold;"  action="#{furnitureAction.deleteProductSpecification}" 
-                                                                   update="@form"   >
-                                                        <f:setPropertyActionListener value="#{char}" target="#{newProductBean.productSpecification}" />    
-                                                    </p:commandLink> 
-                                                </p:column>                                                   
-                                              </p:dataTable> 
-                                              <p:separator />
-                                              <p:commandButton value="#{bundle.newDimension}" disabled="#{newProductBean.selectedItem == null}"   
-                                                               action="#{furnitureAction.showDimensionSpecifications()}"  onclick="selectDimensionValueDialog.show();" />
-                                          </h:form>  
-                                      </p:tab>
-                                      
-                                      
-                                      
-                                      
-                                      
-                                      
-                                    <p:tab id="priceTab" title="#{bundle.price}"  style="padding:0px ! important; margin-left: 0px;  "  >
-                                        <h:form>
-                                            <table> 
-                                                <tr>
-                                                   <td><h:outputLabel value="#{bundle.initialPrice}:*" style="font-weight: bold"/></td>
-                                                   <td>
-                                                       <h:inputText id="inAmount" value="#{newProductBean.initialAmount}" size="9"  converter="DoubleConverter" required="true" requiredMessage="#{bundle.initialPrice}: #{bundle.mandatoryField}" >
-                                                           <p:ajax event="blur" listener="#{furnitureAction.updateFinalPriceCreateProduct}" update="finalPrice"  />
-                                                           <f:validateDoubleRange minimum="0.00" maximum="1000000.00" />
-                                                       </h:inputText> 
-                                                       <p:message for="inAmount" display="icon"/>
-                                                   </td>
-                                                   <td><h:outputLabel value="#{bundle.discount}:*" style="font-weight: bold"/></td>
-                                                   <td>
-                                                       <h:inputText id="disc" value="#{newProductBean.discount}" size="6"  converter="DoubleConverter" required="true" requiredMessage="#{bundle.discount}: #{bundle.mandatoryField}" >
-                                                           <p:ajax event="blur" listener="#{furnitureAction.updateFinalPriceCreateProduct}" update="finalPrice"  />
-                                                           <f:validateDoubleRange minimum="0.00" maximum="100.00" />
-                                                       </h:inputText> 
-                                                       <p:message for="disc" display="icon"/>
-                                                   </td>
-                                                    <td >
-                                                        <h:outputLabel value="#{bundle.date}:" style="font-weight: bold"/>
-                                                    </td>
-                                                    <td>
-                                                        <p:calendar locale="el" size="12"  readonlyInput="true"   navigator="true" showOn="button" required="true"
-                                                                    requiredMessage="#{bundle.date}:#{bundle.mandatoryField}" pattern="dd/MM/yyyy" value="#{newProductBean.priceDate}" id="pricedate"/> 
-                                                        <p:message for="pricedate" display="icon"/>
-                                                    </td>
+                                        <p:tab id="connectedTab" title="#{bundle.connectedProducts}"  style="padding:0px ! important; margin-left: 0px;"  >
+                                            <p:panel widgetVar="connectedPanelWidget" id="connectedPanel"    >
+                                                <h:form id="connectedForm">
+                                                    <p:commandButton value="#{bundle.addProduct}" onclick="selectPProductIDDialog.show()" process="@this" immediate="true" update="@widgetVar(selectPProductPanelWidget)" />                                               
+                                                    <br/>
+                                                    <p:dataList value="#{newProductBean.products.target}" var="parent" id="parentid" emptyMessage="#{bundle.noProducts}" 
+                                                            paginator="false" rows="5" paginatorTemplate="{PreviousPageLink} {CurrentPageReport} {NextPageLink} {RowsPerPageDropdown}"  
+                                                            rowsPerPageTemplate="5,10,15" type="none">  
+                                                                <f:facet name="header">  
+                                                                    #{bundle.parentProducts}  
+                                                                </f:facet>  
+                                                                <h:outputText value="#{parent.name}" style="margin-left:10px" />  
+                                                                <br />  
+                                                     </p:dataList> 
+                                                    
+                                                    <p:separator />
+                                                    <p:commandButton value="#{bundle.addProduct}" onclick="selectSProductIDDialog.show()" process="@this" immediate="true" update="@widgetVar(selectSProductPanelWidget)" />     
+                                                    <br/>
+                                                    <p:dataList value="#{newProductBean.subProducts.target}" var="sub" id="subid"  emptyMessage="#{bundle.noProducts}" 
+                                                            paginator="false" rows="5" paginatorTemplate="{PreviousPageLink} {CurrentPageReport} {NextPageLink} {RowsPerPageDropdown}"  
+                                                            rowsPerPageTemplate="5,10,15" type="none">  
+                                                                <f:facet name="header">  
+                                                                    #{bundle.subproducts}  
+                                                                </f:facet>  
+                                                                <h:outputText value="#{sub.name}" style="margin-left:10px" />  
+                                                                <br />  
+                                                     </p:dataList>  
+                                                </h:form>                                                
+                                            </p:panel>
+                                        </p:tab>  
 
-                                               </tr>
-                                                <tr>
-                                                    <td><h:outputLabel value="#{bundle.finalPrice}:*" style="font-weight: bold"/></td>
-                                                   <td>
-                                                       <h:inputText id="finalPrice" readonly="true"  value="#{newProductBean.amount}" size="9"  converter="DoubleConverter" required="true" requiredMessage="#{bundle.finalPrice}: #{bundle.mandatoryField}" />
-                                                       <p:message for="finalPrice" display="icon"/>
-                                                   </td>
-                                                   <td><h:outputLabel value="#{bundle.currency}:*"  style="font-weight: bold"/></td>   			 		 
-                                                   <td colspan="1"> 
-                                                       <p:selectOneMenu value="#{newProductBean.currency}" converter="CurrencyConverter"  id="selectCurrency">						 
-                                                           <f:selectItems value="#{applicationBean.currencies}" var="currency" itemLabel="#{currency.name}" itemValue="#{currency}"   />						     
-                                                       </p:selectOneMenu>
-                                                       <p:message for="selectCurrency" display="icon"/>
-                                                   </td>
-
-                                                </tr>                                             
-                                            </table>
-                                            <br/>
-                                            <p:commandButton value="#{bundle.insertPrice}" style="font-weight: bold" update="@form" action="#{furnitureAction.insertPriceCreateProduct}" />                                        
-                                            <p:commandButton value="#{bundle.reset}" style="font-weight: bold" update="@form" action="#{furnitureAction.resetPriceCreateProduct}"/>
-                                            <p:separator />
-                                            <p:commandButton disabled="#{newProductBean.prices.size()==0}" value="#{bundle.viewPrice}" style="font-weight: bold" />
-                                            <p:spacer width="20" height="0" />
-                                            <p:outputLabel rendered="#{newProductBean.prices.size()>0}" style="font-weight: bold;color: black" value="#{bundle.price}-" /> 
-                                            <p:outputLabel rendered="#{newProductBean.prices.size()>0}" style="font-weight: bold;" value="#{newProductBean.prices(0).amount}" />  
-                                        </h:form>
                                         
-                                    </p:tab> 
-                                      
-                                      
-                                     <p:tab id="proceTab" title="#{bundle.connectedProducts}"  style="padding:0px ! important; margin-left: 0px;  "  >
-                                    
-                                     </p:tab>  
-                                      
-                                  </p:tabView>                                          
+                                        
+                                    </p:tabView>                                          
                                 </td>                                                                
                             </tr>
                             <tr>
@@ -315,8 +354,6 @@
                                     <p:commandButton process="@this"  value="#{bundle.resetFrom}" action="#{furnitureAction.createProduct()}" style="font-weight:bold ; margin: 10px;  "  />
                                 </td>
                             </tr>
-                        
-                        
                         </table>
                     </td> 
 
@@ -325,6 +362,45 @@
         </h:form>
 
 
+        
+        
+        <h:form id="selectPProductForm"> 
+            <p:dialog header="#{bundle.selectParentProduct}" id="selectPProductID" position="center" widgetVar="selectPProductIDDialog" modal="true" minWidth="200" minHeight="500" resizable="false">
+                <p:panel id="selectPProductPanel" widgetVar="selectPProductPanelWidget">
+                    <p:pickList id="ppList" value="#{newProductBean.products}" var="pp" itemValue="#{pp}" itemLabel="#{pp.name}" converter="ProductConverter"  
+                                showSourceControls="false" showTargetControls="false" showCheckbox="false" showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" >  
+                        <f:facet name="sourceCaption">#{bundle.available}</f:facet>  
+                        <f:facet name="targetCaption">#{bundle.selected}</f:facet>  
+                        <p:ajax event="transfer" listener="#{furnitureAction.selectPProduct}" />  
+                        <p:column>  
+                            #{pp.name}  
+                        </p:column>  
+                    </p:pickList>                     
+                    <p:commandButton value="#{bundle.close}" onclick="selectPProductIDDialog.hide()" process="@this" immediate="true" update="@widgetVar(connectedPanelWidget)" />
+                </p:panel>
+            </p:dialog>
+        </h:form>
+        
+        <h:form id="selectSProductForm"> 
+            <p:dialog header="#{bundle.selectSubproduct}" id="selectSProductID" position="center" widgetVar="selectSProductIDDialog" modal="true" minWidth="200" minHeight="500" resizable="false">
+                <p:panel id="selectSProductPanel" widgetVar="selectSProductPanelWidget">
+                    <p:pickList id="spList" value="#{newProductBean.subProducts}" var="sp"  itemValue="#{sp}" itemLabel="#{sp.name}" converter="ProductConverter"  
+                                showSourceControls="true" showTargetControls="true" showCheckbox="true" showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" >  
+                        <f:facet name="sourceCaption">#{bundle.available}</f:facet>  
+                        <f:facet name="targetCaption">#{bundle.selected}</f:facet>  
+                        <p:ajax event="transfer" listener="#{furnitureAction.selectPProduct}" />  
+                        <p:column>  
+                            #{sp.name}  
+                        </p:column>  
+                    </p:pickList>                     
+                    <p:commandButton value="#{bundle.close}" onclick="selectSProductIDDialog.hide()" process="@this" immediate="true" update="@widgetVar(connectedPanelWidget)" />
+                </p:panel>
+            </p:dialog>
+        </h:form>
+        
+        
+        
+        
 
         <h:form id="selectSpecForm"> 
             <p:dialog header="#{bundle.selectSpecification}" id="selectSpecID" position="center" widgetVar="selectSpecDialog" modal="true" minWidth="200" minHeight="500" resizable="false">
@@ -369,52 +445,60 @@
 
                 <p:separator />
 
-                <p:commandButton id="bt1" update=":createProductForm:tabView:imagechar" action="#{furnitureAction.selectSValues}"  value="#{bundle.insert}" disabled="#{newProductBean.selectedSvalues.size()==0}" rendered="#{newProductBean.specification.freetext==0 and newProductBean.specification.multiplevalues==1}"/>
-                <p:commandButton id="bt2" update=":createProductForm:tabView:imagechar" action="#{furnitureAction.selectSValues}"  value="#{bundle.insert}" disabled="#{newProductBean.selectedSvalue==null}" rendered="#{newProductBean.specification.freetext==0 and newProductBean.specification.multiplevalues==0}"/>
-                <p:commandButton id="bt3" update=":createProductForm:tabView:imagechar" action="#{furnitureAction.selectSValues}"  value="#{bundle.insert}"  rendered="#{newProductBean.specification.freetext==1}"/>                                                                      
+                <p:commandButton id="bt1" update="@widgetVar(specsPanelWidget)" action="#{furnitureAction.selectSValues}"  value="#{bundle.insert}" disabled="#{newProductBean.selectedSvalues.size()==0}" rendered="#{newProductBean.specification.freetext==0 and newProductBean.specification.multiplevalues==1}"/>
+                <p:commandButton id="bt2" update="@widgetVar(specsPanelWidget)" action="#{furnitureAction.selectSValues}"  value="#{bundle.insert}" disabled="#{newProductBean.selectedSvalue==null}" rendered="#{newProductBean.specification.freetext==0 and newProductBean.specification.multiplevalues==0}"/>
+                <p:commandButton id="bt3" update="@widgetVar(specsPanelWidget)" action="#{furnitureAction.selectSValues}"  value="#{bundle.insert}"  rendered="#{newProductBean.specification.freetext==1}"/>                                                                      
 
             </p:dialog>
         </h:form>
-        
-        
-        
-        
-         <h:form id="selectDimensionValueForm">
-            <p:dialog header="#{bundle.selectDimensionValue}" id="selectDimensionValueID" position="center" widgetVar="selectDimensionValueDialog" modal="true" resizable="false" >
-                <p:messages autoUpdate="true" severity="error"/>
-                                
-                
-                <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.dimensionType} :*"   />
-                <p:selectOneMenu id="dimensioTypeField" value="#{newProductBean.specification}" converter="SpecificationConverter" required="true" requiredMessage="#{bundle.specification}: #{bundle.mandatoryField}">						                    
-                    <f:selectItems value="#{newProductBean.specifications}" var="sp" itemLabel="#{sp.name}" itemValue="#{sp}"   />                    
-                </p:selectOneMenu>
-                
-                
-                <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.dimensionValue} :*"   />  
-                <p:inputText size="5" value="#{newProductBean.svalue}"  converter="DoubleConverter" converterMessage="#{bundle.notValidNumber}"
-                             required="true" requiredMessage="#{bundle.value}: #{bundle.mandatoryField}" id="dimensionField" >
-                    <f:validateDoubleRange minimum="0.00" maximum="1000000.00" /> 
-                </p:inputText>
-                <p:message for="dimensionField" display="icon" /> 
 
-                
-                <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.measurment} :*"   />
-                <p:selectOneMenu id="measurmentField" value="#{newProductBean.selectedMeasurment}" converter="MeasurmentConverter" required="true" requiredMessage="#{bundle.mesurment}: #{bundle.mandatoryField}">						                    
-                    <f:selectItems value="#{applicationBean.measurments}" var="measurment" itemLabel="#{measurment.name}" itemValue="#{measurment}"   />                    
-                </p:selectOneMenu>
-                <p:message for="measurmentField" display="icon" /> 
 
-                
+
+
+        <h:form id="selectDimensionValueForm">
+            <p:dialog header="#{bundle.selectDimensionValue}" id="selectDimensionValueID" position="center" widgetVar="selectDimensionValueDialog" modal="false" resizable="false" >
+                <p:messages autoUpdate="true" />
+
+                <p:panel id="selectDimensionValuePanel">
+                    <table>
+                        <tr>
+                            <td><p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.dimensionType} :*"   /> </td>
+                            <td><p:selectOneMenu id="dimensioTypeField" value="#{newProductBean.specification}" converter="SpecificationConverter" required="true" requiredMessage="#{bundle.specification}: #{bundle.mandatoryField}">						                    
+                                    <f:selectItems value="#{newProductBean.specifications}" var="sp" itemLabel="#{sp.name}" itemValue="#{sp}"   />                    
+                                </p:selectOneMenu>
+                                <p:message for="dimensioTypeField" display="icon" /> 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.dimensionValue} :*"   />  </td>
+                            <td><p:inputText size="5" value="#{newProductBean.svalue}"  converter="DoubleConverter" converterMessage="#{bundle.notValidNumber}"
+                                             required="true" requiredMessage="#{bundle.value}: #{bundle.mandatoryField}" id="dimensionField" >
+                                    <f:validateDoubleRange minimum="0.00" maximum="1000000.00" /> 
+                                </p:inputText>
+                                <p:message for="dimensionField" display="icon" /> 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.measurment} :*"   /></td>
+                            <td><p:selectOneMenu id="measurmentField" value="#{newProductBean.selectedMeasurment}" converter="MeasurmentConverter" required="true" requiredMessage="#{bundle.mesurment}: #{bundle.mandatoryField}">						                    
+                                    <f:selectItems value="#{applicationBean.measurments}" var="measurment" itemLabel="#{measurment.name}" itemValue="#{measurment}"   />                    
+                                </p:selectOneMenu>
+                                <p:message for="measurmentField" display="icon" /> 
+                            </td>                            
+                        </tr>
+                    </table>
+                </p:panel>    
+
                 <p:separator />
 
-                <p:commandButton id="bt33" update=":createProductForm:tabView:dimensionTab" action="#{furnitureAction.insertDimensionAction()}"  value="#{bundle.insert}" />                                                                      
+                <p:commandButton id="bt33" update="@widgetVar(dimensionDatatableWidget)" action="#{furnitureAction.insertDimensionAction()}"  value="#{bundle.insert}" />                                                                      
 
             </p:dialog>
         </h:form>
 
 
-        
-        
+
+
         <!--oncomplete="PF('carDialog').show()" -->
 
         <p:dialog id="dialogFotosID" position="top" widgetVar="dialogFotos" modal="true" minWidth="600" minHeight="500" header="#{bundle.selectImage}" resizable="false">
@@ -545,12 +629,12 @@
 
 
                     <p:row>  
-                        <p:column colspan="1"><p:outputLabel value="#{bundle.subProduct}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
+                        <!--<p:column colspan="1"><p:outputLabel value="#{bundle.subProduct}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
                         <p:column colspan="3">
                             <p:outputLabel value="#{bundle.yes} " rendered="#{newProductBean.newProduct.subproduct==1}" />
                             <p:outputLabel value=" - (#{newProductBean.newProduct.product.name})" rendered="#{newProductBean.newProduct.subproduct==1}" />
                             <p:outputLabel value="#{bundle.no} " rendered="#{newProductBean.newProduct.subproduct==0}" />
-                        </p:column> 
+                        </p:column> -->
 
                         <p:column rowspan="8"  ><p:outputLabel value="#{bundle.images}: " style="font-weight: bold;vertical-align: top;float: right" /></p:column> 
                         <p:column rowspan="8">
