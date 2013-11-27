@@ -8,7 +8,7 @@ import com.furniture.util.PersistenceHelper;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Set;
+import java.util.Set; 
 import java.util.logging.Level;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -24,7 +24,7 @@ import org.omnifaces.util.Ajax;
  */
 public class CompanyDAO {
     // property constants
-
+ 
     public static final String NAME = "name";
     public static final String DESCRIPTION = "description";
     public static final String EMAIL = "email";

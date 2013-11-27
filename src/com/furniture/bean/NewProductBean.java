@@ -6,6 +6,7 @@ package com.furniture.bean;
 
 import com.furniture.dao.CompanyDAO;
 import com.furniture.dao.CompanyproductDAO;
+import com.furniture.dao.ProductDAO;
 import com.furniture.entities.Category;
 import com.furniture.entities.Company;
 import com.furniture.entities.Companyproduct;
@@ -55,6 +56,7 @@ public class NewProductBean implements Serializable {
     private Category selectedCategory;
     private TreeNode root;
     private TreeNode selectedNode;
+    private String selectedNodePath;
     
     private Specification selectedDimensionSpecidifcation;
     private List<Productspecification> dimesionProductSpecifications = new ArrayList<Productspecification>(0);
@@ -76,8 +78,10 @@ public class NewProductBean implements Serializable {
     
     private List<Imageproduct> images = new ArrayList<Imageproduct>(0);
     private Imageproduct newImage = new Imageproduct();
+    private Imageproduct selectedImage = new Imageproduct();
     private List<Videoproduct> videos = new ArrayList<Videoproduct>(0);
     private Videoproduct newVideo = new Videoproduct();
+    private Videoproduct selectedVideo = new Videoproduct();
     private List<Specification> specifications = new ArrayList<Specification>(0);
     private List<Specification> selectedSpecification = new ArrayList<Specification>(0);
     private List<Specificationcategory> selectedSpecificationCat = new ArrayList<Specificationcategory>(0);
@@ -123,6 +127,37 @@ public class NewProductBean implements Serializable {
         }
     }
 
+    public String getSelectedNodePath() {
+        if (selectedNode!=null) {
+            ProductDAO dao = new ProductDAO();
+            return dao.getCategoryPath((Category)selectedNode.getData(), null);            
+        } else {
+            return "";
+        }        
+    }
+
+    public void setSelectedNodePath(String selectedNodePath) {
+        this.selectedNodePath = selectedNodePath;
+    }
+
+    
+    public Imageproduct getSelectedImage() {
+        return selectedImage;
+    }
+
+    public void setSelectedImage(Imageproduct selectedImage) {
+        this.selectedImage = selectedImage;
+    }
+
+    public Videoproduct getSelectedVideo() {
+        return selectedVideo;
+    }
+
+    public void setSelectedVideo(Videoproduct selectedVideo) {
+        this.selectedVideo = selectedVideo;
+    }
+
+    
     public DualListModel<Product> getSubProducts() {
         return subProducts;
     }

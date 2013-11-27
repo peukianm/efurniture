@@ -141,7 +141,7 @@ public class Imageproduct implements java.io.Serializable {
     
     @Column(name = "CREATED_TIMESTAMP", length = 11, insertable = false, updatable = true)
     public Timestamp getCreatedTimestamp() {
-        return this.createdTimestamp;
+        return this.createdTimestamp; 
     }  
 
     public void setCreatedTimestamp(Timestamp createdTimestamp) {
@@ -168,7 +168,10 @@ public class Imageproduct implements java.io.Serializable {
         }
 
         Imageproduct compare = (Imageproduct) obj;
-        return compare.imageid.equals(this.imageid);
+        if (compare.imageid!=null && this.imageid!=null)
+            return compare.imageid.equals(this.imageid);
+        else
+            return compare.filename.equals(this.filename); 
     }
 
     @Override

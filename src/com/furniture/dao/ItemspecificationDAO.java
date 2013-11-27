@@ -187,10 +187,11 @@ public class ItemspecificationDAO {
      
     
     @SuppressWarnings("unchecked")    
-    public List<Specification> fetchItemSpecifications(Item item, Boolean showOnlyEnabled) {
+    public List<Specification> fetchItemSpecifications(Item item, Boolean showOnlyEnabled, Boolean fetchDimensions) {
         try {
             Query query = getEntityManager().createQuery("Select model.specification from Itemspecification model where "
                     + " model.item = :item "
+                    +(fetchDimensions ? "   " : "  and model.specification.dimension!=1    ")
                     + (showOnlyEnabled ? " and model.active = 1 " : " "));
               
             query.setParameter("item", item);

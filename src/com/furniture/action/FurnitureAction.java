@@ -255,7 +255,7 @@ public class FurnitureAction {
             NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
             newProductBean.setNewImage(new Imageproduct());
             FacesUtils.callRequestContext("dialogFotos.show();");
-            FacesUtils.updateHTMLComponnetWIthJS(":imgData");
+            FacesUtils.updateHTMLComponnetWIthJS("imgData");
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -263,13 +263,14 @@ public class FurnitureAction {
             FacesUtils.goError(ex, logger, sessionBean.getUsers(), sessionBean.getErrorMsgKey());
         }
     }
-
+ 
     public void openSelectVideoDlg() {
         try {
             NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
             newProductBean.setNewVideo(new Videoproduct());
+            FacesUtils.updateHTMLComponnetWIthJS("videoData");
             FacesUtils.callRequestContext("dialogVideos.show();");
-            FacesUtils.updateHTMLComponnetWIthJS(":videoData");
+            
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -291,7 +292,7 @@ public class FurnitureAction {
 
             if (newProductBean.getNewProduct().getItem() != null) {
                 ItemspecificationDAO d = new ItemspecificationDAO();
-                specifications.addAll(d.fetchItemSpecifications(newProductBean.getNewProduct().getItem(), true));
+                specifications.addAll(d.fetchItemSpecifications(newProductBean.getNewProduct().getItem(), true, false));
             }
 
 
@@ -426,18 +427,93 @@ public class FurnitureAction {
     
     
     
+            
+            
+    
+    
+    
+    
+     
     
     
     
     
     
+    public void saveImageOrder() {
+        try {
+            System.out.println("SAVING ORDER");
+            NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
+            Imageproduct image = newProductBean.getSelectedImage();
+            FacesUtils.callRequestContext("updateImageOrderDialog.hide()");            
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    public void saveImageDescription() {
+        try {
+            NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
+            Imageproduct image = newProductBean.getSelectedImage();
+            FacesUtils.callRequestContext("updateImageDescriptionDialog.hide()");
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    public void removeImage() {
+        try {
+            NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
+            Imageproduct image = newProductBean.getSelectedImage();
+            List<Imageproduct> images = newProductBean.getImages();
+            images.remove(image);
+            newProductBean.setImages(images);
+            FacesUtils.callRequestContext("updateImageDialog.hide()");
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
     
     
-    
-    
-    
-    
-    
+    public void saveVideoOrder() {
+        try {            
+            NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
+            Videoproduct video = newProductBean.getSelectedVideo();
+            FacesUtils.callRequestContext("updateVideoOrderDialog.hide()");            
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    public void saveVideoDescription() {
+        try {
+            NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
+            Videoproduct video = newProductBean.getSelectedVideo();
+            FacesUtils.callRequestContext("updateVideoDescriptionDialog.hide()");
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    public void removeVideo() {
+        try {
+            NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
+            Videoproduct video = newProductBean.getSelectedVideo();
+            List<Videoproduct> videos = newProductBean.getVideos();
+            videos.remove(video);
+            newProductBean.setVideos(videos);
+            FacesUtils.callRequestContext("updateVideoDialog.hide()");
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
     
     
     public void showDimensionSpecifications() {
@@ -871,7 +947,7 @@ public class FurnitureAction {
 
             if (updateProductBean.getUpdateProduct().getItem() != null) {
                 ItemspecificationDAO d = new ItemspecificationDAO();
-                specifications.addAll(d.fetchItemSpecifications(updateProductBean.getUpdateProduct().getItem(), true));
+                specifications.addAll(d.fetchItemSpecifications(updateProductBean.getUpdateProduct().getItem(), true, false));
             }
 
 

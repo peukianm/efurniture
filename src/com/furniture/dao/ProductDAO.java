@@ -1,6 +1,7 @@
 package com.furniture.dao;
 
 import com.furniture.entities.Catalogue;
+import com.furniture.entities.Category;
 import com.furniture.entities.Company;
 import com.furniture.entities.Companyproduct;
 import com.furniture.entities.Product;
@@ -40,7 +41,7 @@ public class ProductDAO {
     /**
      * Perform an initial save of a previously unsaved Product entity. All subsequent persist actions of this entity should use the #update() method. This
      * operation must be performed within the a database transaction context for the entity's data to be permanently saved to the persistence store, i.e.,
-     * database. This method uses the null null null     {@link javax.persistence.EntityManager#persist(Object)
+     * database. This method uses the null null null null     {@link javax.persistence.EntityManager#persist(Object)
 	 * EntityManager#persist} operation.
      *
      * <pre>
@@ -193,7 +194,7 @@ public class ProductDAO {
             }
             return query.getResultList();
         } catch (RuntimeException re) {
-            logger.error("Error on finding entity", re); 
+            logger.error("Error on finding entity", re);
             throw re;
         }
     }
@@ -241,8 +242,8 @@ public class ProductDAO {
 
     public List<Product> fetchProductAutoCompleteName(String name, Company company) {
         try {
-             name = name.trim();
-            
+            name = name.trim();
+
             String queryString = "Select c from Product c  where (LOWER(c.name) like '" + ((String) name).toLowerCase() + "%'"
                     + " OR UPPER(c.name)  like '" + ((String) name).toUpperCase() + "%') "
                     + " and c.active = 1 "
@@ -250,16 +251,18 @@ public class ProductDAO {
 
             queryString = "Select DISTINCT cp.product  from Companyproduct cp where   "
                     + " cp.active = 1  "
-                    + ( company != null ?" and cp.company = :company " : " ")
+                    + (company != null ? " and cp.company = :company " : " ")
                     + " and (LOWER(cp.product.name) like '" + ((String) name).toLowerCase() + "%'"
                     + " OR UPPER(cp.product.name)  like '" + ((String) name).toUpperCase() + "%') "
                     + " order by cp.product.name";
-            
-            
-                    
-            Query query = getEntityManager().createQuery(queryString);        
-            if (company !=null) query.setParameter("company", company);
-            
+
+
+
+            Query query = getEntityManager().createQuery(queryString);
+            if (company != null) {
+                query.setParameter("company", company);
+            }
+
             query.setMaxResults(20);
             return query.getResultList();
         } catch (RuntimeException re) {
@@ -267,29 +270,63 @@ public class ProductDAO {
             throw re;
         }
     }
-    
+
     public Boolean checkProductInCompany(Company company, Product product) {
-        try {            
-            
+        try {
+
             String queryString = "Select cp.product from Companyproduct cp "
                     + " where cp.active = 1 "
                     + " and cp.company = :company "
                     + " and cp.company.active = 1 "
                     + " and cp.product = :product "
                     + " and cp.product.active = 1 ";
-            
-            Query query = getEntityManager().createQuery(queryString);        
+
+            Query query = getEntityManager().createQuery(queryString);
             query.setParameter("company", company);
             query.setParameter("product", product);
-            
+
             List<Product> products = query.getResultList();
-            if (products.size()>0) 
+            if (products.size() > 0) {
                 return true;
-            else
-                return false;            
+            } else {
+                return false;
+            }
         } catch (RuntimeException re) {
             logger.error("Error on finding entity", re);
             throw re;
         }
-    }    
+    }
+
+    public String getCategoryPath(Category category, String path) {
+        try {
+            System.out.println("Start Path ="+path);
+            String retPath = null;
+            if (path != null) {
+                retPath = category.getName() + "/" + path;
+            } else {
+                retPath = category.getName();
+            }
+
+            String queryString = "Select model.category from Category model "
+                    + " where model.categoryid = :id ";
+                    //+ " and model.category!=null ";
+
+            Query query = getEntityManager().createQuery(queryString);
+            query.setParameter("id", category.getCategoryid());
+            List<Category> categories = query.getResultList();
+            System.out.println("Categories.size="+categories.size());
+            if (categories.size() > 0 && categories.get(0) != null) {
+                Category cat = categories.get(0);
+                System.out.println("Category="+cat);
+                return getCategoryPath(cat, retPath);
+            } else {
+                return retPath;
+            }
+
+
+        } catch (RuntimeException re) {
+            logger.error("Error on finding entity", re);
+            throw re;
+        }
+    }
 }

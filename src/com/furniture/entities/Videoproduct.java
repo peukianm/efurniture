@@ -171,7 +171,11 @@ public class Videoproduct implements java.io.Serializable {
 
         Videoproduct compare = (Videoproduct) obj;
 
-        return compare.videoid.equals(this.videoid);
+        
+        if (compare.videoid!=null && this.videoid!=null)
+            return compare.videoid.equals(this.videoid);
+        else
+            return compare.filename.equals(this.filename);
     }
 
     @Override

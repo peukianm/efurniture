@@ -6,6 +6,7 @@
     <property name="keepgenerated" value="true">
       <description>Keep a copy of the generated servlet class' java code.</description>
     </property>
-    <property name="alternatedocroot_1" value="from=/img/* dir=C:/content/temp" />
+    <parameter-encoding default-charset="UTF-8" />        
   </jsp-config>
+  <property name="alternatedocroot_1" value="from=/media/* dir=C:\" />
 </glassfish-web-app>

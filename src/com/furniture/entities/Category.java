@@ -1,8 +1,11 @@
 package com.furniture.entities;
 
+import com.furniture.dao.ProductDAO;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +20,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * Category entity.
@@ -40,6 +44,7 @@ public class Category implements java.io.Serializable {
     private List<Category> categories = new ArrayList<Category>(0);
     private List<Company> companies = new ArrayList<Company>(0);
     private List<Product> products = new ArrayList<Product>(0);
+    private String categoryPath;
     
     // Constructors
     /**
@@ -168,6 +173,26 @@ public class Category implements java.io.Serializable {
     public void setCategories(List<Category> categories) {
         this.categories = categories;
     }
+    
+    
+    
+    
+    @Transient
+    public String getCategoryPath() {
+        System.out.println("GET CATEGORY PATH");
+        try {
+            ProductDAO dao = new ProductDAO();
+            return dao.getCategoryPath(category, null);
+        } catch (RuntimeException re) {            
+            re.printStackTrace();
+            throw re;
+        }
+    }
+
+    public void setCategoryPath(String categoryPath) {
+        this.categoryPath = categoryPath;
+    }
+    
 
    
     @ManyToMany(cascade = CascadeType.ALL)
