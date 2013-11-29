@@ -11,6 +11,11 @@ import com.furniture.util.EJBUtil;
 import com.furniture.util.PersistenceHelper;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -41,7 +46,7 @@ public class ProductDAO {
     /**
      * Perform an initial save of a previously unsaved Product entity. All subsequent persist actions of this entity should use the #update() method. This
      * operation must be performed within the a database transaction context for the entity's data to be permanently saved to the persistence store, i.e.,
-     * database. This method uses the null null null null     {@link javax.persistence.EntityManager#persist(Object)
+     * database. This method uses the null null null null null null null null     {@link javax.persistence.EntityManager#persist(Object)
 	 * EntityManager#persist} operation.
      *
      * <pre>
@@ -299,7 +304,7 @@ public class ProductDAO {
 
     public String getCategoryPath(Category category, String path) {
         try {
-            System.out.println("Start Path ="+path);
+            System.out.println("Start Path =" + path);
             String retPath = null;
             if (path != null) {
                 retPath = category.getName() + "/" + path;
@@ -309,21 +314,133 @@ public class ProductDAO {
 
             String queryString = "Select model.category from Category model "
                     + " where model.categoryid = :id ";
-                    //+ " and model.category!=null ";
+            //+ " and model.category!=null ";
 
             Query query = getEntityManager().createQuery(queryString);
             query.setParameter("id", category.getCategoryid());
             List<Category> categories = query.getResultList();
-            System.out.println("Categories.size="+categories.size());
+            System.out.println("Categories.size=" + categories.size());
             if (categories.size() > 0 && categories.get(0) != null) {
                 Category cat = categories.get(0);
-                System.out.println("Category="+cat);
+                System.out.println("Category=" + cat);
                 return getCategoryPath(cat, retPath);
             } else {
                 return retPath;
             }
 
 
+        } catch (RuntimeException re) {
+            logger.error("Error on finding entity", re);
+            throw re;
+        }
+    }
+
+    public List<Product> getCategoryProduct(List<Category> categories, List<Company> companies, String productName) {
+
+        System.out.println("categories=" + categories);
+        System.out.println("companies=" + companies);
+        System.out.println("productName=" + productName);
+        Set<Product> products = new HashSet<Product>(0);
+        try {
+            if (companies != null && companies.size() > 0 && (categories == null || categories.size() == 0)) {
+                for (int i = 0; i < companies.size(); i++) {
+                    Company company = companies.get(i);
+                    List<Companyproduct> companyProducts = new ArrayList(company.getCompanyproducts());
+                    for (int j = 0; j < companyProducts.size(); j++) {
+                        Companyproduct companyproduct = companyProducts.get(j);
+                        System.out.println("ADDING product in case 1");
+                        if (companyproduct.getProduct().getActive().equals(BigDecimal.ONE)) {
+                            products.add(companyproduct.getProduct());
+                        }
+                    }
+                }
+            } else if ((companies == null || companies.size() == 0) && categories != null && categories.size() > 0) {
+                for (int i = 0; i < categories.size(); i++) {
+                    Category category = categories.get(i);
+                    System.out.println("ADDING MASSIVE product in case 2");
+                    for (Iterator<Product> it = getCategoryProduct(category, null).iterator(); it.hasNext();) {
+                        Product product = it.next();
+                        if (product.getActive().equals(BigDecimal.ONE)) {
+                            products.add(product);
+                        }
+                    }
+//                    for (int j = 0; j < category.getProducts().size(); j++) {
+//                        Product product = category.getProducts().get(j);
+//                        if (product.getActive().equals(BigDecimal.ONE)) {
+//                            products.add(product);
+//                        }
+//                    }
+                }
+            } else if (companies != null && companies.size() > 0 && categories != null && categories.size() > 0) {
+                for (int i = 0; i < companies.size(); i++) {
+                    Company company = companies.get(i);
+                    for (int j = 0; j < categories.size(); j++) {
+                        Category category = categories.get(j);
+                        System.out.println("ADDING MASSIVE product in case 3");
+                        for (Iterator<Product> it = getCategoryProduct(category, company).iterator(); it.hasNext();) {
+                            Product product = it.next();
+                            if (product.getActive().equals(BigDecimal.ONE)) {
+                                products.add(product);
+                            }
+                        }
+                    }
+                }
+            }
+
+            System.out.println("Products size before name=" + products.size());
+
+            List<Product> productList = new ArrayList<Product>(0);
+            for (Iterator<Product> it = products.iterator(); it.hasNext();) {
+                Product product = it.next();
+                if (productName != null && !product.getName().toLowerCase().contains(productName.toLowerCase())) {
+                    // DO NOTHING !!!!!!!!!
+                } else {
+                    productList.add(product);
+                }
+            }
+
+            System.out.println("Products size after name=" + productList.size());
+            Collections.sort(productList, new Comparator<Product>() {
+                public int compare(Product one, Product other) {
+                    return one.getName().compareTo(other.getName());
+                }
+            });
+            return productList;
+        } catch (RuntimeException re) {
+            logger.error("Error on finding entity", re);
+            throw re;
+        }
+    }
+
+    public Set<Product> getCategoryProduct(Category category, Company company) {
+        Set<Product> products = new HashSet<Product>(0);
+        try {
+            //products.addAll(category.getProducts());
+
+            for (int i = 0; i < category.getProducts().size(); i++) {
+                Product product = category.getProducts().get(i);
+
+                if (company != null) {
+                    List<Company> companies = product.getOrderedCompanies();
+                    for (int j = 0; j < companies.size(); j++) {
+                        Company company1 = companies.get(j);
+                        if (company1.equals(company)) {
+                            products.add(product);
+                        }
+                    }
+                } else {
+                    products.add(product);
+                }
+            }
+
+
+            if (category.getCategories() != null && category.getCategories().size() > 0) {
+                for (int i = 0; i < category.getCategories().size(); i++) {
+                    Category cat = category.getCategories().get(i);
+                    products.addAll(getCategoryProduct(cat, company));
+                }
+            }
+            return products;
         } catch (RuntimeException re) {
             logger.error("Error on finding entity", re);
             throw re;

@@ -25,8 +25,7 @@
             </p:submenu>
                
             <p:submenu label="#{bundle.productAdmin}" icon="ui-icon-document" rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}" > 
-                <p:menuitem value="#{bundle.newProduct}" action="#{furnitureAction.createProduct}"  rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}"  />
-                <p:menuitem value="#{bundle.productPricing}" action="#{furnitureAction.priceProduct}" rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}"  />
+                <p:menuitem value="#{bundle.newProduct}" action="#{furnitureAction.createProduct}"  rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}"  />                
                 <p:menuitem value="#{bundle.search}" action="#{furnitureAction.searchProduct}"  rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}"  />
             </p:submenu>
             

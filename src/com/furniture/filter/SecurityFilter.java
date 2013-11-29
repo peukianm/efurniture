@@ -66,7 +66,7 @@ public class SecurityFilter implements Filter {
 
         //System.out.println("Checking for="+checkforloginpage);
         
-        
+         
         
         
 //        if ((request.getAttribute(FILTER_APPLIED) == null)

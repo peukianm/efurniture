@@ -60,14 +60,6 @@
                                         </p:selectOneMenu>
                                         <p:message for="selectCompany" display="icon"/>
 
-                                <!--<p:selectManyMenu  disabled="{sessionBean.users.role.roleid!=1}"  required="true" value="{newProductBean.selectedCompanies}" requiredMessage="#{bundle.company}: #{bundle.mandatoryField}"
-                                                   converter="CompanyConverter"  id="selectCompany" style="width:150px;height:130px" var="comp" showCheckbox="true"> 						                                                                                                                                                                              
-                                    <f:selectItems value="{applicationBean.companies}" var="company" itemLabel="{company.name}" itemValue="{company}"   />						                                      
-                                    <p:column>{comp.name}</p:column>                                
-                                    <p:ajax  listener="{furnitureAction.handleCompanySelect}"  update="selectProductLine"   /> 
-                                </p:selectManyMenu>                                    
-                                <p:message for="selectCompany" display="icon"/>
-                                <p:inputText readonly="true" value="{newProductBean.selectedCompanies[0].name}" rendered="#{sessionBean.users.role.roleid!=1}"  />-->
                                     </td>     
 
                                     <td style="vertical-align: top;float: right"><h:outputLabel value="#{bundle.insertDate}: " style="font-weight: bold" /></td>
@@ -87,38 +79,23 @@
                                     </td>
 
                                     <td style="vertical-align: top;float: right"> <p:outputLabel value="#{bundle.category}* :"  style="font-weight: bold"/> </td>
-                                    <td style="vertical-align: top;" colspan="3">                                       
-                                        <p:tree id="categoryTree" value="#{newProductBean.root}" var="node" selectionMode="single" selection="#{newProductBean.selectedNode}">  
-                                            <p:treeNode>  
-                                                <h:outputText value="#{node.name}" />  
-                                            </p:treeNode>  
-                                        </p:tree>                                                                                
+                                    <td style="vertical-align: top;" colspan="3"><p:outputLabel  id="showTree"  value="#{newProductBean.selectedNode.data.name}" /><br/>
+                                        
+                                        <p:commandButton id="treeBtn" immediate="true"  value="#{bundle.selectCategory}" />
+                                        <p:overlayPanel id="treepanel" for="treeBtn" hideEffect="fade" >
+                                            <p:tree id="categoryTree" value="#{newProductBean.root}" var="node" selectionMode="single" selection="#{newProductBean.selectedNode}">  
+                                                <p:ajax event="select" update="@form:showTree"  /> 
+                                                <p:treeNode>  
+                                                    <h:outputText value="#{node.name}" />  
+                                                </p:treeNode>  
+                                            </p:tree>
+                                        </p:overlayPanel>
+                                                                                                                       
                                     </td>
                                 </tr>
-
-
-                                <!-- <tr>
-                                     <td><p:outputLabel value="#{bundle.subProduct} :"  style="font-weight: bold"/></td>
-                                     <td>
-                                         <p:selectOneRadio id="subproduct" value="{newProductBean.newProduct.subproduct}">  
-                                             <f:selectItem itemLabel="#{bundle.yes}" itemValue="1" />
-                                             <f:selectItem itemLabel="#{bundle.no}" itemValue="0" />
-                                             <p:ajax  listener="{furnitureAction.handleSubproductSelect}"  update="selectParentProduct tesss"   /> 
-                                         </p:selectOneRadio> 
- 
-                                         <p:panel id="tesss" style="border-style: none">
-                                             <p:selectOneMenu value="{newProductBean.newProduct.product}" id="selectParentProduct" converter="ProductConverter" 
-                                                              required="true" requiredMessage="#{bundle.subProduct}: #{bundle.mandatpryField}"  rendered="{newProductBean.newProduct.subproduct eq 1}"  >                                                                                      
-                                                 <f:selectItems value="{newProductBean.parentProductList}" var="prod" itemLabel="#{prod.name}" itemValue="#{prod}"   /> 
-                                             </p:selectOneMenu>
-                                         </p:panel>    
-                                     </td>
-                                 </tr> -->
                             </table>
-
                         </p:panel>   
                     </td>
-
                 </tr>
                 <tr>
                     <td style="vertical-align: top; " >
@@ -612,7 +589,7 @@
                 </p:selectOneRadio>
 
 
-                <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor} :* " rendered="#{newProductBean.specification.freetext==1}"  />  
+                <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor}  #{newProductBean.specification.name} :* " rendered="#{newProductBean.specification.freetext==1}"  />  
                 <p:inputTextarea rows="5" cols="40" value="#{newProductBean.svalue}" rendered="#{newProductBean.specification.freetext==1}" required="true" requiredMessage="#{bundle.value}: #{bundle.mandatoryField}"/>
 
                 <p:separator />
@@ -800,10 +777,13 @@
                         <p:row style="border-style:none ! important;">                               
                             <p:column colspan="5">
                                 <p:outputLabel value="#{newProductBean.newProduct.name}" style="float: left; font-weight: bold; font-size: 19px ! important"/>  
-
+                                <p:outputLabel value="#{newProductBean.selectedNodePath}" style="font-size: 10px ! important; vertical-align: central" />
+                                
                                 <div class="bottom" style="">  
-                                    <p:outputLabel value="#{newProductBean.selectedCompany.name}" style="float: right; font-size:10px; vertical-align: bottom; margin-top: 1% "/>
-                                </div>    
+                                    <p:outputLabel value="#{newProductBean.selectedCompany.name}" style="float: right;font-size:10px; vertical-align: bottom; margin-top: 1% "/><br/>                                    
+                                </div> 
+                                    
+                                   
                             </p:column>  
                         </p:row> 
                     </f:facet>
@@ -811,25 +791,10 @@
 
 
                     <p:row style="border-style:none ! important;">  
-
-<!--<p:column rowspan="8"  ><p:outputLabel value="#{bundle.images}: " style="font-weight: bold;vertical-align: top;float: right" /></p:column> -->
-                        <p:column rowspan="4" style="border-style:none ! important;">
+                        <p:column rowspan="3" style="border-style:none ! important;padding: 0px">
                             <p:galleria id="imageGaler" value="#{newProductBean.newProduct.imageproducts}" var="image" panelWidth="500" panelHeight="313" autoPlay="false" 
                                         effect="clip" showCaption="true">  
-                                <p:graphicImage id="produImage" value="/media/temp/#{image.filename}"   alt="#{image.description}" title="#{image.primary}" width="500" height="363" />  
-                                <!--<f:facet name="content">  
-                                    <h:panelGrid  columns="2" cellpadding="0" style="border-style: none; font-weight: 8px; border-width:0px ! important;
-                                                  border-style:none ! important;">  
-                                        <f:facet name="header">  
-                                            <p:graphicImage value="/media/temp/#{image.filename}" height="400" width="430" />  
-                                        </f:facet>  -->
-
-<!-- <p:outputLabel value="#{image.description}"/>  
-
-<p:outputLabel id="number" value="#{image.primary}"/>  -->
-                                <!-- </h:panelGrid>  
-                             </f:facet> -->  
-
+                                <p:graphicImage id="produImage" value="/media/temp/#{image.filename}"   alt="#{image.description}" title="#{image.primary}" width="500" height="363" />    
                             </p:galleria> 
                         </p:column>  
                     </p:row>
@@ -839,12 +804,12 @@
                     <p:row style="border-style:none ! important;">                           
                         <p:column colspan="4" style="border-style:none ! important;vertical-align: top"><p:outputLabel value="#{newProductBean.newProduct.description}" /></p:column>  
                     </p:row> 
-                    <p:row style="border-style:none ! important;">                           
+                   <!-- <p:row style="border-style:none ! important;">                           
                         <p:column colspan="4" style="border-style:none ! important;vertical-align: top">
                             <p:outputLabel value="#{bundle.category}:" style="font-weight: bold;"/>
                             <p:outputLabel value="#{newProductBean.selectedNodePath}" />                           
                         </p:column>  
-                    </p:row> 
+                    </p:row> -->
 
                     <!--<p:row style="border-style:none ! important;">                          
                         <p:column colspan="4" style="border-style:none ! important;"><h:outputLabel  converter="DateConverter"  value="#{newProductBean.newProduct.createddate}"   /></p:column>  
@@ -855,41 +820,17 @@
                         <p:column colspan="3"><p:outputLabel value="#{newProductBean.newProduct.productcategory.name}" /></p:column>  
                     </p:row>
 
-
-
-                    <p:row>  
-                        <p:column ><p:outputLabel value="#{bundle.productLine}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column> 
-                        <p:column colspan="3">
-                            <ui:repeat var="productLineProduct" value="#{newProductBean.newProduct.orderedProductlines}" >
-                                <p:outputLabel value="#{productLineProduct.name} "/>                                     
-                            </ui:repeat>
-                        </p:column>  
-                    </p:row>
-
                     <p:row>  
                         <p:column colspan="1"><p:outputLabel value="#{bundle.productTemplate}:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
                         <p:column colspan="3"><p:outputLabel value="#{newProductBean.newProduct.item.name}" rendered="#{newProductBean.newProduct.item!=null}" /></p:column>  
                     </p:row>
 
-
-                    <p:row>  
-                        <p:column colspan="1"><p:outputLabel value="Video:" style="font-weight: bold;vertical-align: top;float: right"/></p:column>  
-                        <p:column colspan="3">                            
-                            <p:commandButton id="vidBtn" type="button"  rendered="#{newProductBean.newProduct.videoproducts.size()>0}"  
-                                             value="#{bundle.view}" onclick="videoDlg.show()" />                                                        
-                        </p:column>  
-                    </p:row>  
-
-                    <p:row>  
-                        <p:column colspan="6" styleClass="ui-widget-header">  
-                            <p:outputLabel value="#{bundle.productCharacteristics} "/>    
-                        </p:column>  
-                    </p:row> -->
+                     -->
 
                     <p:row style="border-style:none ! important;">
-                        <p:column colspan="5" style="border-style:none ! important;vertical-align: top">   
+                        <p:column colspan="5" style="border-style:none ! important;vertical-align: top;padding: 1px">   
                             <p:tabView>
-                                <p:tab  title="#{bundle.productCharacteristics}"  style="padding:0px ! important; margin-left: 0px;  "  >
+                                <p:tab  title="#{bundle.characteristics}"  style="padding:0px ! important; margin-left: 0px;  "  >
                                     <p:outputPanel>
                                         <p:dataTable var="pss" value="#{newProductBean.newProduct.productspecifications}" styleClass="hide-column-names noCollapse" style="border-style:none ! important;border-collapse: separate;">
                                             <p:column  style="border-style:none ! important; width:1%; white-space:nowrap;" >  

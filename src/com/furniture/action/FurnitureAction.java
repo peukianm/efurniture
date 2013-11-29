@@ -11,6 +11,7 @@ import com.furniture.bean.ProductSearchBean;
 import com.furniture.bean.SessionBean;
 import com.furniture.bean.UpdateProductBean;
 import com.furniture.bean.UserBean;
+import com.furniture.bean.ViewProductBean;
 import com.furniture.dao.CompanyDAO;
 import com.furniture.dao.CompanyproductDAO;
 import com.furniture.dao.ItemDAO;
@@ -42,6 +43,8 @@ import com.furniture.util.MessageBundleLoader;
 import com.furniture.util.PersistenceHelper;
 import com.furniture.util.PersistenceUtil;
 import com.furniture.util.SystemParameters;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -58,6 +61,7 @@ import javax.faces.model.ListDataModel;
 import javax.transaction.UserTransaction;
 import org.apache.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
@@ -94,6 +98,28 @@ public class FurnitureAction {
         }
     }
 
+    
+    public String viewProduct(Product product) {
+        try {
+            sessionBean.setParameter(product);
+            System.out.println("Product="+product);            
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            viewProductBean.reset();
+
+            sessionBean.setPageCode(SystemParameters.getInstance().getProperty("PAGE_VIEW_PRODUCT"));
+            sessionBean.setPageName(MessageBundleLoader.getMessage("viewProduct"));
+            
+            sessionBean.setPageName(product.getName());
+            
+            return "viewProduct?faces-redirect=true "; 
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+            return "";
+        }
+    }
+    
     public String updateProduct(Product product) {
         try {
             //sessionBean.setParameter(null);
@@ -593,8 +619,6 @@ public class FurnitureAction {
     
     
     
-    
-            
      public void insertDimensionAction() {
         try {
             NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
@@ -611,9 +635,7 @@ public class FurnitureAction {
             productSpecification.setSpecification(spec);
             productSpecification.setProduct(newProduct);
             productSpecification.setActive(BigDecimal.ONE);
-            
-            
-            
+                        
             
             List<Productvalue> productValues = newProductBean.getProductValues();
             String svalue = newProductBean.getSvalue();               
@@ -747,25 +769,32 @@ public class FurnitureAction {
     public void insertProduct() {
         try {
             NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
-            if (newProductBean.getImages() == null || newProductBean.getImages().size() == 0) {
-                System.out.println("no images!!!!!!");
+            if (newProductBean.getImages() == null || newProductBean.getImages().size() == 0) {                
                 sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noImagesInserted"));
                 sessionBean.setShowGeneralDialog(Boolean.TRUE);
                 FacesUtils.updateHTMLComponnetWIthJS("primeAlertPanel");
                 return;
             }
 
-            if (newProductBean.getProductSpecifications() == null || newProductBean.getProductSpecifications().size() == 0) {
-                sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noSpecificationsInserted"));
+//            if (newProductBean.getProductSpecifications() == null || newProductBean.getProductSpecifications().size() == 0) {
+//                sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noSpecificationsInserted"));
+//                sessionBean.setShowGeneralDialog(Boolean.TRUE);
+//                FacesUtils.updateHTMLComponnetWIthJS("primeAlertPanel");
+//                return;
+//            }
+
+            if (newProductBean.getSelectedNode() == null ) {
+                sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noCategorySelected"));
                 sessionBean.setShowGeneralDialog(Boolean.TRUE);
-                FacesUtils.updateHTMLComponnetWIthJS("primeAlertPanel");
+                FacesUtils.updateHTMLComponnetWIthJS(":primeAlertPanel");
                 return;
             }
-
+            
+            
 
             Product product = newProductBean.getNewProduct();
             product.setActive(BigDecimal.ONE);
-
+            
 
             Company company = newProductBean.getSelectedCompany();
             List<Companyproduct> companyproducts = new ArrayList<Companyproduct>(0);            
@@ -790,8 +819,15 @@ public class FurnitureAction {
 //            product.setProductlineproducts(productlineproducts);
 
 
-
-            List<Productspecification> productSpecifications = newProductBean.getProductSpecifications();
+            List<Productspecification> productSpecifications = new ArrayList<Productspecification>(0);           
+            
+            if (newProductBean.getProductSpecifications()!=null)
+                productSpecifications.addAll(newProductBean.getProductSpecifications());
+                
+            if (newProductBean.getDimesionProductSpecifications()!=null)
+                productSpecifications.addAll(newProductBean.getDimesionProductSpecifications());
+            
+            
             product.setProductspecifications(productSpecifications);
 
             List<Imageproduct> images = newProductBean.getImages();
@@ -799,7 +835,24 @@ public class FurnitureAction {
 
             List<Videoproduct> videos = newProductBean.getVideos();
             product.setVideoproducts(videos);
-
+            
+            if (newProductBean.getSubProducts().getTarget()!=null && newProductBean.getSubProducts().getTarget().size()>0){
+                product.setSubproducts(newProductBean.getSubProducts().getTarget());
+            }
+            
+            if (newProductBean.getProducts().getTarget()!=null && newProductBean.getProducts().getTarget().size()>0){
+                product.setParentproducts(newProductBean.getProducts().getTarget());
+            }
+            
+            
+            
+            if (newProductBean.getSelectedNode()!=null && newProductBean.getSelectedNode().getData()!=null) {
+                List<Category> categ0ries = new ArrayList<Category>(0);
+                categ0ries.add((Category)newProductBean.getSelectedNode().getData());
+                product.setCategories(categ0ries);
+            }
+            
+            
             FacesUtils.updateHTMLComponnetWIthJS("productPreviewForm");
             FacesUtils.callRequestContext("productPreviewDialog.show();");
 
@@ -831,6 +884,9 @@ public class FurnitureAction {
         updateProductBean.setProductLines(pl);
         
     }
+    
+    public void onNodeSelect(NodeSelectEvent event) {          
+    }  
 
     public void handleFileUploadUpdate(FileUploadEvent event) {
         try {
@@ -1188,9 +1244,36 @@ public class FurnitureAction {
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
             persistenceHelper.create(product);
+            if (newProductBean.getPrices()!=null && newProductBean.getPrices().size()>0) {
+                persistenceHelper.create(newProductBean.getPrices().get(0));
+            }
+            
+            
             persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_INSERTPRODUCT")), product, null, null, null, null, null);
             userTransaction.commit();
 
+            if (product.getImageproducts()!=null) {
+                for (int i = 0; i < product.getImageproducts().size(); i++) {
+                    Imageproduct image = product.getImageproducts().get(i);                
+                    String tempPath = image.getPath();
+                    String finalPath = SystemParameters.getInstance().getProperty("PATH_WEB_PRODUCTS")+"\\"+product.getProductid()+"\\images\\"+image.getFilename();                                
+                    IOUtils.saveBinaryFile(finalPath, new FileInputStream(tempPath)); 
+                    IOUtils.deleteFile(tempPath);
+                }
+            }
+            
+            if (product.getVideoproducts()!=null) {
+                for (int i = 0; i < product.getVideoproducts().size(); i++) {
+                    Videoproduct video = product.getVideoproducts().get(i);                
+                    String tempPath = video.getPath();
+                    String finalPath = SystemParameters.getInstance().getProperty("PATH_WEB_PRODUCTS")+"\\"+product.getProductid()+"\\videos\\"+video.getFilename();                                
+                    IOUtils.saveBinaryFile(finalPath, new FileInputStream(tempPath)); 
+                    IOUtils.deleteFile(tempPath);
+                }
+            }
+            
+            
+            
             sessionBean.setPageCode(SystemParameters.getInstance().getProperty("PAGE_FURNITURE_HOME"));
             sessionBean.setPageName(MessageBundleLoader.getMessage("homePage"));
             return "main?faces-redirect=true";
@@ -1316,7 +1399,26 @@ public class FurnitureAction {
         try {
             ProductSearchBean productSearchBean = (ProductSearchBean) FacesUtils.getManagedBean("productSearchBean");
             ProductDAO dao = new ProductDAO();
-            List<Product> products = dao.searchProducts(productSearchBean.getSearchByName(), productSearchBean.getSearchByCompany(), productSearchBean.getSearchByProductline(), productSearchBean.getSearchByCatalogue(), productSearchBean.getSearchByProductcategory());
+            TreeNode[] nodes = productSearchBean.getSelectedNodes();
+            List<Category> categories = null;
+            if (nodes!=null) {
+                categories = new ArrayList<Category>(0);
+                for (int i = 0; i < nodes.length; i++) {
+                    TreeNode treeNode = nodes[i];
+                    categories.add((Category)treeNode.getData());
+                }
+            }
+            
+            List<Product> products = new ArrayList<Product>(0);
+            
+            if ((categories==null || categories.size()==0) && (productSearchBean.getSearchBySelectedCompanies()==null || productSearchBean.getSearchBySelectedCompanies().size()==0) && productSearchBean.getSearchByName()==null) {                
+                products = dao.findByProperty("active", BigDecimal.ONE);
+            } else {
+                products = dao.getCategoryProduct(categories, productSearchBean.getSearchBySelectedCompanies(), productSearchBean.getSearchByName());
+            }
+            
+                
+//            List<Product> products = dao.searchProducts(productSearchBean.getSearchByName(), productSearchBean.getSearchByCompany(), productSearchBean.getSearchByProductline(), productSearchBean.getSearchByCatalogue(), productSearchBean.getSearchByProductcategory());
             productSearchBean.setProducts(products);
             productSearchBean.setProductsModel(new ListDataModel<Product>(products));
         } catch (Exception e) {

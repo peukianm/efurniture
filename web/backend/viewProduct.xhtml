@@ -1,0 +1,178 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="templates/uiBackend.xhtml"> 
+
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-confirm-dialog-severity {
+                margin: 0 7px 7px 0;
+            }
+
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <p:growl autoUpdate="true"/> 
+        <div class="entry" style="line-height:120%;" >
+            <h:form id="viewProductForm">                		         		   
+               <!-- <p:panel id="viewProductPanel" header="#{bundle.viewProduct} " toggleable="false" style="padding:0px ! important; width:auto;white-space: nowrap;margin:  5px" > --> 
+                    <p:panelGrid style="border-style:none ! important;">
+                        <f:facet name="header"> 
+                            <p:row style="border-style:none ! important;">                               
+                                <p:column colspan="5" >
+                                    <p:outputLabel value="#{viewProductBean.product.name}" style="float: left; font-weight: bold; font-size: 19px ! important"/>
+                                    <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style="float: right"/>
+                                    <p:outputLabel value="#{viewProductBean.product.firstCategory.name}" style="font-size: 10px ! important; vertical-align: central" />
+
+                                    <div class="bottom" style="">  
+                                        <ui:repeat value="#{viewProductBean.product.orderedCompanies}" var="company">
+                                            <p:outputLabel value="#{company.name} " style="float: right;font-size:10px; vertical-align: bottom; margin-top: 1% "/><br/>
+                                        </ui:repeat>
+                                    </div> 
+
+
+                                </p:column>  
+                            </p:row> 
+                        </f:facet>
+
+
+
+                        <p:row style="border-style:none ! important;">  
+                            <p:column rowspan="3" style="border-style:none ! important;padding: 0px">
+                                <p:galleria id="imageGaler" value="#{viewProductBean.images}" var="image" panelWidth="500" panelHeight="313" autoPlay="false" 
+                                            effect="clip" showCaption="true">  
+                                    <p:graphicImage id="produImage" value="/media/products/#{viewProductBean.product.productid}/images/#{image.filename}"   alt="#{image.description}" title="#{image.primary}" width="500" height="363" />    
+                                </p:galleria> 
+                            </p:column>  
+                        </p:row>
+
+
+
+                        <p:row style="border-style:none ! important;">                           
+                            <p:column colspan="4" style="border-style:none ! important;vertical-align: top;line-height: 100%">
+                                <p:outputLabel value="#{viewProductBean.product.description}" />                                
+                                <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style="float: right; margin-top: 30px"/>
+                            </p:column>  
+                        </p:row> 
+                        
+                        <p:row style="border-style:none ! important;">
+                            <p:column colspan="5" style="border-style:none ! important;vertical-align: top;padding: 1px">   
+                                <p:tabView>
+                                    <p:tab  title="#{bundle.characteristics}"  style="padding:0px ! important; margin-left: 0px;  "  >
+                                        <p:outputPanel>
+                                            <p:dataTable var="pss" value="#{viewProductBean.productSpecifications}" styleClass="hide-column-names noCollapse" style="border-style:none ! important;border-collapse: separate;">
+                                                <p:column  style="border-style:none ! important; width:1%; white-space:nowrap;" >  
+                                                    <p:outputLabel value="#{pss.specification.name}: " style="font-weight: bold;vertical-align: top;float: right"/> 
+                                                </p:column> 
+                                                <p:column  style="border-style:none ! important;">                                        
+                                                    <ui:repeat var="prr" value="#{pss.productvalues}" >
+                                                        <h:outputText value="#{prr.svalue.name}" rendered="#{prr.svalue!=null}" /> <p:spacer width="5" />
+                                                        <h:outputText value="#{prr.value}" rendered="#{prr.svalue==null}" /> <p:spacer width="5" />
+                                                    </ui:repeat>                                         
+                                                </p:column>  
+
+                                            </p:dataTable><br/>
+                                            <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:95%"/>
+                                        </p:outputPanel>
+                                    </p:tab>
+
+
+                                    <p:tab title="#{bundle.dimensions}"  style="padding:0px ! important; margin-left: 0px;  "  >
+                                        <p:outputPanel>    
+                                            <p:dataTable  value="#{viewProductBean.dimesionProductSpecifications}" var="dimesionProductSpecification" rows="10" styleClass="hide-column-names noCollapse" 
+                                                          paginator="false" emptyMessage="#{bundle.noDimensionInserted}" style="border-collapse: separate;"> 
+                                                <p:column style="border-style:none ! important;width:1%; white-space:nowrap;"> 
+                                                    <p:outputLabel value="#{dimesionProductSpecification.specification.name}:" style="font-weight: bold;vertical-align: top;float: right" />                                                                    
+                                                </p:column>
+                                                <p:column style="border-style:none ! important;"> 
+                                                    <ui:repeat var="prr" value="#{dimesionProductSpecification.productvalues}" >                                                    
+                                                        <h:outputText value="#{prr.value}"/> 
+                                                    </ui:repeat>                                                                     
+                                                </p:column>
+                                            </p:dataTable><br/>
+                                            <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:95%"/>
+                                        </p:outputPanel>
+                                    </p:tab>
+
+
+                                    <p:tab title="#{bundle.price}" style="padding:0px ! important; margin-left: 0px;"  >
+                                        <p:outputPanel>
+                                            <p:outputLabel rendered="#{viewProductBean.prices.size()>0}" style="font-size: 150%; " 
+                                                           value="#{viewProductBean.prices.get(0).amount} #{viewProductBean.prices.get(0).currency.name} (#{bundle.initialPrice} #{viewProductBean.prices.get(0).initialprice})" /> 
+                                            <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:95%"/>
+                                        </p:outputPanel>
+                                    </p:tab>
+
+                                    <p:tab title="#{bundle.connectedProducts}"  style="padding:0px ! important; margin-left: 0px;"  >
+                                        <p:outputPanel>
+                                            <p:dataList value="#{viewProductBean.products.target}" var="parent" emptyMessage="#{bundle.noProducts}" 
+                                                        paginator="false" rows="5" paginatorTemplate="{PreviousPageLink} {CurrentPageReport} {NextPageLink} {RowsPerPageDropdown}"  
+                                                        rowsPerPageTemplate="5,10,15" type="none">  
+                                                <f:facet name="header">  
+                                                    #{bundle.parentProducts}  
+                                                </f:facet>  
+                                                <h:outputText value="#{parent.name}" style="margin-left:10px" />  
+                                                <br />  
+                                            </p:dataList> 
+                                            <br/>
+                                            <p:separator />                                       
+                                            <br/>
+                                            <p:dataList value="#{viewProductBean.subProducts.target}" var="sub" emptyMessage="#{bundle.noProducts}" 
+                                                        paginator="false" rows="5" paginatorTemplate="{PreviousPageLink} {CurrentPageReport} {NextPageLink} {RowsPerPageDropdown}"  
+                                                        rowsPerPageTemplate="5,10,15" type="none">  
+                                                <f:facet name="header">  
+                                                    #{bundle.subproducts}  
+                                                </f:facet>  
+                                                <h:outputText value="#{sub.name}" style="margin-left:10px" />  
+                                                <br />  
+                                            </p:dataList> <br/>
+                                            <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:95%"/>
+                                        </p:outputPanel>
+                                    </p:tab>
+
+
+                                </p:tabView>                                                                                                               
+                            </p:column>                       
+                        </p:row>   
+
+                        <p:row rendered="#{viewProductBean.videos.size()>0}">
+                            <p:column colspan="5">                                                        
+                                <ui:repeat var="video" value="#{viewProductBean.videos}" varStatus="var" >    
+                                    <p:lightBox styleClass="imagebox">
+                                        <h:outputLink value="#"  style="color:blue;text-decoration: underline;font-weight:bold; ">  
+                                            <h:outputText value="Video #{var.index}"/><p:spacer width="10" />  
+                                        </h:outputLink>  
+
+                                        <f:facet name="inline">  
+                                            <p:media value="/media/products/#{viewProductBean.product.productid}/videos/#{video.filename}"  width="520" height="400" />  
+                                        </f:facet>
+                                    </p:lightBox>
+                                </ui:repeat>    
+                            </p:column>
+                        </p:row>    
+
+                    </p:panelGrid>
+
+            </h:form>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+        </div>
+    </ui:define>
+
+</ui:composition>
+
+

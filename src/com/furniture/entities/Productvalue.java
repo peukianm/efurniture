@@ -85,7 +85,7 @@ public class Productvalue implements java.io.Serializable {
     
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MEASURMENT", nullable = false)
+    @JoinColumn(name = "MEASURMENTID", nullable = false)
     public Measurment getMeasurment() {
         return this.measurment;
     }

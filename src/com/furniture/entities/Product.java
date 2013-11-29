@@ -3,7 +3,7 @@ package com.furniture.entities;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections; 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
@@ -67,11 +67,9 @@ public class Product implements java.io.Serializable {
     private List<Product> subproducts = new ArrayList<Product>(0);
     private List<Product> parentproducts = new ArrayList<Product>(0);
 
-    
-
     // Constructors
     /**
-     * default constructor  
+     * default constructor
      */
     public Product() {
     }
@@ -208,7 +206,6 @@ public class Product implements java.io.Serializable {
 //    public void setSubproduct(BigDecimal subproduct) {
 //        this.subproduct = subproduct;
 //    }
-
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
     public List<Companyproduct> getCompanyproducts() {
         return this.companyproducts;
@@ -262,14 +259,13 @@ public class Product implements java.io.Serializable {
 //    public void setProducts(List<Product> products) {
 //        this.products = products;
 //    }
-    
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
     public List<Videoproduct> getVideoproducts() {
-            return this.videoproducts;
+        return this.videoproducts;
     }
 
     public void setVideoproducts(List<Videoproduct> videoproducts) {
-            this.videoproducts = videoproducts;
+        this.videoproducts = videoproducts;
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
@@ -298,13 +294,13 @@ public class Product implements java.io.Serializable {
             for (int i = 0; i < productlineproducts.size(); i++) {
                 Productlineproduct productlineproduct = productlineproducts.get(i);
                 Productline productline = productlineproduct.getProductline();
-                if (productline.getActive().equals(BigDecimal.ONE)){
+                if (productline.getActive().equals(BigDecimal.ONE)) {
                     for (int j = 0; j < productline.getCatalogues().size(); j++) {
                         Catalogue catalogue = productline.getCatalogues().get(j);
                         if (catalogue.getActive().equals(BigDecimal.ONE)) {
                             catal.add(catalogue);
                         }
-                    }                    
+                    }
                 }
             }
             catalogues = new ArrayList<Catalogue>(catal);
@@ -324,12 +320,10 @@ public class Product implements java.io.Serializable {
         this.catalogues = catalogues;
     }
 
-    
-    
     /**
      * @return the catalogues
      */
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.REFRESH)
     @JoinTable(name = "CATPROD",
     joinColumns = {
         @JoinColumn(name = "PRODUCTID")
@@ -347,12 +341,8 @@ public class Product implements java.io.Serializable {
     public void setCategories(List<Category> categories) {
         this.categories = categories;
     }
-    
-    
-    
-    
-    
-    @ManyToMany(cascade = CascadeType.ALL)
+
+    @ManyToMany(cascade = CascadeType.REFRESH)
     @JoinTable(name = "CONNPRODUCT",
     joinColumns = {
         @JoinColumn(name = "SUBPRODUCTID")
@@ -364,15 +354,11 @@ public class Product implements java.io.Serializable {
         return parentproducts;
     }
 
-    
     public void setParentproducts(List<Product> parentproducts) {
         this.parentproducts = parentproducts;
     }
-    
-    
-    
-    
-    @ManyToMany(cascade = CascadeType.ALL)
+
+    @ManyToMany(cascade = CascadeType.REFRESH)
     @JoinTable(name = "CONNPRODUCT",
     joinColumns = {
         @JoinColumn(name = "PARENTPRODUCTID")
@@ -384,11 +370,84 @@ public class Product implements java.io.Serializable {
         return subproducts;
     }
 
-    
     public void setSubproducts(List<Product> subproducts) {
         this.subproducts = subproducts;
     }
+
     
+    
+    @Transient
+    public List<Productspecification> getDimesnionProductSpecifications() {
+        List<Productspecification> retVal = new ArrayList<Productspecification>(0);
+        if (productspecifications!=null && productspecifications.size()>0){
+            for (int i = 0; i < productspecifications.size(); i++) {
+                Productspecification ps = productspecifications.get(i);
+                if (ps.getSpecification().getDimension().equals(BigDecimal.ONE)) {
+                    retVal.add(ps);
+                }                
+            }
+        }
+        return retVal;
+    }
+    
+    @Transient
+    public List<Productspecification> getColorProductSpecifications() {
+        List<Productspecification> retVal = new ArrayList<Productspecification>(0);
+        if (productspecifications!=null && productspecifications.size()>0){
+            for (int i = 0; i < productspecifications.size(); i++) {
+                Productspecification ps = productspecifications.get(i);
+                if (ps.getSpecification().getColor().equals(BigDecimal.ONE)) {
+                    retVal.add(ps);
+                }                
+            }
+        }
+        return retVal;
+    }
+    
+    
+     @Transient
+    public List<Productspecification> getOtherProductSpecifications() {
+        List<Productspecification> retVal = new ArrayList<Productspecification>(0);
+        if (productspecifications!=null && productspecifications.size()>0){
+            for (int i = 0; i < productspecifications.size(); i++) {
+                Productspecification ps = productspecifications.get(i);
+                if (!ps.getSpecification().getDimension().equals(BigDecimal.ONE)) {
+                    retVal.add(ps);
+                }                
+            }
+        }
+        return retVal;
+    }
+    
+    @Transient
+    public Company getFirstCompany() {
+        if (companyproducts!=null && companyproducts.size()>0) {
+            return companyproducts.get(0).getCompany();
+        } else {
+            return null;
+        }
+    }
+    
+    
+    
+    @Transient
+    public Category getFirstCategory() {
+        if (categories!=null && categories.size()>0) {
+            return categories.get(0);
+        } else {
+            return null;
+        }
+    }
+    
+    
+    @Transient
+    public Price getFirstPrice() {
+        if (prices!=null && prices.size()>0) {
+            return prices.get(0);
+        } else {
+            return null;
+        }        
+    }
     
     @Transient
     public List<Company> getOrderedCompanies() {
@@ -399,8 +458,8 @@ public class Product implements java.io.Serializable {
                 Company company = companyproduct.getCompany();
                 if (company.getActive().equals(BigDecimal.ONE)) {
                     orderedCompanies.add(company);
-                }                
-            }            
+                }
+            }
 
             Collections.sort(orderedCompanies, new Comparator<Company>() {
                 public int compare(Company one, Company other) {
@@ -416,16 +475,13 @@ public class Product implements java.io.Serializable {
     public void setOrderedCompanies(List<Company> orderedCompanies) {
         this.orderedCompanies = orderedCompanies;
     }
-    
-    
-    
-    
+
     @Transient
     public List<Productline> getOrderedProductlines() {
         orderedProductlines = new ArrayList<Productline>(0);
         if (productlineproducts != null) {
             for (int i = 0; i < productlineproducts.size(); i++) {
-                Productlineproduct productlineproduct = productlineproducts.get(i);                
+                Productlineproduct productlineproduct = productlineproducts.get(i);
                 Productline productline = productlineproduct.getProductline();
                 if (productline.getActive().equals(BigDecimal.ONE)) {
                     orderedProductlines.add(productline);
@@ -445,10 +501,7 @@ public class Product implements java.io.Serializable {
     public void setOrderedProductlines(List<Productline> orderedProductlines) {
         this.orderedProductlines = orderedProductlines;
     }
-    
-    
-    
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

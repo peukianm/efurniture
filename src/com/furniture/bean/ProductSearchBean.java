@@ -5,14 +5,18 @@
 package com.furniture.bean;
 
 import com.furniture.dao.CatalogueDAO; 
+import com.furniture.dao.CompanyDAO;
+import com.furniture.dao.CompanyproductDAO;
 import com.furniture.dao.ProductcategoryDAO;
 import com.furniture.dao.ProductlineDAO;
 import com.furniture.entities.Catalogue;
+import com.furniture.entities.Category;
 import com.furniture.entities.Company;
 import com.furniture.entities.Product;  
 import com.furniture.entities.Productcategory;
 import com.furniture.entities.Productline;
 import com.furniture.entities.Users;
+import com.furniture.util.FurnitureUtil;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
@@ -22,6 +26,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import org.primefaces.model.TreeNode;
   
 /**
  *
@@ -33,45 +38,51 @@ public class ProductSearchBean implements Serializable {
 
     @ManagedProperty(value = "#{sessionBean}")
     private SessionBean sessionBean;
-    private Company searchByCompany;
-    private Productline searchByProductline;
-    private Catalogue searchByCatalogue;
-    private Productcategory searchByProductcategory;
+    //private Company searchByCompany;
+    //private Productline searchByProductline;
+    //private Catalogue searchByCatalogue;
+    //private Productcategory searchByProductcategory;
     private String searchByName;
     private List<Company> companies;
-    private List<Productline> productLines;
-    private List<Productcategory> productCategories;
-    private List<Catalogue> catalogues;
+    private List<Company> searchBySelectedCompanies;
+     private TreeNode[] selectedNodes; 
+     
+    //private List<Productline> productLines;
+    //private List<Productcategory> productCategories;
+    //private List<Catalogue> catalogues;
     private Product selectedProduct;
     private transient DataModel<Product> productsModel;
     private List<Product> products;
+    private TreeNode root;
 
     @PostConstruct
     public void init() {
-//        Users user = sessionBean.getUsers();     
-//        Company company = user.getCompany();
-
-        System.out.println("INIT IN SEARCH PRODUCT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111");
-        ProductlineDAO pldao = new ProductlineDAO();
-        productLines = pldao.findByProperty("active", BigDecimal.ONE);
-        CatalogueDAO catdao = new CatalogueDAO();
-        catalogues = catdao.findByProperty("active", BigDecimal.ONE);
-        ProductcategoryDAO pcdao = new ProductcategoryDAO();
-        productCategories = pcdao.findByProperty("active", BigDecimal.ONE);
-
+        CompanyDAO dao = new CompanyDAO();
+        List<Category> categories = dao.getAllRootCategories(Boolean.TRUE);
+        root = FurnitureUtil.getCategoriesTree(categories);
     }
 
     public void reset() {
-        searchByCompany = null;   
-        searchByProductline = null;
-        searchByCatalogue = null;
-        searchByProductcategory = null;
+        selectedNodes = null;
         searchByName = null;
         selectedProduct = null;
         productsModel = null;
         products = null;
+        searchBySelectedCompanies = null;
     }
 
+    public TreeNode getRoot() {
+        return root;
+    }
+
+    public void setRoot(TreeNode root) {
+        this.root = root;
+    }
+
+    
+    
+    
+    
     public Product getSelectedProduct() {
         return selectedProduct;
     }
@@ -104,37 +115,37 @@ public class ProductSearchBean implements Serializable {
         this.sessionBean = sessionBean;
     }
 
-    public Company getSearchByCompany() {
-        return searchByCompany;
-    }
-
-    public void setSearchByCompany(Company searchByCompany) {
-        this.searchByCompany = searchByCompany;
-    }
-
-    public Productline getSearchByProductline() {
-        return searchByProductline;
-    }
-
-    public void setSearchByProductline(Productline searchByProductline) {
-        this.searchByProductline = searchByProductline;
-    }
-
-    public Catalogue getSearchByCatalogue() {
-        return searchByCatalogue;
-    }
-
-    public void setSearchByCatalogue(Catalogue searchByCatalogue) {
-        this.searchByCatalogue = searchByCatalogue;
-    }
-
-    public Productcategory getSearchByProductcategory() {
-        return searchByProductcategory;
-    }
-
-    public void setSearchByProductcategory(Productcategory searchByProductcategory) {
-        this.searchByProductcategory = searchByProductcategory;
-    }
+//    public Company getSearchByCompany() {
+//        return searchByCompany;
+//    }
+//
+//    public void setSearchByCompany(Company searchByCompany) {
+//        this.searchByCompany = searchByCompany;
+//    }
+//
+//    public Productline getSearchByProductline() {
+//        return searchByProductline;
+//    }
+//
+//    public void setSearchByProductline(Productline searchByProductline) {
+//        this.searchByProductline = searchByProductline;
+//    }
+//
+//    public Catalogue getSearchByCatalogue() {
+//        return searchByCatalogue;
+//    }
+//
+//    public void setSearchByCatalogue(Catalogue searchByCatalogue) {
+//        this.searchByCatalogue = searchByCatalogue;
+//    }
+//
+//    public Productcategory getSearchByProductcategory() {
+//        return searchByProductcategory;
+//    }
+//
+//    public void setSearchByProductcategory(Productcategory searchByProductcategory) {
+//        this.searchByProductcategory = searchByProductcategory;
+//    }
 
     public String getSearchByName() {
         return searchByName;
@@ -152,27 +163,44 @@ public class ProductSearchBean implements Serializable {
         this.companies = companies;
     }
 
-    public List<Productline> getProductLines() {
-        return productLines;
+//    public List<Productline> getProductLines() {
+//        return productLines;
+//    }
+//
+//    public void setProductLines(List<Productline> productLines) {
+//        this.productLines = productLines;
+//    }
+//
+//    public List<Productcategory> getProductCategories() {
+//        return productCategories;
+//    }
+//
+//    public void setProductCategories(List<Productcategory> productCategories) {
+//        this.productCategories = productCategories;
+//    }
+//
+//    public List<Catalogue> getCatalogues() {
+//        return catalogues;
+//    }
+//
+//    public void setCatalogues(List<Catalogue> catalogues) {
+//        this.catalogues = catalogues;
+//    }
+
+    public List<Company> getSearchBySelectedCompanies() {
+        return searchBySelectedCompanies;
     }
 
-    public void setProductLines(List<Productline> productLines) {
-        this.productLines = productLines;
+    public void setSearchBySelectedCompanies(List<Company> searchBySelectedCompanies) {
+        this.searchBySelectedCompanies = searchBySelectedCompanies;
     }
 
-    public List<Productcategory> getProductCategories() {
-        return productCategories;
+    public TreeNode[] getSelectedNodes() {
+        return selectedNodes;
     }
 
-    public void setProductCategories(List<Productcategory> productCategories) {
-        this.productCategories = productCategories;
+    public void setSelectedNodes(TreeNode[] selectedNodes) {
+        this.selectedNodes = selectedNodes;
     }
-
-    public List<Catalogue> getCatalogues() {
-        return catalogues;
-    }
-
-    public void setCatalogues(List<Catalogue> catalogues) {
-        this.catalogues = catalogues;
-    }
+    
 }

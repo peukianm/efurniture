@@ -114,8 +114,8 @@
 
     
     
-    <h:panelGroup layout="block"  id="primeAlertPanel" >        
-        <p:dialog  header="#{bundle.warning}"  modal="true" resizable="false" closable="false"
+    <h:form id="primeAlertPanel"  >        
+        <p:dialog  header="#{bundle.warning}" severity="alert"  modal="true" resizable="false" closable="false"
                    widgetVar="alertMessageDlg"  visible="#{sessionBean.showGeneralDialog}" >                    
             <h:form id="alertMsgForm"> 
                 <table>
@@ -132,7 +132,7 @@
                 </table>
             </h:form>
         </p:dialog>
-    </h:panelGroup>
+    </h:form>
        
     
 </ui:composition>
