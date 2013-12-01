@@ -11,6 +11,12 @@
                 margin: 0 7px 7px 0;
             }
             
+            
+            .noBord, .noBord tbody, .noBord tbody td, .noBord tbody tr {
+                padding: 1px 5px;
+                border-style: none !important; 
+            }
+            
         </style>
     </ui:define>
 
@@ -89,8 +95,8 @@
 
 
 
-                        <p:column headerText="#{bundle.charecteristics}"  style="width:46%;vertical-align: top" >                                                            
-                            <p:dataTable  var="pss" value="#{product.productspecifications}" style="font-size: 8px"  styleClass="hide-column-names" emptyMessage="#{bundle.noSpecs}" >
+                        <p:column headerText="#{bundle.charecteristics}"  style="width:46%;vertical-align: top; " >                                                            
+                            <p:dataTable  var="pss" value="#{product.productspecifications}" style="font-size: 8px;float: left"  styleClass="hide-column-names noBord" emptyMessage="#{bundle.noSpecs}" >
                                 <p:column width="20%" >  
                                     <p:outputLabel value="#{pss.specification.name}: " style="font-weight: bold;vertical-align: top;float: right"/> 
                                 </p:column> 

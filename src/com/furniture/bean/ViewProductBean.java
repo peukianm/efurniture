@@ -15,7 +15,10 @@ import com.furniture.entities.Measurment;
 import com.furniture.entities.Price;
 import com.furniture.entities.Product;
 import com.furniture.entities.Productspecification;
+import com.furniture.entities.Productvalue;
 import com.furniture.entities.Specification;
+import com.furniture.entities.Specificationcategory;
+import com.furniture.entities.Specificationvalue;
 import com.furniture.entities.Videoproduct;
 import com.furniture.util.FurnitureUtil;
 import java.io.Serializable;
@@ -28,6 +31,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.TreeNode;
 
@@ -43,17 +47,24 @@ public class ViewProductBean implements Serializable {
     private SessionBean sessionBean;
     private Product product;
     private String selectedNodePath;
-    private List<Productspecification> dimesionProductSpecifications = new ArrayList<Productspecification>(0);
-    private List<Productspecification> productSpecifications = new ArrayList<Productspecification>(0);
+    
+    
     private List<Price> prices = new ArrayList<Price>(0);
     private DualListModel subProducts;
     private DualListModel products;
+    
     private List<Imageproduct> images;
+    private Imageproduct newImage = new Imageproduct();
+    private Imageproduct selectedImage = new Imageproduct();
+    
     private List<Videoproduct> videos;
+    private Videoproduct newVideo = new Videoproduct();
+    private Videoproduct selectedVideo = new Videoproduct();
+    
     private Category selectedCategory;
     private TreeNode root;
     private TreeNode selectedNode;
-    private Specification selectedDimensionSpecidifcation;
+    
     private Double amount;
     private Double discount;
     private Double initialAmount;
@@ -61,6 +72,26 @@ public class ViewProductBean implements Serializable {
     private Date priceDate;
     private Measurment selectedMeasurment;
     private Price newPrice;
+    
+    
+    private List<Specification> specifications = new ArrayList<Specification>(0);
+    private List<Specification> selectedSpecification = new ArrayList<Specification>(0);
+    private List<Specificationcategory> selectedSpecificationCat = new ArrayList<Specificationcategory>(0);
+    private Specification specification = new Specification();
+    //Value attributes  
+    private List<Specificationvalue> svalues = new ArrayList<Specificationvalue>(0);
+    private List<Specificationvalue> selectedSvalues = new ArrayList<Specificationvalue>(0);
+    private Specificationvalue selectedSvalue;
+    private String svalue = new String();
+    private List<Productspecification> productSpecifications = new ArrayList<Productspecification>(0);
+    private List<Productspecification> dimesionProductSpecifications = new ArrayList<Productspecification>(0);
+    private Specification selectedDimensionSpecidifcation;
+    
+    private List<Productvalue> productValues = new ArrayList<Productvalue>(0);
+    private Productspecification productSpecification;
+    
+    
+    
 
     @PostConstruct
     public void init() {
@@ -86,7 +117,21 @@ public class ViewProductBean implements Serializable {
             List<Category> categories = dao.getCompanyRootCategories(company, Boolean.TRUE);
             root = FurnitureUtil.getCategoriesTree(categories);
 
+            selectedNode = new DefaultTreeNode(product.getFirstCategory(),null);
+             
             productSpecifications = product.getOtherProductSpecifications();
+//            for (int i = 0; i < productSpecifications.size(); i++) {
+//                Productspecification productSpecification = productSpecifications.get(i);
+//                System.out.println(productSpecification);
+//                List<Productvalue> pvs = productSpecification.getProductvalues();
+//                for (int j = 0; j < pvs.size(); j++) {
+//                    Productvalue productvalue = pvs.get(j);
+//                    System.out.println(productvalue);                                        
+//                }
+//                
+//            }
+            
+            
             dimesionProductSpecifications = product.getDimesnionProductSpecifications();
             prices = product.getPrices();
 
@@ -98,6 +143,119 @@ public class ViewProductBean implements Serializable {
     public void reset() {
     }
 
+    public Imageproduct getNewImage() {
+        return newImage;
+    }
+
+    public void setNewImage(Imageproduct newImage) {
+        this.newImage = newImage;
+    }
+
+    public Imageproduct getSelectedImage() {
+        return selectedImage;
+    }
+
+    public void setSelectedImage(Imageproduct selectedImage) {
+        this.selectedImage = selectedImage;
+    }
+
+    public Videoproduct getNewVideo() {
+        return newVideo;
+    }
+
+    public void setNewVideo(Videoproduct newVideo) {
+        this.newVideo = newVideo;
+    }
+
+    public Videoproduct getSelectedVideo() {
+        return selectedVideo;
+    }
+
+    public void setSelectedVideo(Videoproduct selectedVideo) {
+        this.selectedVideo = selectedVideo;
+    }
+
+    public List<Specification> getSpecifications() {
+        return specifications;
+    }
+
+    public void setSpecifications(List<Specification> specifications) {
+        this.specifications = specifications;
+    }
+
+    public List<Specification> getSelectedSpecification() {
+        return selectedSpecification;
+    }
+
+    public void setSelectedSpecification(List<Specification> selectedSpecification) {
+        this.selectedSpecification = selectedSpecification;
+    }
+
+    public List<Specificationcategory> getSelectedSpecificationCat() {
+        return selectedSpecificationCat;
+    }
+
+    public void setSelectedSpecificationCat(List<Specificationcategory> selectedSpecificationCat) {
+        this.selectedSpecificationCat = selectedSpecificationCat;
+    }
+
+    public Specification getSpecification() {
+        return specification;
+    }
+
+    public void setSpecification(Specification specification) {
+        this.specification = specification;
+    }
+
+    public List<Specificationvalue> getSvalues() {
+        return svalues;
+    }
+
+    public void setSvalues(List<Specificationvalue> svalues) {
+        this.svalues = svalues;
+    }
+
+    public List<Specificationvalue> getSelectedSvalues() {
+        return selectedSvalues;
+    }
+
+    public void setSelectedSvalues(List<Specificationvalue> selectedSvalues) {
+        this.selectedSvalues = selectedSvalues;
+    }
+
+    public Specificationvalue getSelectedSvalue() {
+        return selectedSvalue;
+    }
+
+    public void setSelectedSvalue(Specificationvalue selectedSvalue) {
+        this.selectedSvalue = selectedSvalue;
+    }
+
+    public String getSvalue() {
+        return svalue;
+    }
+
+    public void setSvalue(String svalue) {
+        this.svalue = svalue;
+    }
+
+    public List<Productvalue> getProductValues() {
+        return productValues;
+    }
+
+    public void setProductValues(List<Productvalue> productValues) {
+        this.productValues = productValues;
+    }
+
+    public Productspecification getProductSpecification() {
+        return productSpecification;
+    }
+
+    public void setProductSpecification(Productspecification productSpecification) {
+        this.productSpecification = productSpecification;
+    }
+    
+    
     public List<Imageproduct> getImages() {
         return images;
     }
@@ -249,7 +407,7 @@ public class ViewProductBean implements Serializable {
     public void setSessionBean(SessionBean sessionBean) {
         this.sessionBean = sessionBean;
     }
-
+ 
     public Product getProduct() {
         return product;
     }

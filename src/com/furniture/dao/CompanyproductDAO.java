@@ -170,7 +170,7 @@ public class CompanyproductDAO {
                 int rowStartIdx = Math.max(0, rowStartIdxAndCount[0]);
                 if (rowStartIdx > 0) {
                     query.setFirstResult(rowStartIdx);
-                }
+                } 
  
                 if (rowStartIdxAndCount.length > 1) {
                     int rowCount = Math.max(0, rowStartIdxAndCount[1]);
@@ -194,7 +194,7 @@ public class CompanyproductDAO {
             query.setParameter("company", company);
             return query.getResultList();
         } catch (RuntimeException re) {
-            logger.error("Error fetching products from company ", re);
+            logger.error("Error fetching products from company ", re);      
             throw re;
         }
 
@@ -218,7 +218,7 @@ public class CompanyproductDAO {
         } catch (RuntimeException re) {
             logger.error("Error fetching products from companyproduct ", re);
             throw re;
-        }
+        } 
 
     }
     

@@ -14,14 +14,20 @@
                 <title>#{sessionBean.pageName}</title>
             </f:facet>
 
-            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/css/default.css" />
+            <!--<link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/css/default.css" />  -->
 
             <ui:insert name="head"></ui:insert> 
 
             <script type="text/javascript">
                 $(function() {$('.sidebar a').hover(function() {$(this).toggleClass('ui-state-hover');})});
             </script>
-
+            <style type="text/css">
+                .mainBG{
+                    /*background-image:url('../images/gradient5.png'); */
+                    background-image:url('../images/kaplamas1.jpg') ;
+                    background-repeat:repeat;
+                }
+            </style>
 
 
             <script type="text/javascript">
@@ -61,6 +67,7 @@
         </h:head>
 
         <h:body  styleClass="mainBG">
+            <h:outputStylesheet name="css/default.css" />
             <p:idleMonitor timeout="1800000" onidle="idleDialog.show()">  
                 <p:ajax event="idle" listener="#{administrationAction.invalidateSession}"/>                  
             </p:idleMonitor> 

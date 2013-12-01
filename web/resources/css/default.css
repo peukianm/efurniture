@@ -535,10 +535,9 @@ img.right {
 }
 
 .mainBG{
-    /*background-image:url('../images/gradient5.png'); */
-    background-image:url('../images/kaplamas1.jpg') ;
-    
-    background-repeat:repeat;
+    /*background-image:url('../images/gradient5.png'); 
+    background-image:url('../images/kaplamas1.jpg') ;    
+    background-repeat:repeat; */
 }
 
 .ui-datepicker{
@@ -557,10 +556,20 @@ img.right {
     vertical-align: bottom;
 }
 
+.top > * {
+    vertical-align: top;
+}
+
 .ui-datatable table .noCollapse {
     border-collapse: separate ! important;
     padding:0px;
 }
+
+.ui-datatable thead tr th, .ui-datatable thead tr, .ui-datatable thead  {
+    font-weight: bold ! important;
+    
+}
+
 
 
 

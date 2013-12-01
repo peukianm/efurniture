@@ -28,6 +28,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 /**
  * Product entity.
@@ -162,7 +163,7 @@ public class Product implements java.io.Serializable {
         this.name = name;
     }
 
-    @Column(name = "DESCRIPTION", length = 400)
+    @Column(name = "DESCRIPTION", length = 800)
     public String getDescription() {
         return this.description;
     }
@@ -180,6 +181,7 @@ public class Product implements java.io.Serializable {
         this.active = active;
     }
 
+    @Version
     @Column(name = "CREATED_TIMESTAMP", length = 11, insertable = false, updatable = true)
     public Timestamp getCreatedTimestamp() {
         return this.createdTimestamp;
@@ -323,7 +325,7 @@ public class Product implements java.io.Serializable {
     /**
      * @return the catalogues
      */
-    @ManyToMany(cascade = CascadeType.REFRESH)
+    @ManyToMany(cascade = {CascadeType.REFRESH})
     @JoinTable(name = "CATPROD",
     joinColumns = {
         @JoinColumn(name = "PRODUCTID")

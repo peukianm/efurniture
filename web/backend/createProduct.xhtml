@@ -15,14 +15,11 @@
             .ui-confirm-dialog-severity {
                 margin: 0 7px 7px 0;
             }
+            .ui-datatable tbody td {
+                padding: 1px 5px;
+            }
         </style>
-        <script  type="text/javascript">
-            function reloadGalleria(){
-                alert('GO!!!!!!1');            
-                PrimeFaces.cw('Galleria','widget_galis',{id:'galiss',autoPlay:false,showCaption:true,panelWidth:500,panelHeight:313,custom:false},'galleria');        
-            } 
         
-        </script>
     </ui:define>
 
     <ui:define name="content" >
@@ -123,7 +120,7 @@
 
                                 <td style="vertical-align: top">
                                     <p:tabView id="tabView">    
-                                        <p:tab id="imagechar" title="#{bundle.productCharacteristics}"  style="padding:0px ! important; margin-left: 0px;  "  >
+                                        <p:tab id="imagechar" title="#{bundle.characteristics}"  style="padding:0px ! important; margin-left: 0px;  "  >
                                             <!--<p:outputLabel style="font-weight: bold;color: black" value="#{bundle.selectSpecCategory}:" /><br/>
                                             <p:spacer width="0" height="40" />-->
                                             <p:panel id="specsPanel" widgetVar="specsPanelWidget">
@@ -422,7 +419,7 @@
 
 
         <h:form id="updateVideoForm"> 
-            <p:dialog header="#{bundle.updateVideo}!!!!!!!!!!!" id="updateVideoID" position="top" widgetVar="updateVideoDialog" modal="true" draggable="false"   resizable="false">
+            <p:dialog header="#{bundle.updateVideo}" id="updateVideoID" position="top" widgetVar="updateVideoDialog" modal="true" draggable="false"   resizable="false">
                 <p:outputPanel id="updateVideoPanel" widgetVar="updateVideoPanelWidget">                                        
                     <p:dataTable value="#{newProductBean.videos}" var="video" rows="1" paginator="true"> 
                         <p:column> 
@@ -549,9 +546,8 @@
 
 
 
-
-
-        <h:form id="selectSpecForm"> 
+ 
+        <h:form id="selectSpecForm">  
             <p:dialog header="#{bundle.selectSpecification}" id="selectSpecID" position="center" widgetVar="selectSpecDialog" modal="true" minWidth="200" minHeight="500" resizable="false">
                 <p:dataTable id="specsTable" var="spec" value="#{newProductBean.specifications}" selection="#{newProductBean.specification}" widgetVar="specsTableWIdget"
                              emptyMessage="#{bundle.noRecordsFound}" rowIndexVar="tt"  rowKey="#{spec}" paginator="true" rows="15" >

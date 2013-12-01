@@ -56,6 +56,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.transaction.UserTransaction;
@@ -1394,6 +1395,854 @@ public class FurnitureAction {
             return "";
         }
     }
+    
+    
+    
+    public void updateProductName(){
+        
+        UserTransaction userTransaction = null;
+        try{
+            ViewProductBean viewProductBean = (ViewProductBean)FacesUtils.getManagedBean("viewProductBean");
+            Product product = viewProductBean.getProduct();
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            
+            if (viewProductBean.getSelectedNode()!=null && !viewProductBean.getSelectedNode().getData().equals(product.getFirstCategory())) {
+                System.out.println("UPDATING CAT !!!!!!!!!!!!!!!!!!!!!!1111111");
+                product.setCategories(null);
+                product = persistenceHelper.editPersist(product);
+                Category cat = (Category)viewProductBean.getSelectedNode().getData();
+                List<Category> cats = new ArrayList<Category>(0);
+                cats.add(cat); 
+                product.setCategories(cats);
+            }
+            
+            
+            product = persistenceHelper.editPersist(product);            
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), product, null, null, null, null, null);            
+            userTransaction.commit();
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+            viewProductBean.setProduct(product);
+            FacesUtils.callRequestContext("nameDialogWidget.hide()");
+            
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+    
+    public void updateProductDescription(){
+        
+        UserTransaction userTransaction = null;
+        try{
+            ViewProductBean viewProductBean = (ViewProductBean)FacesUtils.getManagedBean("viewProductBean");
+            Product product = viewProductBean.getProduct();
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();            
+            
+            product = persistenceHelper.editPersist(product);            
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), product, null, null, null, null, null);            
+            userTransaction.commit();
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+            viewProductBean.setProduct(product);
+            FacesUtils.callRequestContext("descriptionDialogWidget.hide()");
+            
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+       
+    
+    
+     public void onNodeSelec(NodeSelectEvent event) {          
+         System.out.println(event.getTreeNode());
+         ViewProductBean viewProductBean = (ViewProductBean)FacesUtils.getManagedBean("viewProductBean");         
+         viewProductBean.setSelectedNode(event.getTreeNode());
+    }  
+    
+    
+    public void updateProductdescription(){
+        
+        UserTransaction userTransaction = null;
+        try{
+            ViewProductBean viewProductBean = (ViewProductBean)FacesUtils.getManagedBean("viewProductBean");
+            Product product = viewProductBean.getProduct();
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            product = persistenceHelper.editPersist(product);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), product, null, null, null, null, null);
+            userTransaction.commit();
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+            
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+     public void showSpecificationsView() {
+        try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            List<Specificationcategory> specs = viewProductBean.getSelectedSpecificationCat();
+            SpecificationDAO dao = new SpecificationDAO();
+            Set<Specification> specifications = new HashSet<Specification>(0);
+            for (int i = 0; i < specs.size(); i++) {
+                Specificationcategory specificationcategory = (Specificationcategory) specs.get(i);
+                specifications.addAll(dao.findByProperty("specificationcategory", specificationcategory));
+            }
+
+             
+                ItemspecificationDAO d = new ItemspecificationDAO();
+                specifications.addAll(d.fetchItemSpecifications(viewProductBean.getProduct().getItem(), true, false));
+            
+
+
+            viewProductBean.setSpecifications(new ArrayList<Specification>(specifications));
+            FacesUtils.callRequestContext("selectSpecDialog.show();");
+
+        } catch (Exception e) {  
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    } 
+     
+      public void deleteProductSpecificationView() {
+        UserTransaction userTransaction = null;
+          try {            
+            System.out.println("DELETING SPECIFICATION !!!!!");            
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            Product product = viewProductBean.getProduct();
+            List<Productspecification> productSpecifications = viewProductBean.getProductSpecifications();
+            Productspecification productSpecification = viewProductBean.getProductSpecification();                        
+            productSpecifications.remove(productSpecification);            
+            viewProductBean.setProductSpecifications(productSpecifications);
+              System.out.println(product);
+              System.out.println(productSpecification);
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            product.getProductspecifications().remove(productSpecification);
+            persistenceHelper.remove(productSpecification);            
+            //product = persistenceHelper.editPersist(product);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), product, null, null, null, null, null);            
+            viewProductBean.setProduct(product);
+            userTransaction.commit();
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+     }
+      
+      public void selectSpecificationView() {
+        try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            Specification spec = viewProductBean.getSpecification();
+            SpecificationvalueDAO dao = new SpecificationvalueDAO();
+            List<Specificationvalue> svalues = dao.findByProperty("specification", spec);
+
+            viewProductBean.setSvalue(null);
+            viewProductBean.setSelectedSvalues(null);
+            viewProductBean.setSelectedSvalue(null);
+
+            viewProductBean.setSvalues(svalues);
+            FacesUtils.callRequestContext("selectValueDialog.show();");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+      
+      
+      public void selectSValuesView() {
+        UserTransaction userTransaction = null;
+          try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            Product newProduct = viewProductBean.getProduct();
+            Specification spec = viewProductBean.getSpecification();
+
+            List<Productspecification> productSpecifications = viewProductBean.getProductSpecifications();
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            Productspecification productSpecification = new Productspecification();
+            productSpecification.setSpecification(spec);
+            productSpecification.setProduct(newProduct);            
+            productSpecification.setActive(BigDecimal.ONE);            
+            
+            List<Productvalue> productValues = viewProductBean.getProductValues();
+            
+            if (spec.getFreetext().equals(BigDecimal.ZERO) && spec.getMultiplevalues().equals(BigDecimal.ONE)) {
+                List<Specificationvalue> svalues = viewProductBean.getSelectedSvalues();
+                for (int i = 0; i < svalues.size(); i++) {
+                    Productvalue productvalue = new Productvalue();
+                    productvalue.setProductspecification(productSpecification);
+                    Specificationvalue specificationvalue = svalues.get(i);
+                    productvalue.setSvalue(specificationvalue.getSvalue());
+                    productValues.add(productvalue);
+                    productvalue.setActive(BigDecimal.ONE);
+                    productSpecification.getProductvalues().add(productvalue);
+                }
+
+            }
+
+
+            if (spec.getFreetext().equals(BigDecimal.ZERO) && spec.getMultiplevalues().equals(BigDecimal.ZERO)) {
+                Specificationvalue svalue = viewProductBean.getSelectedSvalue();
+                Productvalue productvalue = new Productvalue();
+                productvalue.setProductspecification(productSpecification);
+                productvalue.setSvalue(svalue.getSvalue());
+                productValues.add(productvalue);
+                productvalue.setActive(BigDecimal.ONE);
+                productSpecification.getProductvalues().add(productvalue);
+            }
+
+            if (spec.getFreetext().equals(BigDecimal.ONE)) {
+                String svalue = viewProductBean.getSvalue();
+                Productvalue productvalue = new Productvalue();
+                productvalue.setProductspecification(productSpecification);
+                productvalue.setValue(svalue);
+                productValues.add(productvalue);
+                productvalue.setActive(BigDecimal.ONE);
+                productSpecification.getProductvalues().add(productvalue);
+            }
+
+            productSpecification = persistenceHelper.editPersist(productSpecification);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), newProduct, null, null, null, null, null);            
+            productSpecifications.add(productSpecification);
+            
+            userTransaction.commit(); 
+            System.out.println("productSpecifications=" + productSpecifications.size());
+            System.out.println("productValues=" + productValues.size());
+
+            viewProductBean.setProductSpecifications(productSpecifications);
+            viewProductBean.setProductValues(productValues);
+
+            FacesUtils.callRequestContext("selectValueDialog.hide();");
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+      
+      
+      public void insertDimensionActionView() {
+        UserTransaction userTransaction = null;
+          try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+             
+            Product newProduct = viewProductBean.getProduct();
+            Specification spec = viewProductBean.getSpecification();
+
+            
+            List<Productspecification> dimensionProductSpecifications = viewProductBean.getDimesionProductSpecifications();
+            System.out.println("SPECIFICATIO PRIN TO ADD="+dimensionProductSpecifications.size());
+            
+            
+            Productspecification productSpecification = new Productspecification();
+            productSpecification.setSpecification(spec);
+            productSpecification.setProduct(newProduct);
+            productSpecification.setActive(BigDecimal.ONE);
+                        
+            
+            List<Productvalue> productValues = viewProductBean.getProductValues();
+            String svalue = viewProductBean.getSvalue();               
+            Productvalue productvalue = new Productvalue();
+            productvalue.setProductspecification(productSpecification);
+            productvalue.setValue(svalue);            
+            productvalue.setActive(BigDecimal.ONE);
+            productvalue.setMeasurment(viewProductBean.getSelectedMeasurment());
+            productValues.add(productvalue);            
+            productSpecification.getProductvalues().add(productvalue);
+            
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            productSpecification = persistenceHelper.editPersist(productSpecification);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), newProduct, null, null, null, null, null);            
+            dimensionProductSpecifications.add(productSpecification);
+            userTransaction.commit();
+                        
+            viewProductBean.setDimesionProductSpecifications(dimensionProductSpecifications);
+            viewProductBean.setProductValues(productValues);
+
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+            //FacesUtils.callRequestContext("selectDimensionValueDialog.hide();");
+            
+        } catch (Exception e) {
+             try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();    
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+     
+     public void deleteProductDimensionSpecificationView(Productspecification productSpecification) {
+         UserTransaction userTransaction = null;
+         try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            List<Productspecification> productDimensionSpecifications = viewProductBean.getDimesionProductSpecifications();
+            //Productspecification productSpecification = viewProductBean.getProductSpecification();            
+            productDimensionSpecifications.remove(productSpecification);            
+            viewProductBean.setDimesionProductSpecifications(productDimensionSpecifications);
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            persistenceHelper.remove(productSpecification);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
+            userTransaction.commit();
+            
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+            FacesUtils.updateHTMLComponnetWIthJS("dimensionForm");
+
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    } 
+    
+    
+    public void showDimensionSpecificationsView() {
+        try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            Item item = viewProductBean.getProduct().getItem();
+            ItemspecificationDAO dao = new ItemspecificationDAO();
+            List<Specification> specs = dao.fetchItemDimensionSpecifications(item, Boolean.TRUE);
+            viewProductBean.setSpecifications(specs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+    public void updateFinalPriceViewProduct() {
+        try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            if (viewProductBean.getInitialAmount() != null && viewProductBean.getInitialAmount() != null) {
+                Double finalPrice = viewProductBean.getInitialAmount() * (100 - viewProductBean.getDiscount()) / 100;
+                viewProductBean.setAmount(finalPrice);
+            }
+        } catch (Exception e) {           
+        }
+    }
+    
+    public void insertPriceViewProduct() {
+        UserTransaction userTransaction = null;
+        try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            Price newPrice = new Price();
+            newPrice.setAmount(viewProductBean.getAmount());
+            newPrice.setInitialprice(viewProductBean.getInitialAmount());
+            newPrice.setDiscount(viewProductBean.getDiscount());
+            newPrice.setCompany(viewProductBean.getProduct().getFirstCompany());
+            
+            newPrice.setActive(BigDecimal.ONE);
+            newPrice.setProduct(viewProductBean.getProduct());
+            newPrice.setPricedate(viewProductBean.getPriceDate());
+            newPrice.setCurrency(viewProductBean.getCurrency());
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            newPrice = persistenceHelper.editPersist(newPrice);
+            
+            
+            List<Price> prices = viewProductBean.getPrices();
+            for (int i = 0; i < prices.size(); i++) {
+                Price price = prices.get(i); 
+                System.out.println(price);
+                System.out.println(persistenceHelper.getEntityManager().contains(price));
+                persistenceHelper.remove(price);                
+            }
+            
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
+            userTransaction.commit();
+            
+            List<Price> pricess = new ArrayList<Price>(0);
+            pricess.add(newPrice);
+            viewProductBean.setPrices(pricess);
+            
+            viewProductBean.setAmount(null);
+            viewProductBean.setInitialAmount(null);
+            viewProductBean.setDiscount(null);
+            viewProductBean.setPriceDate(null);
+            viewProductBean.setCurrency(null);
+            
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+            
+            
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    public void resetPriceViewProduct() {
+        try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            viewProductBean.setAmount(null);
+            viewProductBean.setInitialAmount(null);
+            viewProductBean.setDiscount(null);
+            viewProductBean.setPriceDate(null);
+            viewProductBean.setCurrency(null);            
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    public void resetPriceValueView() {
+        UserTransaction userTransaction = null;
+        try {
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");            
+            persistenceHelper.remove(viewProductBean.getPrices().get(0));
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
+            userTransaction.commit(); 
+            viewProductBean.setPrices(new ArrayList<Price>(0));
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+           
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+     
+    
+    public void saveBProducts() {
+        UserTransaction userTransaction = null;
+        try {
+            
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");            
+            List<Product> pproducts = viewProductBean.getProducts().getTarget();
+            Product product = viewProductBean.getProduct();
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();            
+            product.setParentproducts(pproducts);
+            product = persistenceHelper.editPersist(product);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
+            userTransaction.commit(); 
+            viewProductBean.setProduct(product);
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+           
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    public void saveSProducts() {
+        UserTransaction userTransaction = null;
+        try {
+            
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");            
+            List<Product> sproducts = viewProductBean.getSubProducts().getTarget();
+            Product product = viewProductBean.getProduct();
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();            
+            product.setSubproducts(sproducts);
+            product = persistenceHelper.editPersist(product);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
+            userTransaction.commit(); 
+            viewProductBean.setProduct(product);
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+           
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    public void openSelectImageViewDlg() {
+        try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            viewProductBean.setNewImage(new Imageproduct());
+            FacesUtils.callRequestContext("dialogFotos.show();");
+            FacesUtils.updateHTMLComponnetWIthJS("imgData");
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            FacesUtils.goError(ex, logger, sessionBean.getUsers(), sessionBean.getErrorMsgKey());
+        }
+    }
+ 
+    public void openSelectVideoViewDlg() {
+        try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            viewProductBean.setNewVideo(new Videoproduct());
+            FacesUtils.updateHTMLComponnetWIthJS("videoData");
+            FacesUtils.callRequestContext("dialogVideos.show();");
+            
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            FacesUtils.goError(ex, logger, sessionBean.getUsers(), sessionBean.getErrorMsgKey());
+        }
+    }
+    
+    public void handleFileUploadView(FileUploadEvent event) {
+        try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            UploadedFile file = event.getFile();
+            String path = SystemParameters.getInstance().getProperty("PATH_WEB_TEMP");
+
+            Imageproduct newImage = new Imageproduct();
+            newImage.setActive(BigDecimal.ONE);
+            newImage.setFilename(file.getFileName());
+            newImage.setProduct(viewProductBean.getProduct());
+            newImage.setPath(path + "\\" + viewProductBean.getProduct().getProductid() + "\\images\\"+ file.getFileName());
+            viewProductBean.setNewImage(newImage);
+
+            //IOUtils.saveBinaryFile(path + "\\" + viewProductBean.getProduct().getProductid() + "\\images\\" + file.getFileName(), file.getInputstream());
+            IOUtils.saveBinaryFile(path + "\\" + file.getFileName(), file.getInputstream());
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            FacesUtils.goError(ex, logger, sessionBean.getUsers(), sessionBean.getErrorMsgKey());
+        }
+    }
+
+    public void handleFileUploadVideoView(FileUploadEvent event) {
+        try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            UploadedFile file = event.getFile();
+            String path = SystemParameters.getInstance().getProperty("PATH_WEB_TEMP");
+
+            Videoproduct newVideo = new Videoproduct();
+            newVideo.setActive(BigDecimal.ONE);
+            newVideo.setFilename(file.getFileName());
+            newVideo.setProduct(viewProductBean.getProduct());
+            newVideo.setPath(path + "\\" + viewProductBean.getProduct().getProductid() + "\\videos\\"+ file.getFileName());
+            viewProductBean.setNewVideo(newVideo);
+
+            //IOUtils.saveBinaryFile(path + "\\" + viewProductBean.getProduct().getProductid() + "\\videos\\" + file.getFileName(), file.getInputstream());
+            IOUtils.saveBinaryFile(path + "\\"  + file.getFileName(), file.getInputstream());
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            FacesUtils.goError(ex, logger, sessionBean.getUsers(), sessionBean.getErrorMsgKey());
+        }
+    }
+    
+    public void savePhotoView() {
+        UserTransaction userTransaction = null;
+        try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            List<Imageproduct> images = viewProductBean.getImages();
+            Imageproduct image = viewProductBean.getNewImage();
+            
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            image = persistenceHelper.editPersist(image);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
+            images.add(image);            
+            userTransaction.commit();
+            
+            String tempPath = image.getPath();
+            String finalPath = SystemParameters.getInstance().getProperty("PATH_WEB_PRODUCTS")+"\\"+viewProductBean.getProduct().getProductid()+"\\images\\"+image.getFilename();                                
+            IOUtils.saveBinaryFile(finalPath, new FileInputStream(tempPath)); 
+            IOUtils.deleteFile(tempPath);
+            
+            viewProductBean.setNewImage(new Imageproduct());
+            viewProductBean.setImages(images);
+            FacesUtils.callRequestContext("dialogFotos.hide();");
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+        } catch (Exception ex) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            ex.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            FacesUtils.goError(ex, logger, sessionBean.getUsers(), sessionBean.getErrorMsgKey());
+        }
+    }
+
+    public void saveVideoView() {
+        UserTransaction userTransaction = null;
+        try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            List<Videoproduct> videos = viewProductBean.getVideos();
+            Videoproduct video = viewProductBean.getNewVideo();
+            
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            video = persistenceHelper.editPersist(video);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
+            videos.add(video);            
+            userTransaction.commit();
+            
+            String tempPath = video.getPath();
+            String finalPath = SystemParameters.getInstance().getProperty("PATH_WEB_PRODUCTS")+"\\"+viewProductBean.getProduct().getProductid()+"\\videos\\"+video.getFilename();                                
+            IOUtils.saveBinaryFile(finalPath, new FileInputStream(tempPath)); 
+            IOUtils.deleteFile(tempPath);
+            
+            viewProductBean.setNewVideo(new Videoproduct()); 
+            viewProductBean.setVideos(videos);
+            FacesUtils.callRequestContext("dialogVideos.hide();");
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+        } catch (Exception ex) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            ex.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            FacesUtils.goError(ex, logger, sessionBean.getUsers(), sessionBean.getErrorMsgKey());
+        }
+    }
+    
+    
+    
+    public void saveImageOrderView() {
+        UserTransaction userTransaction = null;
+        try {            
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            Imageproduct image = viewProductBean.getSelectedImage();
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
+            userTransaction.commit();
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+            FacesUtils.callRequestContext("updateImageOrderDialog.hide()");            
+        } catch (Exception e) {
+             try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    public void saveImageDescriptionView() {
+        UserTransaction userTransaction = null;
+        try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            Imageproduct image = viewProductBean.getSelectedImage();
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
+            userTransaction.commit();
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+            FacesUtils.callRequestContext("updateImageDescriptionDialog.hide()");
+        } catch (Exception e) {
+             try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    public void removeImageView() {
+        UserTransaction userTransaction = null;
+        try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            Imageproduct image = viewProductBean.getSelectedImage();
+            List<Imageproduct> images = viewProductBean.getImages();
+            
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
+            userTransaction.commit();
+            
+            images.remove(image);
+            viewProductBean.setImages(images);
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+            FacesUtils.callRequestContext("updateImageDialog.hide()");
+        } catch (Exception e) {
+             try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+    public void saveVideoOrderView() {
+        UserTransaction userTransaction = null;
+        try {            
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            Videoproduct video = viewProductBean.getSelectedVideo();
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
+            userTransaction.commit();
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+            FacesUtils.callRequestContext("updateVideoOrderDialog.hide()");            
+        } catch (Exception e) {
+             try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+    public void saveVideoDescriptionView() {
+        UserTransaction userTransaction = null;
+        try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            Videoproduct video = viewProductBean.getSelectedVideo();
+            
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
+            userTransaction.commit();
+            
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+            FacesUtils.callRequestContext("updateVideoDescriptionDialog.hide()");
+        } catch (Exception e) {
+             try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+    public void removeVideoView() {
+        UserTransaction userTransaction = null;
+        try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            Videoproduct video = viewProductBean.getSelectedVideo();
+            List<Videoproduct> videos = viewProductBean.getVideos();
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
+            userTransaction.commit();
+            
+            videos.remove(video);
+            viewProductBean.setVideos(videos);
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+            FacesUtils.callRequestContext("updateVideoDialog.hide()");
+        } catch (Exception e) {
+             try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+
+    
+    
+    
+    
+    
+    
+    
+   
+           
+      
+    
+    
+    
+    
+    
 
     public void searchProductAction() {
         try {
@@ -1664,10 +2513,7 @@ public class FurnitureAction {
                 Double finalPrice = priceBean.getInitialAmount() * (100 - priceBean.getDiscount()) / 100;
                 priceBean.setAmount(finalPrice);
             }
-        } catch (Exception e) {
-            //e.printStackTrace();
-            //sessionBean.setErrorMsgKey("errMsg_GeneralError");
-            //goError(e);
+        } catch (Exception e) {           
         }
     }
 
