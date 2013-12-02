@@ -102,8 +102,7 @@ public class FurnitureAction {
     
     public String viewProduct(Product product) {
         try {
-            sessionBean.setParameter(product);
-            System.out.println("Product="+product);            
+            sessionBean.setParameter(product);            
             ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
             viewProductBean.reset();
 
@@ -175,7 +174,6 @@ public class FurnitureAction {
     }
 
     public void handleCompanySelect() {
-        System.out.println("HANDLING CHANGE COMPAMNY !!!!");
         try {
         NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
         Company company = newProductBean.getSelectedCompany();
@@ -405,9 +403,6 @@ public class FurnitureAction {
             }
 
 
-            System.out.println("productSpecifications=" + productSpecifications.size());
-            System.out.println("productValues=" + productValues.size());
-
             newProductBean.setProductSpecifications(productSpecifications);
             newProductBean.setProductValues(productValues);
 
@@ -468,7 +463,6 @@ public class FurnitureAction {
     
     public void saveImageOrder() {
         try {
-            System.out.println("SAVING ORDER");
             NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
             Imageproduct image = newProductBean.getSelectedImage();
             FacesUtils.callRequestContext("updateImageOrderDialog.hide()");            
@@ -581,7 +575,6 @@ public class FurnitureAction {
             newProductBean.setDiscount(null);
             newProductBean.setPriceDate(null);
             newProductBean.setCurrency(null);
-            System.out.println("PROCES.size="+newProductBean.getPrices().size());
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -598,7 +591,6 @@ public class FurnitureAction {
             newProductBean.setDiscount(null);
             newProductBean.setPriceDate(null);
             newProductBean.setCurrency(null);
-            System.out.println("RESET!!!!!!!!!!!!!!!");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -628,9 +620,7 @@ public class FurnitureAction {
             Specification spec = newProductBean.getSpecification();
 
             
-            List<Productspecification> dimensionProductSpecifications = newProductBean.getDimesionProductSpecifications();
-            System.out.println("SPECIFICATIO PRIN TO ADD="+dimensionProductSpecifications.size());
-            
+            List<Productspecification> dimensionProductSpecifications = newProductBean.getDimesionProductSpecifications();            
             
             Productspecification productSpecification = new Productspecification();
             productSpecification.setSpecification(spec);
@@ -650,7 +640,6 @@ public class FurnitureAction {
             
             dimensionProductSpecifications.add(productSpecification);
             
-            System.out.println("SPECIFICATIO META TO ADD="+dimensionProductSpecifications.size());
             newProductBean.setDimesionProductSpecifications(dimensionProductSpecifications);
             newProductBean.setProductValues(productValues);
 
@@ -684,9 +673,8 @@ public class FurnitureAction {
     public void selectPProduct(TransferEvent event) {
         try {
             NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
-             for(Object item : event.getItems()) {  
-                  System.out.println(item);
-            }    
+//             for(Object item : event.getItems()) {  
+//            }    
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -770,24 +758,22 @@ public class FurnitureAction {
     public void insertProduct() {
         try {
             NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
-            if (newProductBean.getImages() == null || newProductBean.getImages().size() == 0) {                
-                sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noImagesInserted"));
-                sessionBean.setShowGeneralDialog(Boolean.TRUE);
-                FacesUtils.updateHTMLComponnetWIthJS("primeAlertPanel");
-                return;
-            }
-
-//            if (newProductBean.getProductSpecifications() == null || newProductBean.getProductSpecifications().size() == 0) {
-//                sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noSpecificationsInserted"));
-//                sessionBean.setShowGeneralDialog(Boolean.TRUE);
+//            if (newProductBean.getImages() == null || newProductBean.getImages().size() == 0) {                
+//                sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noImagesInserted"));                                
+//                FacesUtils.callRequestContext("alertMessageDlg.show()");        
 //                FacesUtils.updateHTMLComponnetWIthJS("primeAlertPanel");
 //                return;
 //            }
 
+//            if (newProductBean.getProductSpecifications() == null || newProductBean.getProductSpecifications().size() == 0) {
+//                sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noSpecificationsInserted"));                                
+//                FacesUtils.callRequestContext("alertMessageDlg.show()");        
+//                FacesUtils.updateHTMLComponnetWIthJS("primeAlertPanel");//            }
+
             if (newProductBean.getSelectedNode() == null ) {
                 sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noCategorySelected"));
-                sessionBean.setShowGeneralDialog(Boolean.TRUE);
-                FacesUtils.updateHTMLComponnetWIthJS(":primeAlertPanel");
+                FacesUtils.callRequestContext("alertMessageDlg.show()"); 
+                FacesUtils.updateHTMLComponnetWIthJS(":alertMsgForm:primePanel");
                 return;
             }
             
@@ -865,7 +851,6 @@ public class FurnitureAction {
     }
 
     public void handleCompanySelectUpdate() {
-        System.out.println("HANDLING CHANGE COMPAMNY !!!!");
         UpdateProductBean updateProductBean = (UpdateProductBean) FacesUtils.getManagedBean("updateProductBean");
 
         Set<Productline> productLines = new HashSet<Productline>(0);
@@ -1090,9 +1075,6 @@ public class FurnitureAction {
             }
 
 
-            System.out.println("productSpecifications=" + productSpecifications.size());
-            System.out.println("productValues=" + productValues.size());
-
             updateProductBean.setProductSpecifications(productSpecifications);
             updateProductBean.setProductValues(productValues);
 
@@ -1111,7 +1093,6 @@ public class FurnitureAction {
             List<Productspecification> productSpecifications = updateProductBean.getProductSpecifications();
             Productspecification productSpecification = updateProductBean.getProductSpecification();
             productSpecifications.remove(productSpecification);
-            System.out.println("size=" + productSpecifications.size());
             updateProductBean.setProductSpecifications(productSpecifications);
 
         } catch (Exception e) {
@@ -1302,25 +1283,17 @@ public class FurnitureAction {
 
 
             for (int i = 0; i < product.getCompanyproducts().size(); i++) {
-                System.out.println("REMOVINH Companyproducts");
-                System.out.println("ID="+product.getCompanyproducts().get(i).getId());                
                 persistenceHelper.remove(product.getCompanyproducts().get(i));
             }
 
             for (int i = 0; i < product.getProductlineproducts().size(); i++) {
-                System.out.println("REMOVINH Productlineproducts");
-                System.out.println("ID="+product.getProductlineproducts().get(i).getId());
                 persistenceHelper.remove(product.getProductlineproducts().get(i));
             }
  
 //            for (int i = 0; i < product.getImageproducts().size(); i++) {
-//                System.out.println("REMOVINH images");
-//                System.out.println("ID="+product.getImageproducts().get(i).getImageid());
 //                persistenceHelper.remove(product.getImageproducts().get(i));
 //            }
 //            for (int i = 0; i < product.getVideoproducts().size(); i++) {
-//                System.out.println("REMOVINH video");
-//                System.out.println("ID="+product.getVideoproducts().get(i).getVideoid());
 //                persistenceHelper.remove(product.getVideoproducts().get(i));
 //            }
             
@@ -1333,15 +1306,12 @@ public class FurnitureAction {
             product.setActive(BigDecimal.ONE);
             product.setCompanyproducts(null);
             product.setProductlineproducts(null);
-            System.out.println("NAME="+product.getName());
             product = persistenceHelper.editPersist(product);
-            System.out.println("NAME="+product.getName());
             
             
             List<Company> companies = updateProductBean.getSelectedCompanies();
             List<Companyproduct> companyproducts = new ArrayList<Companyproduct>(0);
             for (int i = 0; i < companies.size(); i++) {
-                System.out.println("ADDING COMPANY="+companies.get(i));
                 Company company = companies.get(i);
                 Companyproduct companyproduct = new Companyproduct();
                 companyproduct.setActive(BigDecimal.ONE);
@@ -1371,9 +1341,7 @@ public class FurnitureAction {
 
             List<Videoproduct> videos = updateProductBean.getVideos();
             product.setVideoproducts(videos);
-            System.out.println("NAME="+product.getName());
             product = persistenceHelper.editPersist(product);
-            System.out.println("NAME="+product.getName());
             persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), product, null, null, null, null, null);
             //persistenceHelper.getEntityManager().refresh(product);
             userTransaction.commit();
@@ -1408,7 +1376,6 @@ public class FurnitureAction {
             userTransaction.begin();
             
             if (viewProductBean.getSelectedNode()!=null && !viewProductBean.getSelectedNode().getData().equals(product.getFirstCategory())) {
-                System.out.println("UPDATING CAT !!!!!!!!!!!!!!!!!!!!!!1111111");
                 product.setCategories(null);
                 product = persistenceHelper.editPersist(product);
                 Category cat = (Category)viewProductBean.getSelectedNode().getData();
@@ -1471,7 +1438,6 @@ public class FurnitureAction {
     
     
      public void onNodeSelec(NodeSelectEvent event) {          
-         System.out.println(event.getTreeNode());
          ViewProductBean viewProductBean = (ViewProductBean)FacesUtils.getManagedBean("viewProductBean");         
          viewProductBean.setSelectedNode(event.getTreeNode());
     }  
@@ -1532,15 +1498,12 @@ public class FurnitureAction {
       public void deleteProductSpecificationView() {
         UserTransaction userTransaction = null;
           try {            
-            System.out.println("DELETING SPECIFICATION !!!!!");            
             ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
             Product product = viewProductBean.getProduct();
             List<Productspecification> productSpecifications = viewProductBean.getProductSpecifications();
             Productspecification productSpecification = viewProductBean.getProductSpecification();                        
             productSpecifications.remove(productSpecification);            
             viewProductBean.setProductSpecifications(productSpecifications);
-              System.out.println(product);
-              System.out.println(productSpecification);
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
             product.getProductspecifications().remove(productSpecification);
@@ -1641,8 +1604,6 @@ public class FurnitureAction {
             productSpecifications.add(productSpecification);
             
             userTransaction.commit(); 
-            System.out.println("productSpecifications=" + productSpecifications.size());
-            System.out.println("productValues=" + productValues.size());
 
             viewProductBean.setProductSpecifications(productSpecifications);
             viewProductBean.setProductValues(productValues);
@@ -1671,9 +1632,7 @@ public class FurnitureAction {
             Specification spec = viewProductBean.getSpecification();
 
             
-            List<Productspecification> dimensionProductSpecifications = viewProductBean.getDimesionProductSpecifications();
-            System.out.println("SPECIFICATIO PRIN TO ADD="+dimensionProductSpecifications.size());
-            
+            List<Productspecification> dimensionProductSpecifications = viewProductBean.getDimesionProductSpecifications();            
             
             Productspecification productSpecification = new Productspecification();
             productSpecification.setSpecification(spec);
@@ -1795,8 +1754,6 @@ public class FurnitureAction {
             List<Price> prices = viewProductBean.getPrices();
             for (int i = 0; i < prices.size(); i++) {
                 Price price = prices.get(i); 
-                System.out.println(price);
-                System.out.println(persistenceHelper.getEntityManager().contains(price));
                 persistenceHelper.remove(price);                
             }
             
@@ -2011,13 +1968,15 @@ public class FurnitureAction {
             userTransaction.begin();
             image = persistenceHelper.editPersist(image);
             persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
-            images.add(image);            
-            userTransaction.commit();
-            
-            String tempPath = image.getPath();
+                        
+            String tempPath = SystemParameters.getInstance().getProperty("PATH_WEB_TEMP")+"\\"+image.getFilename();                              
             String finalPath = SystemParameters.getInstance().getProperty("PATH_WEB_PRODUCTS")+"\\"+viewProductBean.getProduct().getProductid()+"\\images\\"+image.getFilename();                                
             IOUtils.saveBinaryFile(finalPath, new FileInputStream(tempPath)); 
             IOUtils.deleteFile(tempPath);
+            userTransaction.commit();
+            
+            
+            images.add(image);
             
             viewProductBean.setNewImage(new Imageproduct());
             viewProductBean.setImages(images);
@@ -2047,12 +2006,13 @@ public class FurnitureAction {
             video = persistenceHelper.editPersist(video);
             persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
             videos.add(video);            
-            userTransaction.commit();
             
-            String tempPath = video.getPath();
+            
+            String tempPath = SystemParameters.getInstance().getProperty("PATH_WEB_TEMP")+"\\"+video.getFilename(); 
             String finalPath = SystemParameters.getInstance().getProperty("PATH_WEB_PRODUCTS")+"\\"+viewProductBean.getProduct().getProductid()+"\\videos\\"+video.getFilename();                                
             IOUtils.saveBinaryFile(finalPath, new FileInputStream(tempPath)); 
             IOUtils.deleteFile(tempPath);
+            userTransaction.commit();
             
             viewProductBean.setNewVideo(new Videoproduct()); 
             viewProductBean.setVideos(videos);
@@ -2079,9 +2039,10 @@ public class FurnitureAction {
             Imageproduct image = viewProductBean.getSelectedImage();
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
-            
+            image = persistenceHelper.editPersist(image);
             persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
             userTransaction.commit();
+            viewProductBean.setSelectedImage(image);
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
             FacesUtils.callRequestContext("updateImageOrderDialog.hide()");            
         } catch (Exception e) {
@@ -2102,9 +2063,10 @@ public class FurnitureAction {
             Imageproduct image = viewProductBean.getSelectedImage();
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
-            
+            image = persistenceHelper.editPersist(image);
             persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
             userTransaction.commit();
+            viewProductBean.setSelectedImage(image);
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
             FacesUtils.callRequestContext("updateImageDescriptionDialog.hide()");
         } catch (Exception e) {
@@ -2125,13 +2087,14 @@ public class FurnitureAction {
             Imageproduct image = viewProductBean.getSelectedImage();
             List<Imageproduct> images = viewProductBean.getImages();
             
+            images.remove(image);
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
-            
+            persistenceHelper.remove(image);            
             persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
             userTransaction.commit();
             
-            images.remove(image);
+            
             viewProductBean.setImages(images);
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
             FacesUtils.callRequestContext("updateImageDialog.hide()");
@@ -2155,9 +2118,10 @@ public class FurnitureAction {
             Videoproduct video = viewProductBean.getSelectedVideo();
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
-            
+            video = persistenceHelper.editPersist(video);
             persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
             userTransaction.commit();
+            viewProductBean.setSelectedVideo(video);
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
             FacesUtils.callRequestContext("updateVideoOrderDialog.hide()");            
         } catch (Exception e) {
@@ -2181,10 +2145,10 @@ public class FurnitureAction {
             
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
-            
+            video = persistenceHelper.editPersist(video);
             persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
             userTransaction.commit();
-            
+            viewProductBean.setSelectedVideo(video);
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
             FacesUtils.callRequestContext("updateVideoDescriptionDialog.hide()");
         } catch (Exception e) {
@@ -2208,7 +2172,7 @@ public class FurnitureAction {
             List<Videoproduct> videos = viewProductBean.getVideos();
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
-            
+            persistenceHelper.remove(video);
             persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
             userTransaction.commit();
             
@@ -2281,7 +2245,6 @@ public class FurnitureAction {
         try {
 
             ProductSearchBean productSearchBean = (ProductSearchBean) FacesUtils.getManagedBean("productSearchBean");
-            System.out.println(productSearchBean.getSelectedProduct());
             FacesUtils.updateHTMLComponnetWIthJS("productPreviewForm");
             FacesUtils.callRequestContext("productPreviewDialog.show();");
 
@@ -2325,9 +2288,6 @@ public class FurnitureAction {
         UserTransaction userTransaction = null;
         try {
             ProductSearchBean productSearchBean = (ProductSearchBean) FacesUtils.getManagedBean("productSearchBean");
-            System.out.println("PRODUCT=" + productSearchBean.getSelectedProduct());
-            System.out.println(productSearchBean.getSearchByName());
-
             Product product = productSearchBean.getSelectedProduct();
 
             userTransaction = persistenceHelper.getUserTransaction();
@@ -2376,7 +2336,6 @@ public class FurnitureAction {
             if (product != null) {
                 List<Price> prices = (new PriceDAO()).findByProperty("product", product);
                 List<Company> companies = product.getOrderedCompanies();
-                System.out.println("COMPANIES SIZE=" + companies.size());
 //                Collections.sort(prices, new Comparator<Price>() {
 //                    public int compare(Price one, Price other) {
 //                        return one.getPricedate().compareTo(other.getPricedate());
@@ -2396,7 +2355,6 @@ public class FurnitureAction {
 
     public void handleCompanySelectCatalogue() {
         try {
-            System.out.println("HANDLING CHANGE COMPAMNY !!!!");
             PriceBean priceBean = (PriceBean) FacesUtils.getManagedBean("priceBean");
 
             Company company = priceBean.getSelectedCompany();
@@ -2472,7 +2430,6 @@ public class FurnitureAction {
         try {
             PriceBean priceBean = (PriceBean) FacesUtils.getManagedBean("priceBean");
             Price price = priceBean.getPrice();
-            System.out.println("PRICE=" + price);
 
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
@@ -2481,7 +2438,6 @@ public class FurnitureAction {
                     null, null, null, null, null);
             userTransaction.commit();
             List<Price> prices = (new PriceDAO()).findByProperty("product", priceBean.getSelectedProduct());
-            System.out.println("Prices size="+prices.size());
             priceBean.setPrices(prices);
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("msgDeletePrice"));
 
@@ -2542,7 +2498,6 @@ public class FurnitureAction {
 
         try {
             ProductSearchBean productSearchBean = (ProductSearchBean) FacesUtils.getManagedBean("productSearchBean");
-            System.out.println(productSearchBean.getSelectedProduct());
             Product product = productSearchBean.getSelectedProduct();
             productSearchBean.setSelectedProduct(product);
             FacesUtils.updateHTMLComponnetWIthJS("confDeleteProductDlgID");

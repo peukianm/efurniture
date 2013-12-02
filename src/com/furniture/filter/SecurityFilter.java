@@ -69,36 +69,36 @@ public class SecurityFilter implements Filter {
          
         
         
-//        if ((request.getAttribute(FILTER_APPLIED) == null)
-//                && (!checkforloginpage.endsWith("index.jsp"))                
-//                && (!checkforloginpage.endsWith("loginPage.jsf"))
-//                && (!checkforloginpage.endsWith("error.jsf"))
-//                && (checkforloginpage.contains("backend") || checkforloginpage.contains("common") || checkforloginpage.contains("templates"))) {
-//
-//            request.setAttribute(FILTER_APPLIED, Boolean.TRUE);
-//            String user = null;            
-//            if (session != null) {
-//                if (session.getAttribute("sessionBean") != null && ((SessionBean) session.getAttribute("sessionBean")).getUsers() != null) {
-//                    user = "OK";
-//                }
-//            } 
-//
-//            if (user == null) {
-//                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!REDIRECTING fROM SECURITY FILTER " + checkforloginpage);
-//
-//                if ("partial/ajax".equals(hreq.getHeader("Faces-Request"))) {
-//                    // It's a JSF ajax request.            	           	
-//                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!AJAX CALL--->REDIRECTING fROM SECURITY FILTER " + checkforloginpage);
-//                    hres.setContentType("text/xml");
-//                    hres.getWriter().append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>").printf("<partial-response><redirect url=\"%s\"></redirect></partial-response>", "/efurniture/index.jsp?faces-redirect=true");
-//                    //hres.sendRedirect("herp/index.jsp?faces-redirect=true");            	            	
-//                } else {
-//                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!NORMAL CALL--->REDIRECTING fROM SECURITY FILTER " + checkforloginpage);
-//                    hres.sendRedirect("/efurniture/index.jsp?faces-redirect=true");
-//                }
-//                return;
-//            }
-//        }
+        if ((request.getAttribute(FILTER_APPLIED) == null)
+                && (!checkforloginpage.endsWith("index.jsp"))                
+                && (!checkforloginpage.endsWith("loginPage.jsf"))
+                && (!checkforloginpage.endsWith("error.jsf"))
+                && (checkforloginpage.contains("backend") || checkforloginpage.contains("common") || checkforloginpage.contains("templates"))) {
+
+            request.setAttribute(FILTER_APPLIED, Boolean.TRUE);
+            String user = null;            
+            if (session != null) {
+                if (session.getAttribute("sessionBean") != null && ((SessionBean) session.getAttribute("sessionBean")).getUsers() != null) {
+                    user = "OK";
+                }
+            } 
+
+            if (user == null) {
+                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!REDIRECTING fROM SECURITY FILTER " + checkforloginpage);
+
+                if ("partial/ajax".equals(hreq.getHeader("Faces-Request"))) {
+                    // It's a JSF ajax request.            	           	
+                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!AJAX CALL--->REDIRECTING fROM SECURITY FILTER " + checkforloginpage);
+                    hres.setContentType("text/xml");
+                    hres.getWriter().append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>").printf("<partial-response><redirect url=\"%s\"></redirect></partial-response>", "/efurniture/index.jsp?faces-redirect=true");
+                    //hres.sendRedirect("herp/index.jsp?faces-redirect=true");            	            	
+                } else {
+                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!NORMAL CALL--->REDIRECTING fROM SECURITY FILTER " + checkforloginpage);
+                    hres.sendRedirect("/efurniture/index.jsp?faces-redirect=true");
+                }
+                return;
+            }
+        }
         
         
         

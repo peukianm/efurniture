@@ -90,13 +90,6 @@ public class UpdateProductBean implements Serializable {
 
     @PostConstruct
     public void init() {
-
-
-        System.out.println("UPDATE PRODUCT BEAN!!!!!!!!!!!!!!!");
-
-        System.out.println("UPDATEPRODUCT="+updateProduct(updateProduct));
-        System.out.println("SESSIONPRODUCT="+sessionBean.getParameter());
-        System.out.println("ID="+productID);
         
         if (sessionBean.getParameter() != null && sessionBean.getParameter() instanceof Product) {
             updateProduct = (Product)sessionBean.getParameter(); 

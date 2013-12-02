@@ -179,7 +179,6 @@ public class Category implements java.io.Serializable {
     
     @Transient
     public String getCategoryPath() {
-        System.out.println("GET CATEGORY PATH");
         try {
             ProductDAO dao = new ProductDAO();
             return dao.getCategoryPath(category, null);

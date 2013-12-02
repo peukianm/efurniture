@@ -23,7 +23,6 @@ public class CompanyProductConverter implements Converter {
             return null;
         } else {
             try {
-                System.out.println("submittedValue="+submittedValue);
                 BigDecimal number = new BigDecimal(submittedValue);
 
                 Companyproduct companyproduct = persistenceHelper.getEntityManager().find(Companyproduct.class, number);

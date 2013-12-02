@@ -18,12 +18,17 @@
             .ui-datatable tbody td {
                 padding: 1px 5px;
             }
+            
+            .ui-panelgrid td, .ui-panelgrid tr
+            {
+                border-style: none !important; 
+            }
         </style>
         
     </ui:define>
 
     <ui:define name="content" >
-        <p:messages id="opsnMsg" redisplay="false" autoUpdate="true"   />
+        <!--<p:messages id="opsnMsg" redisplay="false" autoUpdate="true"   /> -->
         <p:growl autoUpdate="true"/> 
 
         <h:form id="createProductForm"> 
@@ -31,7 +36,7 @@
                 <tr>
                     <td style="vertical-align: top;">
                         <p:panel id="basicData" header="#{bundle.basicProductData}"  style="padding:0px ! important; margin: 0.1%; " > 
-                            <table cellspacing="3">
+                            <table cellspacing="5">
                                 <tr>
                                     <td style="vertical-align: top;float: right"><p:outputLabel value="#{bundle.name}* : " style="font-weight: bold"/></td>
                                     <td style="vertical-align: top;"><p:inputText required="true" size="30" requiredMessage="#{bundle.productName}: #{bundle.mandatoryField}"  value="#{newProductBean.newProduct.name}" 
@@ -60,7 +65,7 @@
                                     </td>     
 
                                     <td style="vertical-align: top;float: right"><h:outputLabel value="#{bundle.insertDate}: " style="font-weight: bold" /></td>
-                                    <td> 
+                                    <td style="vertical-align: top;"> 
                                         <p:calendar locale="el" size="12"  readonlyInput="true"  required="false" navigator="true" showOn="button" 
                                                     pattern="dd/MM/yyyy" value="#{newProductBean.newProduct.createddate}" id="createdate"/> 
                                     </td>                                                                                            
@@ -70,7 +75,7 @@
 
 
                                 <tr>
-                                    <td style="vertical-align: top;float: right"><p:outputLabel value="#{bundle.description} :"  style="font-weight: bold"/></td>
+                                    <td style="vertical-align: top;float: right"><p:outputLabel value="#{bundle.description}* :"  style="font-weight: bold"/></td>
                                     <td style="vertical-align: top;"><p:inputTextarea required="true" requiredMessage="#{bundle.productDescription}: #{bundle.mandatoryField}"  value="#{newProductBean.newProduct.description}" id="productDescription" rows="5" cols="30" />
                                         <p:message for="productDescription" display="icon"/>
                                     </td>
@@ -220,7 +225,7 @@
                                         <p:tab id="priceTab" title="#{bundle.price}"  style="padding:0px ! important; margin-left: 0px;"  >
                                             <p:panel id="pricePanel" widgetVar="pricePanelWidget">
                                                 <h:form id="priceForm">
-                                                    <p:messages autoUpdate="true"   />
+                                                    <!--<p:messages autoUpdate="true"   />-->
                                                     <table> 
                                                         <tr>
                                                             <td><h:outputLabel value="#{bundle.initialPrice}:*" style="font-weight: bold"/></td>
@@ -240,7 +245,7 @@
                                                                 <p:message for="disc" display="icon"/>
                                                             </td>
                                                             <td >
-                                                                <h:outputLabel value="#{bundle.date}:" style="font-weight: bold"/>
+                                                                <h:outputLabel value="#{bundle.date}* :" style="font-weight: bold"/>
                                                             </td>
                                                             <td>
                                                                 <p:calendar locale="el" size="12"  readonlyInput="true"   navigator="true" showOn="button" required="true"
@@ -321,7 +326,9 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <p:commandButton   value="#{bundle.insertProduct}" action="#{furnitureAction.insertProduct}" style="font-weight:bold ; margin: 10px;  "  />
+                                    <p:commandButton   value="#{bundle.insertProduct}" action="#{furnitureAction.insertProduct}" style="font-weight:bold ; margin: 10px;" update="basicData"   >
+                                        <p:resetInput target="@form" />
+                                    </p:commandButton>
                                     <p:commandButton process="@this"  value="#{bundle.resetFrom}" action="#{furnitureAction.createProduct()}" style="font-weight:bold ; margin: 10px;  "  />
                                 </td>
                             </tr>
@@ -522,7 +529,7 @@
                             #{pp.name}  
                         </p:column>  
                     </p:pickList>                     
-                    <p:commandButton value="#{bundle.close}" onclick="selectPProductIDDialog.hide()" process="@this" immediate="true" update="@widgetVar(connectedPanelWidget)" />
+                    <p:commandButton value="#{bundle.save}" onclick="selectPProductIDDialog.hide()" process="@this" immediate="true" update="@widgetVar(connectedPanelWidget)" />
                 </p:panel>
             </p:dialog>
         </h:form>
@@ -539,7 +546,7 @@
                             #{sp.name}  
                         </p:column>  
                     </p:pickList>                     
-                    <p:commandButton value="#{bundle.close}" onclick="selectSProductIDDialog.hide()" process="@this" immediate="true" update="@widgetVar(connectedPanelWidget)" />
+                    <p:commandButton value="#{bundle.save}" onclick="selectSProductIDDialog.hide()" process="@this" immediate="true" update="@widgetVar(connectedPanelWidget)" />
                 </p:panel>
             </p:dialog>
         </h:form>
@@ -568,7 +575,7 @@
 
         <h:form id="selectValueForm">
             <p:dialog header="#{bundle.selectSpecificationValue}" id="selectValueID" position="center" widgetVar="selectValueDialog" modal="true" resizable="false" >
-                <p:messages autoUpdate="true" severity="error"/>
+               <!-- <p:messages autoUpdate="true" severity="error"/> -->
                 <p:outputLabel style="font-weight: bold" value="#{bundle.valuesFor} #{newProductBean.specification.name} " rendered="#{newProductBean.specification.freetext==0}" />  
                 <p:outputLabel style="font-weight: bold;font-style: italic" value=" (#{bundle.multipleSelection})" rendered="#{newProductBean.specification.freetext==0 and newProductBean.specification.multiplevalues==1}"/> 
 
@@ -602,7 +609,7 @@
 
         <h:form id="selectDimensionValueForm">
             <p:dialog header="#{bundle.selectDimensionValue}" id="selectDimensionValueID" position="center" widgetVar="selectDimensionValueDialog" modal="false" resizable="false" >
-                <p:messages autoUpdate="true" />
+               <!--<p:messages autoUpdate="true" /> -->
 
                 <p:panel id="selectDimensionValuePanel">
                     <table>
@@ -647,7 +654,7 @@
         <!--oncomplete="PF('carDialog').show()" -->
 
         <p:dialog id="dialogFotosID" position="top" widgetVar="dialogFotos" modal="true" minWidth="600" minHeight="500" header="#{bundle.selectImage}" resizable="false">
-            <p:messages id="selectPatientMsg" autoUpdate="true" severity="error" /> 
+            <!--<p:messages id="selectPatientMsg" autoUpdate="true" severity="error" /> -->
             <h:form prependId="false" enctype="multipart/form-data">
                 <p:fileUpload fileUploadListener="#{furnitureAction.handleFileUpload}"
                               update=":imgData"
@@ -700,7 +707,7 @@
 
 
         <p:dialog id="dialogVideosID" position="top" widgetVar="dialogVideos" modal="true" minWidth="600" minHeight="500" header="#{bundle.selectVideo}" resizable="false">
-            <p:messages id="selectVideoMsg" autoUpdate="true" severity="error" /> 
+            <!--<p:messages id="selectVideoMsg" autoUpdate="true" severity="error" /> -->
             <h:form prependId="false" enctype="multipart/form-data">
                 <p:fileUpload fileUploadListener="#{furnitureAction.handleFileUploadVideo}"
                               update=":videoData"
@@ -788,7 +795,7 @@
 
                     <p:row style="border-style:none ! important;">  
                         <p:column rowspan="3" style="border-style:none ! important;padding: 0px">
-                            <p:galleria id="imageGaler" value="#{newProductBean.newProduct.imageproducts}" var="image" panelWidth="500" panelHeight="313" autoPlay="false" 
+                            <p:galleria id="imageGaler" value="#{newProductBean.newProduct.imageproducts}" var="image" panelWidth="500" panelHeight="363" autoPlay="false" 
                                         effect="clip" showCaption="true">  
                                 <p:graphicImage id="produImage" value="/media/temp/#{image.filename}"   alt="#{image.description}" title="#{image.primary}" width="500" height="363" />    
                             </p:galleria> 

@@ -71,7 +71,7 @@
             <p:idleMonitor timeout="1800000" onidle="idleDialog.show()">  
                 <p:ajax event="idle" listener="#{administrationAction.invalidateSession}"/>                  
             </p:idleMonitor> 
-            
+
             <p:dialog header="#{bundle.attention}" resizable="false"  closable="false" 
                       widgetVar="idleDialog" modal="true" style="color: black;font-weight: bold;">  
                 <h:form>                    
@@ -82,18 +82,53 @@
                 </h:form>
             </p:dialog> 
 
-           
-           <!-- <div id="sidebar" class="ui-widget-content ui-corner-bottom ui-helper-clearfix ui-shadow" style="padding:1px; padding-top: 4px">
-                <ui:include src="leftBackend.xhtml" />										
-            </div> -->
- 
+
+            <h:form id="alertMsgForm"> 
+
+                <p:confirmDialog  message="#{sessionBean.alertMessage}" header="#{bundle.warning}" severity="alert" 
+                                  widgetVar="alertMessageDialog">                    
+                    <h:panelGroup layout="block"  id="primeAlertPanel" >
+                        <p:commandButton type="button" value="OK" oncomplete="alertMessageDialog.hide()" styleClass="centered"  />    	                      	                      
+                    </h:panelGroup>
+                </p:confirmDialog>
+
+                <p:dialog  header="#{bundle.warning}" severity="alert" modal="true" resizable="false"  widgetVar="alertMessageDlg"  visible="#{sessionBean.showGeneralDialog}" >                    
+                    <p:panel widgetVar="primePanel">
+                        <table>
+                            <tr>
+                                <td style="text-align: center">
+                            <h:outputLabel value="#{sessionBean.alertMessage}"/>
+                            </td>
+                            </tr>                    
+                            <tr>
+                                <td style="text-align: center">
+                            <p:commandButton  update=":alertMsgForm" value="OK" action="#{administrationAction.closeAlertDlg}"/>
+                            </td>
+                            </tr>    	                      	                      
+                        </table>
+                    </p:panel>
+
+                </p:dialog> 
+                
+                 <p:confirmDialog global="true">  
+                        <p:commandButton value="#{bundle.yes}" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>  
+                        <p:commandButton value="#{bundle.no}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>       
+                    </p:confirmDialog>  
+
+            </h:form>
+
+
+            <!-- <div id="sidebar" class="ui-widget-content ui-corner-bottom ui-helper-clearfix ui-shadow" style="padding:1px; padding-top: 4px">
+                 <ui:include src="leftBackend.xhtml" />										
+             </div> -->
+
 
             <!--<DIV style="margin-left: 16.75% !important;margin-right: 4% !important;" > -->
-               <DIV style="max-width: 1000px;margin: 0px auto;" > 
+            <DIV style="max-width: 1000px;margin: 0px auto;" > 
                 <div id="header" class="ui-widget ui-widget-header ui-corner-all ui-shadow">
                     <ui:include src="headBackend.xhtml" />	
                 </div>
- 
+
                 <div id="page" class="ui-widget ui-shadow">						
                     <div id="content">				
                         <c:set var="url" value="#{request.requestURL.substring(0, request.requestURL.length() - request.requestURI.length())}#{request.contextPath}/"/>

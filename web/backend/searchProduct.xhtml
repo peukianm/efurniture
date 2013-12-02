@@ -81,21 +81,21 @@
                             <h:outputText value="#{product.name}" />                                                           
                         </p:column>  
 
-                        <p:column headerText="#{bundle.company}"  style="width:14%;vertical-align: top">                                                            
+                        <p:column headerText="#{bundle.company}"  style="width:20%;vertical-align: top">                                                            
                             <ui:repeat var="companyProduct" value="#{product.orderedCompanies}" >
                                 <h:outputText value="#{companyProduct.name}"/><br/>                                     
                             </ui:repeat>
                         </p:column>
 
-                       <p:column headerText="#{bundle.category}"  style="width:14%; vertical-align: top">                                                                                        
-                           <ui:repeat var="category" value="#{product.categories}" >
-                                <h:outputText value="#{category.name}"/><br/>                                     
+                      <!-- <p:column headerText="#{bundle.category}"  style="width:14%; vertical-align: top">                                                                                        
+                           <ui:repeat var="category" value="{product.categories}" >
+                                <h:outputText value="{category.name}"/><br/>                                     
                             </ui:repeat>                            
-                        </p:column> 
+                        </p:column>  -->
 
 
 
-                        <p:column headerText="#{bundle.charecteristics}"  style="width:46%;vertical-align: top; " >                                                            
+                        <p:column headerText="#{bundle.charecteristics}"  style="width:56%;vertical-align: top; " >                                                            
                             <p:dataTable  var="pss" value="#{product.productspecifications}" style="font-size: 8px;float: left"  styleClass="hide-column-names noBord" emptyMessage="#{bundle.noSpecs}" >
                                 <p:column width="20%" >  
                                     <p:outputLabel value="#{pss.specification.name}: " style="font-weight: bold;vertical-align: top;float: right"/> 
@@ -122,10 +122,13 @@
                             <p:commandButton id="deleteButton"  icon="ui-icon-closethick" title="Διαγραφή" action="#{furnitureAction.removeProduct()}" immediate="true" update="productResults"
                                              rendered="#{furnitureAction.checkProductInCompany(product)}">  <!--oncomplete="confDeleteProductDlg.show()" -->
                                 <f:setPropertyActionListener value="#{product}" target="#{productSearchBean.selectedProduct}" />
+                                <p:confirm header="#{bundle.confirmation}" message="#{bundle.confDeleteProduct}" icon="ui-icon-alert" /> 
                             </p:commandButton>
                         </p:column>
 
-                    </p:dataTable>  
+                    </p:dataTable>
+                    
+                   
 
 
                     <p:confirmDialog  id="confDeleteProductDlgID" message="#{bundle.confDeleteProduct}" header="#{bundle.warning}" severity="alert" widgetVar="confDeleteProductDlg" >                                                                                             

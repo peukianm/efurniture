@@ -111,7 +111,7 @@ public class Product implements java.io.Serializable {
         this.parentproducts = parentproducts;
         this.subproducts = subproducts;
     }
-
+ 
     // Property accessors
     @Id
     @Column(name = "PRODUCTID", unique = true, nullable = false, precision = 22, scale = 0)

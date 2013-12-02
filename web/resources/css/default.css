@@ -107,6 +107,15 @@ img.right {
     right:5px;
 }
 
+#username {
+    position:absolute;
+    bottom:5px;
+    right:5px;
+    font-weight: bold;
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    
+}
+
 /* Page */
 #page {
     padding: 7px 0px;
@@ -489,7 +498,7 @@ img.right {
 
 .ui-datatable-data, table,.ui-outputlabel, .ui-selectonemenu-label, .ui-selectonemenu-items, .ui-selectonemenu, .ui-autocomplete-items, .ui-autocomplete-input, 
 .ui-button-text,.ui-button-text-only, .ui-datatable-header,.ui-tabs .ui-tabs-nav li a, .ui-selectcheckboxmenu .ui-selectcheckboxmenu-label, .ui-selectcheckboxmenu-list-item label, 
-.ui-tree-selectable .ui-treenode-label, ui-inputfield, .ui-widget textarea, .ui-widget input{
+.ui-tree-selectable .ui-treenode-label, ui-inputfield, .ui-widget textarea, .ui-widget input, ui-datalist-content{
     font-family: Tahoma, Arial, Verdana   !important; 
     font-size: 11px   !important ;	
     color :black !important;

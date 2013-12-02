@@ -90,6 +90,8 @@ public class ViewProductBean implements Serializable {
     private List<Productvalue> productValues = new ArrayList<Productvalue>(0);
     private Productspecification productSpecification;
     
+    private Boolean showButton;
+    
     
     
 
@@ -143,6 +145,20 @@ public class ViewProductBean implements Serializable {
     public void reset() {
     }
 
+    
+    public Boolean getShowButton() {
+        if (product.getFirstCompany().equals(sessionBean.getUsers().getCompany())) {
+            return true;
+        } else {
+            return false;
+        }        
+    }
+
+    public void setShowButton(Boolean showButton) {
+        this.showButton = showButton;
+    }
+    
+    
     public Imageproduct getNewImage() {
         return newImage;
     }

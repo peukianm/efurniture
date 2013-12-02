@@ -218,8 +218,7 @@ public class ProductDAO {
                     + (catalogue != null ? " and cpl.catalogue= :catalogue" : " ")
                     + (name != null ? " AND (LOWER(d.name) like '%" + name.toLowerCase() + "%'" + " OR UPPER(d.name)  like '%" + name.toUpperCase() + "%') " : " ")
                     + " order by p.name ";
-            System.out.println("Productline=" + productline);
-            System.out.println("QUERY=" + queryString);
+
             Query query = getEntityManager().createQuery(queryString);
 
             if (company != null) {
@@ -237,7 +236,6 @@ public class ProductDAO {
 
 
             List<Product> products = query.getResultList();
-            System.out.println("SIZE=" + products.size());
             return products;
         } catch (RuntimeException re) {
             logger.error("Error on finding entity", re);
@@ -304,7 +302,6 @@ public class ProductDAO {
 
     public String getCategoryPath(Category category, String path) {
         try {
-            System.out.println("Start Path =" + path);
             String retPath = null;
             if (path != null) {
                 retPath = category.getName() + "/" + path;
@@ -319,10 +316,8 @@ public class ProductDAO {
             Query query = getEntityManager().createQuery(queryString);
             query.setParameter("id", category.getCategoryid());
             List<Category> categories = query.getResultList();
-            System.out.println("Categories.size=" + categories.size());
             if (categories.size() > 0 && categories.get(0) != null) {
                 Category cat = categories.get(0);
-                System.out.println("Category=" + cat);
                 return getCategoryPath(cat, retPath);
             } else {
                 return retPath;
@@ -337,9 +332,6 @@ public class ProductDAO {
 
     public List<Product> getCategoryProduct(List<Category> categories, List<Company> companies, String productName) {
 
-        System.out.println("categories=" + categories);
-        System.out.println("companies=" + companies);
-        System.out.println("productName=" + productName);
         Set<Product> products = new HashSet<Product>(0);
         try {
             if (companies != null && companies.size() > 0 && (categories == null || categories.size() == 0)) {
@@ -348,7 +340,6 @@ public class ProductDAO {
                     List<Companyproduct> companyProducts = new ArrayList(company.getCompanyproducts());
                     for (int j = 0; j < companyProducts.size(); j++) {
                         Companyproduct companyproduct = companyProducts.get(j);
-                        System.out.println("ADDING product in case 1");
                         if (companyproduct.getProduct().getActive().equals(BigDecimal.ONE)) {
                             products.add(companyproduct.getProduct());
                         }
@@ -357,7 +348,6 @@ public class ProductDAO {
             } else if ((companies == null || companies.size() == 0) && categories != null && categories.size() > 0) {
                 for (int i = 0; i < categories.size(); i++) {
                     Category category = categories.get(i);
-                    System.out.println("ADDING MASSIVE product in case 2");
                     for (Iterator<Product> it = getCategoryProduct(category, null).iterator(); it.hasNext();) {
                         Product product = it.next();
                         if (product.getActive().equals(BigDecimal.ONE)) {
@@ -376,7 +366,6 @@ public class ProductDAO {
                     Company company = companies.get(i);
                     for (int j = 0; j < categories.size(); j++) {
                         Category category = categories.get(j);
-                        System.out.println("ADDING MASSIVE product in case 3");
                         for (Iterator<Product> it = getCategoryProduct(category, company).iterator(); it.hasNext();) {
                             Product product = it.next();
                             if (product.getActive().equals(BigDecimal.ONE)) {
@@ -387,7 +376,6 @@ public class ProductDAO {
                 }
             }
 
-            System.out.println("Products size before name=" + products.size());
 
             List<Product> productList = new ArrayList<Product>(0);
             for (Iterator<Product> it = products.iterator(); it.hasNext();) {
@@ -399,7 +387,6 @@ public class ProductDAO {
                 }
             }
 
-            System.out.println("Products size after name=" + productList.size());
             Collections.sort(productList, new Comparator<Product>() {
                 public int compare(Product one, Product other) {
                     return one.getName().compareTo(other.getName());

@@ -171,7 +171,6 @@ public class ApplicationBean implements Serializable {
                 Companyproduct companyproduct = new Companyproduct();
                 companyproduct.setCompany(company);
                 companyproducts.add(companyproduct);
-                System.out.println(companyproduct);
             }
 
         }

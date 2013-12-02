@@ -120,8 +120,7 @@ public class AdministrationAction implements Serializable {
         FacesUtils.invalidateSession();
     }
 
-    public String gotoMain() {
-        System.out.println("GOING TO MAIN!!!!!!!!!!!!!!!!!!!!!!!1111111");
+    public String gotoMain() {        
         try {
             sessionBean.setPageCode(SystemParameters.getInstance().getProperty("PAGE_FURNITURE_HOME"));
             sessionBean.setPageName(MessageBundleLoader.getMessage("homePage"));

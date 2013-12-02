@@ -144,7 +144,6 @@ public class ItemDAO {
                     }
                 }
             }
-            System.out.println(query.getResultList().size());
             return query.getResultList();
         } catch (RuntimeException re) {
             logger.error("Error on finding entity", re);

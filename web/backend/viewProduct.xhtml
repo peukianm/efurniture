@@ -40,7 +40,7 @@
                                     </ui:repeat>
                                 </div> 
                                 <span class="top" style="float: right; margin-top: -32px" >
-                                    <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" onclick="nameDialogWidget.show()" update=":nameFormID"/>
+                                    <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" onclick="nameDialogWidget.show()" update=":nameFormID" rendered="#{viewProductBean.showButton}" />
                                 </span>
 
                             </p:column>  
@@ -54,7 +54,9 @@
                             <p:galleria id="imageGaler" value="#{viewProductBean.images}" var="image" panelWidth="500" panelHeight="363" autoPlay="false" 
                                         effect="clip" showCaption="true">  
                                 <p:graphicImage id="produImage" value="/media/products/#{viewProductBean.product.productid}/images/#{image.filename}"   alt="#{image.description}" title="#{image.primary}" width="500" height="363" />    
-                            </p:galleria> 
+                            </p:galleria>
+                            <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:94%;" onclick="mediaDialogWidget.show()" process="@this" 
+                                            immediate="true" update="@widgetVar(mediaPanelWidget)"  rendered="#{viewProductBean.showButton}"/>
                         </p:column>  
                     </p:row>
 
@@ -63,7 +65,7 @@
                     <p:row style="border-style:none ! important;">                           
                         <p:column colspan="4" style="border-style:none ! important;vertical-align: top;line-height: 100%">
                             <p:outputLabel value="#{viewProductBean.product.description}" />                                
-                            <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style="float: right; margin-top: 30px" onclick="descriptionDialogWidget.show()" update=":descriptionFormID"/>
+                            <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style="float: right; margin-top: 30px" onclick="descriptionDialogWidget.show()" update=":descriptionFormID" rendered="#{viewProductBean.showButton}"/>
                         </p:column>  
                     </p:row> 
 
@@ -84,7 +86,7 @@
                                             </p:column>  
 
                                         </p:dataTable><br/>
-                                        <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:95%"  onclick="specsDialogWidget.show()" update=":specsFormID" />
+                                        <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:95%"  onclick="specsDialogWidget.show()" update=":specsFormID" rendered="#{viewProductBean.showButton}" />
                                     </p:outputPanel>
                                 </p:tab>
 
@@ -103,7 +105,7 @@
                                             </p:column>
                                         </p:dataTable><br/>
                                         <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:95%" onclick="selectDimensionValueDialog.show();"
-                                                         update=":selectDimensionValueForm:selectDimensionValuePanel" action="#{furnitureAction.showDimensionSpecificationsView()}" />
+                                                         update=":selectDimensionValueForm:selectDimensionValuePanel" action="#{furnitureAction.showDimensionSpecificationsView()}"  rendered="#{viewProductBean.showButton}" />
                                     </p:outputPanel>
                                 </p:tab>
 
@@ -113,7 +115,7 @@
                                         <p:outputLabel rendered="#{viewProductBean.prices.size()>0}" style="font-size: 150%; " 
                                                        value="#{viewProductBean.prices.get(0).amount} #{viewProductBean.prices.get(0).currency.name} (#{bundle.initialPrice} #{viewProductBean.prices.get(0).initialprice})" /> 
                                         <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:95%" onclick="testDialogWidget.show();" immediate="true" 
-                                                         update=":testForm:testPanel"/>
+                                                         update=":testForm:testPanel"  rendered="#{viewProductBean.showButton}"/>
                                     </p:outputPanel>
                                 </p:tab>
 
@@ -129,7 +131,8 @@
                                             <br />  
                                         </p:dataList> 
                                         <br/>
-                                        <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:95%" onclick="selectPProductIDDialog.show()" process="@this" immediate="true" update="@widgetVar(selectPProductPanelWidget)"/>
+                                        <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:95%" onclick="selectPProductIDDialog.show()" process="@this" 
+                                                         immediate="true" update="@widgetVar(selectPProductPanelWidget)"  rendered="#{viewProductBean.showButton}"/>
                                         <p:separator />                                       
                                         <br/>
                                         <p:dataList value="#{viewProductBean.subProducts.target}" var="sub" emptyMessage="#{bundle.noProducts}" 
@@ -141,12 +144,14 @@
                                             <h:outputText value="#{sub.name}" style="margin-left:10px" />  
                                             <br />  
                                         </p:dataList> <br/>
-                                        <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:95%" onclick="selectSProductIDDialog.show()" process="@this" immediate="true" update="@widgetVar(selectSProductPanelWidget)"/>
+                                        <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:95%" onclick="selectSProductIDDialog.show()" process="@this" 
+                                                         immediate="true" update="@widgetVar(selectSProductPanelWidget)" rendered="#{viewProductBean.showButton}"/>
                                     </p:outputPanel>
                                 </p:tab>
 
 
-                            </p:tabView>                                                                                                               
+                            </p:tabView>
+                           
                         </p:column>                       
                     </p:row>   
 
@@ -162,7 +167,7 @@
                                         <p:media value="/media/products/#{viewProductBean.product.productid}/videos/#{video.filename}"  width="520" height="400" />  
                                     </f:facet>
                                 </p:lightBox>
-                            </ui:repeat>    
+                            </ui:repeat>                             
                         </p:column>
                     </p:row>    
 
@@ -518,7 +523,7 @@
 
             <h:form id="mediaForm"> 
                 <p:dialog header="#{bundle.multimediaMgt}" id="mediaDialogID" position="center" widgetVar="mediaDialogWidget" modal="true" minWidth="200" minHeight="500" resizable="false">
-                    <p:panel id="mediaPanelID" widgetVar="mediaPanelWidget" header="#{bundle.multimediaMgt}"  style="padding:0px ! important; margin-left:  10px; "  >
+                    <p:panel id="mediaPanelID" widgetVar="mediaPanelWidget"   style="padding:0px ! important; margin-left:  10px; "  >
                         <p:outputLabel style="font-weight: bold;color: black" value="#{bundle.images}  " /> <p:outputLabel style="font-weight: bold;" value="(#{viewProductBean.images.size()}) :" /> 
                         <p:spacer height="0" width="20" /> 
                         <p:commandButton immediate="true"  icon="ui-icon-plusthick" action="#{furnitureAction.openSelectImageViewDlg}" update="@widgetVar(imageDataPanel)"   />                         
@@ -529,7 +534,8 @@
                         <p:spacer height="0" width="20" /> 
                         <p:commandButton immediate="true"  icon="ui-icon-plusthick" action="#{furnitureAction.openSelectVideoViewDlg}" update="@widgetVar(videoDataPanel)"  />                         
                         <p:commandButton icon="ui-icon-pencil" immediate="true"  disabled="#{viewProductBean.videos.size()==0}" alt="#{bundle.update}"   onclick="updateVideoDialog.show()"  update=":updateVideoForm:updateVideoPanel"  /> 
-                    </p:panel>
+                    </p:panel> <br/>
+                    <p:commandButton value="#{bundle.close}" type="button" onclick="mediaDialogWidget.hide()"  /> 
                 </p:dialog>
             </h:form>
 
@@ -564,14 +570,14 @@
                             <p:inputTextarea  rows="5" cols="50" value="#{viewProductBean.newImage.description}"  rendered="#{viewProductBean.newImage.filename!=null}" />                        
                         </h:panelGrid>
                     </p:panel>
-                    <p:commandButton value="#{bundle.insert}" action="#{furnitureAction.savePhotoView()}" update="productPhoto :viewProductForm  mediaForm:mediaPanelID  @this" rendered="#{viewProductBean.newImage.filename!=null}" /> 
+                    <p:commandButton value="#{bundle.insert}" action="#{furnitureAction.savePhotoView()}" update="productPhoto :viewProductForm  :mediaForm:mediaPanelID  @this" rendered="#{viewProductBean.newImage.filename!=null}" /> 
                     <p:commandButton value="#{bundle.close}" type="button" onclick="dialogFotos.hide()"  /> 
                 </h:form>
             </p:dialog>
 
 
-            <p:dialog id="dialogVideosID" position="top" widgetVar="dialogVideos" modal="true" minWidth="600" minHeight="500" header="#{bundle.selectVideo}" resizable="false">
                 <p:messages id="selectVideoMsg" autoUpdate="true" severity="error" /> 
+            <p:dialog id="dialogVideosID" position="top" widgetVar="dialogVideos" modal="true" minWidth="600" minHeight="500" header="#{bundle.selectVideo}" resizable="false">
                 <h:form prependId="false" enctype="multipart/form-data">
                     <p:fileUpload fileUploadListener="#{furnitureAction.handleFileUploadVideoView}"
                                   update=":videoData"
@@ -610,7 +616,7 @@
                             </tr>
                         </table>                   
                     </p:panel>
-                    <p:commandButton value="#{bundle.insert}" action="#{furnitureAction.saveVideoView()}" update="productVideo:viewProductForm  mediaForm:mediaPanelID @this" rendered="#{viewProductBean.newVideo.filename!=null}" />     
+                    <p:commandButton value="#{bundle.insert}" action="#{furnitureAction.saveVideoView()}" update="productVideo :viewProductForm  :mediaForm:mediaPanelID @this" rendered="#{viewProductBean.newVideo.filename!=null}" />     
                     <p:commandButton value="#{bundle.close}" type="button" onclick="dialogVideos.hide()"  />     
                 </h:form>
             </p:dialog>
@@ -625,7 +631,7 @@
                             <table >  
                                 <tr >
                                     <td colspan="3">
-                                        <p:graphicImage id="image" value="/media/temp/#{image.filename}"   height="300" width="400"   />   
+                                        <p:graphicImage id="image" value="/media/products/#{viewProductBean.product.productid}/images/#{image.filename}"   height="300" width="400"   />   
                                     </td>
                                 </tr>
                                 <tr >   
@@ -650,8 +656,8 @@
 
 
 
-                            <p:commandButton style="color:blue;font-weight: bold;float: right" update=" @widgetVar(imageDataAdminWidget)"  title="#{bundle.deleteImage}" 
-                                             action="#{furnitureAction.removeImage()}" value="#{bundle.deleteImage}" >    
+                            <p:commandButton style="color:blue;font-weight: bold;float: right" update="@widgetVar(mediaPanelWidget)  :viewProductForm"  title="#{bundle.deleteImage}" 
+                                             action="#{furnitureAction.removeImageView()}" value="#{bundle.deleteImage}" >    
                                 <f:setPropertyActionListener value="#{image}" target="#{viewProductBean.selectedImage}" />  
                             </p:commandButton>                          
                         </p:carousel>
@@ -673,7 +679,7 @@
                         </p:panelGrid>
                     </p:outputPanel>
                     <br/>
-                    <p:commandButton value="#{bundle.save}"  action="#{furnitureAction.saveImageOrder()}" update=":updateImagetForm:updateImagePanel" />
+                    <p:commandButton value="#{bundle.save}"  action="#{furnitureAction.saveImageOrderView()}" update=":updateImagetForm:updateImagePanel :viewProductForm" />
                     <p:commandButton value="#{bundle.cancel}" onclick="updateImageOrderDialog.hide()" process="@this" immediate="true" update=":updateImagetForm:updateImagePanel" />
                 </p:dialog>
             </h:form>
@@ -687,7 +693,7 @@
                             <p:inputTextarea id="descriptionField"  rows="5" cols="50" value="#{viewProductBean.selectedImage.description}"   />    
                         </p:panelGrid>
                     </p:outputPanel>
-                    <p:commandButton value="#{bundle.save}" onclick="updateImageDescriptionDialog.hide()" action="#{furnitureAction.saveImageDescription}" process="descriptionField" update=":updateImagetForm:updateImagePanel" />
+                    <p:commandButton value="#{bundle.save}" onclick="updateImageDescriptionDialog.hide()" action="#{furnitureAction.saveImageDescriptionView()}" process="descriptionField" update=":updateImagetForm:updateImagePanel  :viewProductForm" />
                     <p:commandButton value="#{bundle.cancel}" onclick="updateImageDescriptionDialog.hide()" process="@this" immediate="true" update=":updateImagetForm:updateImagePanel" />
                 </p:dialog>
             </h:form>
@@ -709,7 +715,7 @@
 
                                 <table >  
                                     <tr>
-                                        <p:media value="/media/temp/#{video.filename}" width="480" height="450"    >  
+                                        <p:media value="/media/products/#{viewProductBean.product.productid}/videos/#{video.filename}" width="480" height="450"    >  
                                             <f:param name="autoPlay" value="false" />  
                                         </p:media>
                                     </tr>
@@ -735,8 +741,8 @@
 
 
 
-                                <p:commandButton style="color:blue;font-weight: bold;float: right" update=":updateVideoForm:updateVideoPanel @widgetVar(imageDataAdminWidget)"  title="#{bundle.deleteVideo}" 
-                                                 action="#{furnitureAction.removeVideo()}" value="#{bundle.deleteVideo}" >    
+                                <p:commandButton style="color:blue;font-weight: bold;float: right" update="@widgetVar(mediaPanelWidget)  :viewProductForm"  title="#{bundle.deleteVideo}" 
+                                                 action="#{furnitureAction.removeVideoView()}" value="#{bundle.deleteVideo}" >    
                                     <f:setPropertyActionListener value="#{video}" target="#{viewProductBean.selectedVideo}" />  
                                 </p:commandButton>  
 
@@ -760,7 +766,7 @@
                         </p:panelGrid>
                     </p:outputPanel>
                     <br/>
-                    <p:commandButton value="#{bundle.save}"  action="#{furnitureAction.saveVideoOrder()}" update=":updateVideoForm:updateVideoPanel" />
+                    <p:commandButton value="#{bundle.save}"  action="#{furnitureAction.saveVideoOrderView()}" update=":updateVideoForm:updateVideoPanel  :viewProductForm" />
                     <p:commandButton value="#{bundle.cancel}" onclick="updateVideoOrderDialog.hide()" process="@this" immediate="true" update=":updateVideoForm:updateVideoPanel" />
                 </p:dialog>
             </h:form>
@@ -774,7 +780,7 @@
                             <p:inputTextarea id="descriptionFieldVideo"  rows="5" cols="50" value="#{viewProductBean.selectedVideo.description}"   />    
                         </p:panelGrid>
                     </p:outputPanel>
-                    <p:commandButton value="#{bundle.save}" onclick="updateVideoDescriptionDialog.hide()" action="#{furnitureAction.saveVideoDescription}" process="descriptionFieldVideo" update=":updateVideoForm:updateVideoPanel" />
+                    <p:commandButton value="#{bundle.save}" onclick="updateVideoDescriptionDialog.hide()" action="#{furnitureAction.saveVideoDescriptionView()}" process="descriptionFieldVideo" update=":updateVideoForm:updateVideoPanel  :viewProductForm" />
                     <p:commandButton value="#{bundle.cancel}" onclick="updateVideoDescriptionDialog.hide()" process="@this" immediate="true" update=":updateVideoForm:updateVideoPanel" />
                 </p:dialog>
             </h:form>

@@ -176,12 +176,12 @@ public class CompanyproductDAO {
                     int rowCount = Math.max(0, rowStartIdxAndCount[1]);
                     if (rowCount > 0) {
                         query.setMaxResults(rowCount);  
-                    }
+                    } 
                 }
             }
             return query.getResultList();
         } catch (RuntimeException re) {
-            logger.error("Error on finding entity", re);
+            logger.error("Error on finding entity", re); 
             throw re;
         }
     }
