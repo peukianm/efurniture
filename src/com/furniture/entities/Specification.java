@@ -100,7 +100,7 @@ public class Specification implements java.io.Serializable {
         this.specificationcategory = specificationcategory;
     }
 
-    @Column(name = "NAME", nullable = false, length = 80)
+    @Column(name = "NAME", nullable = false, length = 300)
     public String getName() {
         return this.name;
     }

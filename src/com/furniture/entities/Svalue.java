@@ -46,7 +46,7 @@ public class Svalue implements java.io.Serializable {
         this.valueid = valueid;
         this.name = name;
         this.hasimage = hasimage;
-    }
+    }  
 
     /**
      * full constructor
@@ -75,7 +75,7 @@ public class Svalue implements java.io.Serializable {
         this.valueid = valueid;
     }
 
-    @Column(name = "NAME", nullable = false, length = 80)
+    @Column(name = "NAME", nullable = false, length = 300)
     public String getName() {
         return this.name;
     }
