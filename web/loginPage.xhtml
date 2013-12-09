@@ -25,7 +25,7 @@
                 var _gaq = _gaq || [];
                 _gaq.push(['_setAccount', 'UA-12200033-3']);
                 _gaq.push(['_trackPageview']);
-
+            
                 (function() {
                     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
                     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
@@ -37,7 +37,7 @@
 
         <h:body styleClass="mainBG">
 
-            <DIV style="margin-left: 30% !important; margin-right: 30% !important;  " >
+            <DIV style="max-width: 350px; margin: 0px auto; " >
                 <div id="header" class="ui-widget ui-widget-header" style="border-radius:7px; box-shadow: 4px 4px 4px #5C5C5C " >
                     <ui:include src="common/headLogin.xhtml" />	
                 </div> 
@@ -48,17 +48,20 @@
                         <p:panel id="panel" header="#{bundle.userLogin}" style=" background: whitesmoke; ">  
                             <p:messages id="msgs"/>  
 
-                            <h:panelGrid columns="3" styleClass="content1">  
-                                <h:outputLabel for="username" value="#{bundle.username}: *" />  
+                            <h:panelGrid columns="1" styleClass="content1">  
+                                <h:outputLabel for="username" value="#{bundle.username} (username)" style="font-weight: bold" /> 
                                 <p:inputText id="username" value="#{userBean.username}" required="true" label="username" requiredMessage="#{bundle.username}:#{bundle.mandatoryField}" />  			              
                                 <p:message for="username" display="icon"/>  
-
-                                <h:outputLabel for="password" value="#{bundle.password}: *" />  
+                                <p:spacer height="7px" />
+                                <h:outputLabel for="password" value="#{bundle.password} (password)" style="font-weight: bold" /> 
                                 <p:password id="password" value="#{userBean.password}" label="password" required="true" requiredMessage="#{bundle.password}:#{bundle.mandatoryField}" />  			              
                                 <p:message for="password" id="msgPassword" display="icon"/>  
                             </h:panelGrid>  
 
-                            <p:commandButton id="btn" value="#{bundle.entrance}" update="panel, :selectRolePanel"  action="#{administrationAction.loginAction}" /> 
+                            <p:commandButton id="btn" value="#{bundle.entrance}" update="panel, :selectRolePanel"  action="#{administrationAction.loginAction}" 
+                                             style="" /> <br/>
+                            <p:spacer height="15" width="0" />
+                            <h:commandLink immediate="true"  value="#{bundle.forgetPassword}" style="color: #069;text-decoration: underline;font-size: 10px"   />
                         </p:panel>					
                     </div>
                 </h:form>

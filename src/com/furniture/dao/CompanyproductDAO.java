@@ -190,7 +190,7 @@ public class CompanyproductDAO {
         try {
             Query query = getEntityManager().createQuery("Select cp.product from Companyproduct cp where "
                     + " cp.company = :company "
-                    + (showOnlyActive == true ? " and cp.active=1 " : " "));
+                    + (showOnlyActive == true ? " and cp.active=1 and cp.product.active=1 " : " "));
             query.setParameter("company", company);
             return query.getResultList();
         } catch (RuntimeException re) {
@@ -205,7 +205,7 @@ public class CompanyproductDAO {
             Set<Product> retValues = new HashSet<Product>(0);
             Query query = getEntityManager().createQuery("Select DISTINCT(cp.product) from Companyproduct cp where "
                     + " cp.company = :company "
-                    + (showOnlyActive == true ? " and cp.active=1 " : " "));
+                    + (showOnlyActive == true ? " and cp.active=1 and cp.product.active=1 " : " "));
             
             for (int i = 0; i < companies.size(); i++) {
                 Company company = companies.get(i);

@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * Specification entity.
@@ -39,6 +40,7 @@ public class Specification implements java.io.Serializable {
     private Set<Productspecification> productspecifications = new HashSet<Productspecification>(0);
     private Set<Auditing> auditings = new HashSet<Auditing>(0);
     private Set<Itemspecification> itemspecifications = new HashSet<Itemspecification>(0);
+    private BigDecimal ordered;
 
     // Constructors
     /**
@@ -218,6 +220,17 @@ public class Specification implements java.io.Serializable {
         this.itemspecifications = itemspecifications;
     }
 
+    @Transient
+    public BigDecimal getOrdered() {
+        return ordered;
+    }
+
+    public void setOrdered(BigDecimal ordered) {
+        this.ordered = ordered;
+    }
+    
+    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -240,6 +253,6 @@ public class Specification implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return "Specification{" + "Specificationid=" + specificationid + ", name=" + getName() + "}";
+        return "Specification{" + "Specificationid=" + specificationid + ", name=" + getName() + " ordered="+ordered+"}";
     }
 }

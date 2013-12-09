@@ -7,45 +7,52 @@
                 xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 
-     
-    <h:form>
-    <div id="logo">
-        <img  src="#{request.contextPath}/resources/images/efurn-logo.png" width="120" height="40" alt="Logo" />	
-    </div>
 
-    
+    <h:form>
+        <div id="logo">
+            <img  src="#{request.contextPath}/resources/images/efurn-logo.png" width="100" height="34" alt="Logo" />	
+        </div>
+
+
         <span style="display: inline-block">
-        <p:menubar style="background-color: transparent ! important"> 
-            <p:submenu label="#{bundle.adminAction}" icon="ui-icon-document"  rendered="#{sessionBean.users.role.roleid ==1}"> 
-                <p:menuitem value="#{bundle.companyMgt}" rendered="#{sessionBean.users.role.roleid ==1}" />
-                <p:menuitem value="#{bundle.userMgt}" rendered="#{sessionBean.users.role.roleid ==1}" />
-                <p:menuitem value="#{bundle.pricingRules}" rendered="#{sessionBean.users.role.roleid ==1}" />
-                <p:menuitem value="#{bundle.bundleRules}" rendered="#{sessionBean.users.role.roleid ==1}" />
-                <p:menuitem value="#{bundle.audit}" rendered="#{sessionBean.users.role.roleid ==1}" />
-            </p:submenu>
-               
-            <p:submenu label="#{bundle.productAdmin}" icon="ui-icon-document" rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}" > 
-                <p:menuitem value="#{bundle.newProduct}" action="#{furnitureAction.createProduct}"  rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}"  />                
-                <p:menuitem value="#{bundle.search}" action="#{furnitureAction.searchProduct}"  rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}"  />
-            </p:submenu>
-            
-            <p:submenu label="#{bundle.catalogueAdmin}" icon="ui-icon-document" rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}"> 
-                <p:menuitem value="#{bundle.newCatalogue}" rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}"  />
-                <p:menuitem value="#{bundle.newProductLine}" rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}"  />
-                <p:menuitem value="#{bundle.search}" rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}"  />                
-            </p:submenu>
-            
-            <p:submenu label="#{bundle.currentUser}" icon="ui-icon-document"> 
-                <p:menuitem value="#{bundle.homePage}" action="#{administrationAction.gotoMain()}" />
-                <p:menuitem value="#{bundle.disconnect}" onclick="disconnectDlg.show()" icon="ui-icon-close"  />
-            </p:submenu>
-            
-        </p:menubar>
-        
-    </span>
-    
+            <p:menubar style="background-color: transparent ! important;border: none ! important;font-size: 10px; margin-top:  12px !important;padding: 0px ! important;"> 
+                <p:submenu label="#{bundle.userOptions}" icon="ui-icon-document"> 
+                    <p:menuitem value="#{bundle.mainPage}" action="#{administrationAction.gotoMain()}" icon="ui-icon-home" />
+                    <p:menuitem value="#{bundle.prints}" icon="ui-icon-print" />
+                    <p:menuitem value="#{bundle.help}" action="help" icon="ui-icon-help" />
+                    <p:menuitem value="#{bundle.disconnect}" onclick="disconnectDlg.show()" icon="ui-icon-close"  />
+                </p:submenu>
+                
+
+                 <p:submenu label="#{bundle.adminAction}" icon="ui-icon-document"  rendered="#{sessionBean.users.role.roleid ==1}"> 
+                    <p:menuitem value="#{bundle.companyMgt}" action="#{companyAction.adminCompany()}" rendered="#{sessionBean.users.role.roleid ==1}"   icon="ui-icon-pencil" />
+                    <p:menuitem value="#{bundle.userMgt}" rendered="#{sessionBean.users.role.roleid ==1}"  icon="ui-icon-pencil"  />                
+                    <p:menuitem value="#{bundle.audit}" rendered="#{sessionBean.users.role.roleid ==1}"  icon="ui-icon-search"  />
+                    <p:menuitem value="#{bundle.templateEditor}" rendered="#{sessionBean.users.role.roleid ==1}"  icon="ui-icon-pencil"  />
+                </p:submenu>
+                
+                <p:submenu label="#{bundle.productAdmin}" icon="ui-icon-document" rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}" > 
+                    <p:menuitem  icon="ui-icon-plus" value="#{bundle.newProduct}" action="#{furnitureAction.createProduct}"  rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}"  />                
+                    <p:menuitem  icon="ui-icon-search"  value="#{bundle.search}" action="#{furnitureAction.searchProduct}"  rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}"  />
+                    <p:menuitem  icon="ui-icon-pencil" value="#{bundle.bundleRules}" rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}"  />
+                    <p:menuitem  icon="ui-icon-pencil" value="#{bundle.pricingRules}" rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}"  /> 
+                </p:submenu>
+
+               <p:submenu label="#{bundle.catalogues}" icon="ui-icon-document" rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}"> 
+                    <p:menuitem icon="ui-icon-pencil" value="#{bundle.catalogueAdmin}" rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}"  /> 
+                     <p:menuitem icon="ui-icon-pencil" value="#{bundle.productLineAdmin}" rendered="#{sessionBean.users.role.roleid ==1 ||sessionBean.users.role.roleid == 2}"  /> 
+                </p:submenu>
+
+
+              
+                
+
+            </p:menubar>
+
+        </span>
+
     </h:form>
-    
+
     <table style="position: absolute;top:0%;width: 100%"  >
         <tr><td  style="text-align: center;"> <h:outputLabel value="#{bundle.efrnNet}" styleClass="pageTitle"  /></td></tr>
         <tr><td style="text-align: center;"> <h:outputLabel value="#{bundle.efrnTool}" styleClass="pageSubTitle"  /></td></tr>          
@@ -60,8 +67,8 @@
             <h:outputText value="" />  
         </f:facet>  
     </p:ajaxStatus>
-    
-    
+
+
     <div id="globalthemeswitcher">
         <h:form>	
             <ui:include  src="../../common/languageSelector.xhtml" />
@@ -69,8 +76,8 @@
             <ui:include src="../../common/themeMenu.xhtml" />
         </h:form>	
     </div>
-    <div id="username">
-        #{sessionBean.users.username}
+    <div id="username" style="color: blue;font-size: 10px">
+        #{sessionBean.users.username}-#{sessionBean.users.company.name}
     </div>
 
 

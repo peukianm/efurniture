@@ -8,6 +8,7 @@ import com.furniture.util.EJBUtil;
 import com.furniture.util.PersistenceHelper;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import javax.persistence.EntityManager;
@@ -35,7 +36,7 @@ public class ItemspecificationDAO {
     /**
      * Perform an initial save of a previously unsaved Itemspecification entity. All subsequent persist actions of this entity should use the #update() method.
      * This operation must be performed within the a database transaction context for the entity's data to be permanently saved to the persistence store, i.e.,
-     * database. This method uses the      {@link javax.persistence.EntityManager#persist(Object)
+     * database. This method uses the null     {@link javax.persistence.EntityManager#persist(Object)
 	 * EntityManager#persist} operation.
      *
      * <pre>
@@ -58,7 +59,7 @@ public class ItemspecificationDAO {
 
     /**
      * Delete a persistent Itemspecification entity. This operation must be performed within the a database transaction context for the entity's data to be
-     * permanently deleted from the persistence store, i.e., database. This method uses the      {@link javax.persistence.EntityManager#remove(Object)
+     * permanently deleted from the persistence store, i.e., database. This method uses the null     {@link javax.persistence.EntityManager#remove(Object)
 	 * EntityManager#delete} operation.
      *
      * <pre>
@@ -163,7 +164,7 @@ public class ItemspecificationDAO {
     @SuppressWarnings("unchecked")
     public List<Itemspecification> findAll(final int... rowStartIdxAndCount) {
         try {
-            final String queryString = "select model from Itemspecification model";
+            final String queryString = "select model from Itemspecification model  order by model.ordered ";
             Query query = getEntityManager().createQuery(queryString);
             if (rowStartIdxAndCount != null && rowStartIdxAndCount.length > 0) {
                 int rowStartIdx = Math.max(0, rowStartIdxAndCount[0]);
@@ -184,41 +185,62 @@ public class ItemspecificationDAO {
             throw re;
         }
     }
-     
-    
-    @SuppressWarnings("unchecked")    
+
+    @SuppressWarnings("unchecked")
     public List<Specification> fetchItemSpecifications(Item item, Boolean showOnlyEnabled, Boolean fetchDimensions) {
         try {
-            Query query = getEntityManager().createQuery("Select model.specification from Itemspecification model where "
+            Query query = getEntityManager().createQuery("Select model.specification, model.ordered from Itemspecification model where "
                     + " model.item = :item "
-                    +(fetchDimensions ? "   " : "  and model.specification.dimension!=1    ")
-                    + (showOnlyEnabled ? " and model.active = 1 " : " "));
-              
+                    + (fetchDimensions ? "   " : "  and model.specification.dimension!=1    ")
+                    + (showOnlyEnabled ? " and model.active = 1 " : " ")
+                    + " order by model.ordered ");
+
             query.setParameter("item", item);
-            return query.getResultList();
-        } catch (RuntimeException re){
+
+            List<Object[]> data = query.getResultList();
+
+            List<Specification> retVal = new ArrayList<Specification>();
+            for (int i = 0; i < data.size(); i++) {
+                Object[] objects = data.get(i);
+                Specification specification = (Specification) objects[0];
+                BigDecimal ordered = (BigDecimal) objects[1];
+                specification.setOrdered(ordered);
+                retVal.add(specification);
+            }
+
+
+            return retVal;
+        } catch (RuntimeException re) {
             logger.error("Error on finding entity", re);
             throw re;
         }
-     }
-    
-    
-     @SuppressWarnings("unchecked")    
+    }
+
+    @SuppressWarnings("unchecked")
     public List<Specification> fetchItemDimensionSpecifications(Item item, Boolean showOnlyEnabled) {
         try {
-            Query query = getEntityManager().createQuery("Select model.specification from Itemspecification model where "
+            Query query = getEntityManager().createQuery("Select model.specification,  model.ordered from Itemspecification model where "
                     + " model.item = :item "
                     + " and model.specification.dimension = 1  "
-                    + (showOnlyEnabled ? " and model.active = 1 " : " "));
-              
+                    + (showOnlyEnabled ? " and model.active = 1 " : " ")
+                    + " order by model.ordered ");
+
             query.setParameter("item", item);
-            return query.getResultList();
-        } catch (RuntimeException re){
+            List<Object[]> data = query.getResultList();
+
+            List<Specification> retVal = new ArrayList<Specification>();
+            for (int i = 0; i < data.size(); i++) {
+                Object[] objects = data.get(i);                
+                Specification specification = (Specification) objects[0];
+                BigDecimal ordered = (BigDecimal) objects[1];
+                specification.setOrdered(ordered);
+                retVal.add(specification);
+            }
+
+            return retVal;
+        } catch (RuntimeException re) {
             logger.error("Error on finding entity", re);
             throw re;
         }
-     }
-    
-    
-    
+    }
 }

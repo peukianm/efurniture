@@ -78,7 +78,9 @@ public class ApplicationBean implements Serializable {
         this.companies = companies;
     }
     
-    
+    public void resetCompanies(){
+        this.companies = null;
+    }
     
     List<Productcategory> productcategories;
 
@@ -198,6 +200,17 @@ public class ApplicationBean implements Serializable {
      
       
      
+    private List<Category> rootCategories; 
+    
+    public List<Category> getRootCategories() {
+        CompanyDAO dao = new CompanyDAO();
+        rootCategories = dao.getAllRootCategories(true);          
+        return rootCategories;
+    }
+    
+     public void setRootCategories(List<Category> rootCategories) {
+        this.rootCategories = rootCategories;
+    }
      
      
      

@@ -11,11 +11,14 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -27,6 +30,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "COMPANY", schema = "FURNITURE")
+@SequenceGenerator(name = "SEQ_COMPANY", sequenceName = "COMPANY_SEQ", allocationSize = 1)
 public class Company implements java.io.Serializable {
 
     // Fields
@@ -97,6 +101,7 @@ public class Company implements java.io.Serializable {
     // Property accessors
     @Id
     @Column(name = "COMPANYID", unique = true, nullable = false, precision = 22, scale = 0)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_COMPANY")
     public BigDecimal getCompanyid() {
         return this.companyid;
     }

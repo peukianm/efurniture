@@ -35,6 +35,7 @@ import com.furniture.entities.Productvalue;
 import com.furniture.entities.Specification;
 import com.furniture.entities.Specificationcategory;
 import com.furniture.entities.Specificationvalue;
+import com.furniture.entities.Users;
 import com.furniture.entities.Videoproduct;
 import com.furniture.util.FacesUtils;
 import com.furniture.util.FurnitureUtil;
@@ -43,6 +44,18 @@ import com.furniture.util.MessageBundleLoader;
 import com.furniture.util.PersistenceHelper;
 import com.furniture.util.PersistenceUtil;
 import com.furniture.util.SystemParameters;
+import com.lowagie.text.BadElementException;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.Image;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -57,8 +70,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.servlet.ServletContext;
 import javax.transaction.UserTransaction;
 import org.apache.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
@@ -317,11 +332,22 @@ public class FurnitureAction {
 
             if (newProductBean.getNewProduct().getItem() != null) {
                 ItemspecificationDAO d = new ItemspecificationDAO();
+//                List<Specification> tempSpecs = d.fetchItemSpecifications(newProductBean.getNewProduct().getItem(), true, false); 
+//                for (int i = 0; i < tempSpecs.size(); i++) {
+//                    Specification specification = tempSpecs.get(i);
+//                    System.out.println(specification);
+//                }                                
                 specifications.addAll(d.fetchItemSpecifications(newProductBean.getNewProduct().getItem(), true, false));
             }
 
-
-            newProductBean.setSpecifications(new ArrayList<Specification>(specifications));
+            List<Specification> tempList = new ArrayList<Specification>(specifications);
+            Collections.sort(tempList, new Comparator<Specification>() {
+                public int compare(Specification one, Specification other) {
+                    return one.getOrdered().compareTo(other.getOrdered());
+                }
+            });
+            
+            newProductBean.setSpecifications(new ArrayList<Specification>(tempList));
             FacesUtils.callRequestContext("selectSpecDialog.show();");
 
         } catch (Exception e) {
@@ -361,9 +387,10 @@ public class FurnitureAction {
             List<Productspecification> productSpecifications = newProductBean.getProductSpecifications();
             Productspecification productSpecification = new Productspecification();
             productSpecification.setSpecification(spec);
-            productSpecification.setProduct(newProduct);
-            productSpecifications.add(productSpecification);
+            productSpecification.setProduct(newProduct);            
             productSpecification.setActive(BigDecimal.ONE);
+            productSpecification.setOrdered(spec.getOrdered());
+            productSpecifications.add(productSpecification);
 
             List<Productvalue> productValues = newProductBean.getProductValues();
 
@@ -392,7 +419,7 @@ public class FurnitureAction {
                 productSpecification.getProductvalues().add(productvalue);
             }
 
-            if (spec.getFreetext().equals(BigDecimal.ONE)) {
+            if (spec.getFreetext().equals(BigDecimal.ONE) ) {
                 String svalue = newProductBean.getSvalue();
                 Productvalue productvalue = new Productvalue();
                 productvalue.setProductspecification(productSpecification);
@@ -401,8 +428,24 @@ public class FurnitureAction {
                 productvalue.setActive(BigDecimal.ONE);
                 productSpecification.getProductvalues().add(productvalue);
             }
+            
+//            if (spec.getFreetext().equals(BigDecimal.ONE) && spec.getColor().equals(BigDecimal.ONE)) {
+//                String svalue = newProductBean.getSvalue();
+//                Productvalue productvalue = new Productvalue();
+//                productvalue.setProductspecification(productSpecification);
+//                productvalue.setHexcolor(svalue);
+//                productValues.add(productvalue);
+//                productvalue.setActive(BigDecimal.ONE);
+//                productSpecification.getProductvalues().add(productvalue);
+//            }
 
 
+            
+             Collections.sort(productSpecifications, new Comparator<Productspecification>() {
+                public int compare(Productspecification one, Productspecification other) {
+                    return one.getOrdered().compareTo(other.getOrdered());
+                }
+            });
             newProductBean.setProductSpecifications(productSpecifications);
             newProductBean.setProductValues(productValues);
 
@@ -618,14 +661,15 @@ public class FurnitureAction {
              
             Product newProduct = newProductBean.getNewProduct();
             Specification spec = newProductBean.getSpecification();
-
-            
+           
             List<Productspecification> dimensionProductSpecifications = newProductBean.getDimesionProductSpecifications();            
             
             Productspecification productSpecification = new Productspecification();
             productSpecification.setSpecification(spec);
             productSpecification.setProduct(newProduct);
+            productSpecification.setOrdered(new BigDecimal(1000));           
             productSpecification.setActive(BigDecimal.ONE);
+            productSpecification.setOrdered(spec.getOrdered());
                         
             
             List<Productvalue> productValues = newProductBean.getProductValues();
@@ -639,6 +683,16 @@ public class FurnitureAction {
             productSpecification.getProductvalues().add(productvalue);
             
             dimensionProductSpecifications.add(productSpecification);
+            
+             Collections.sort(dimensionProductSpecifications, new Comparator<Productspecification>() {
+                public int compare(Productspecification one, Productspecification other) {
+                    try {
+                        return one.getOrdered().compareTo(other.getOrdered());
+                    } catch (Exception ex) {
+                        return 0;
+                    }
+                }
+            });
             
             newProductBean.setDimesionProductSpecifications(dimensionProductSpecifications);
             newProductBean.setProductValues(productValues);
@@ -829,6 +883,10 @@ public class FurnitureAction {
             
             if (newProductBean.getProducts().getTarget()!=null && newProductBean.getProducts().getTarget().size()>0){
                 product.setParentproducts(newProductBean.getProducts().getTarget());
+            }
+            
+            if (newProductBean.getScopeCompanies().getTarget()!=null && newProductBean.getScopeCompanies().getTarget().size()>0){
+                product.setScopeCompanies(newProductBean.getScopeCompanies().getTarget());
             }
             
             
@@ -1479,13 +1537,20 @@ public class FurnitureAction {
                 specifications.addAll(dao.findByProperty("specificationcategory", specificationcategory));
             }
 
-             
-                ItemspecificationDAO d = new ItemspecificationDAO();
-                specifications.addAll(d.fetchItemSpecifications(viewProductBean.getProduct().getItem(), true, false));
+
+            ItemspecificationDAO d = new ItemspecificationDAO();
+            specifications.addAll(d.fetchItemSpecifications(viewProductBean.getProduct().getItem(), true, false));
             
+            List<Specification> tempSpecs = new ArrayList<Specification>(specifications);
+            
+             Collections.sort(tempSpecs, new Comparator<Specification>() {
+                public int compare(Specification one, Specification other) {
+                    return one.getOrdered().compareTo(other.getOrdered());
+                }
+            });
+                
 
-
-            viewProductBean.setSpecifications(new ArrayList<Specification>(specifications));
+            viewProductBean.setSpecifications(tempSpecs);
             FacesUtils.callRequestContext("selectSpecDialog.show();");
 
         } catch (Exception e) {  
@@ -1505,13 +1570,15 @@ public class FurnitureAction {
             productSpecifications.remove(productSpecification);            
             viewProductBean.setProductSpecifications(productSpecifications);
             userTransaction = persistenceHelper.getUserTransaction();
-            userTransaction.begin();
-            product.getProductspecifications().remove(productSpecification);
+            
+             product.getProductspecifications().remove(productSpecification);
+            userTransaction.begin();                         
             persistenceHelper.remove(productSpecification);            
             //product = persistenceHelper.editPersist(product);
             persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), product, null, null, null, null, null);            
             viewProductBean.setProduct(product);
             userTransaction.commit();
+            
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
         } catch (Exception e) {
             try {
@@ -1556,9 +1623,10 @@ public class FurnitureAction {
 
             List<Productspecification> productSpecifications = viewProductBean.getProductSpecifications();
             userTransaction = persistenceHelper.getUserTransaction();
-            userTransaction.begin();
+            
             Productspecification productSpecification = new Productspecification();
             productSpecification.setSpecification(spec);
+            productSpecification.setOrdered(spec.getOrdered());
             productSpecification.setProduct(newProduct);            
             productSpecification.setActive(BigDecimal.ONE);            
             
@@ -1589,7 +1657,7 @@ public class FurnitureAction {
                 productSpecification.getProductvalues().add(productvalue);
             }
 
-            if (spec.getFreetext().equals(BigDecimal.ONE)) {
+            if (spec.getFreetext().equals(BigDecimal.ONE) ) {
                 String svalue = viewProductBean.getSvalue();
                 Productvalue productvalue = new Productvalue();
                 productvalue.setProductspecification(productSpecification);
@@ -1598,15 +1666,43 @@ public class FurnitureAction {
                 productvalue.setActive(BigDecimal.ONE);
                 productSpecification.getProductvalues().add(productvalue);
             }
-
-            productSpecification = persistenceHelper.editPersist(productSpecification);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), newProduct, null, null, null, null, null);            
-            productSpecifications.add(productSpecification);
             
+//             if (spec.getFreetext().equals(BigDecimal.ONE) && spec.getColor().equals(BigDecimal.ONE)) {
+//                String svalue = viewProductBean.getSvalue();
+//                Productvalue productvalue = new Productvalue();
+//                productvalue.setProductspecification(productSpecification);
+//                productvalue.setHexcolor(svalue);
+//                productValues.add(productvalue);
+//                productvalue.setActive(BigDecimal.ONE);
+//                productSpecification.getProductvalues().add(productvalue);
+//            }
+            
+            
+
+            
+            productSpecifications.add(productSpecification);
+            Collections.sort(productSpecifications, new Comparator<Productspecification>() {
+                public int compare(Productspecification one, Productspecification other) {                   
+                     try {
+                        return one.getOrdered().compareTo(other.getOrdered());
+                    } catch (Exception ex) {
+                        return 0;
+                    }
+                }
+            });            
+            //productSpecification = persistenceHelper.editPersist(productSpecification);
+            
+            newProduct.getProductspecifications().add(productSpecification);
+            userTransaction.begin();
+            persistenceHelper.create(productSpecification);                        
+            //newProduct = persistenceHelper.editPersist(newProduct);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), newProduct, null, null, null, null, null);                        
             userTransaction.commit(); 
 
             viewProductBean.setProductSpecifications(productSpecifications);
             viewProductBean.setProductValues(productValues);
+            
+            viewProductBean.setProduct(newProduct);
 
             FacesUtils.callRequestContext("selectValueDialog.hide();");
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
@@ -1636,6 +1732,7 @@ public class FurnitureAction {
             
             Productspecification productSpecification = new Productspecification();
             productSpecification.setSpecification(spec);
+            productSpecification.setOrdered(new BigDecimal(1000));
             productSpecification.setProduct(newProduct);
             productSpecification.setActive(BigDecimal.ONE);
                         
@@ -1651,10 +1748,26 @@ public class FurnitureAction {
             productSpecification.getProductvalues().add(productvalue);
             
             userTransaction = persistenceHelper.getUserTransaction();
-            userTransaction.begin();
-            productSpecification = persistenceHelper.editPersist(productSpecification);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), newProduct, null, null, null, null, null);            
+            
+            
+            //productSpecification = persistenceHelper.editPersist(productSpecification);
             dimensionProductSpecifications.add(productSpecification);
+             Collections.sort(dimensionProductSpecifications, new Comparator<Productspecification>() {
+                public int compare(Productspecification one, Productspecification other) {                    
+                     try {
+                        return one.getOrdered().compareTo(other.getOrdered());
+                    } catch (Exception ex) {
+                        return 0;
+                    }
+                }
+            });
+            
+            
+            newProduct.getProductspecifications().add(productSpecification);            
+            userTransaction.begin();
+            persistenceHelper.create(productSpecification);
+            //newProduct = persistenceHelper.editPersist(newProduct);            
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), newProduct, null, null, null, null, null);                        
             userTransaction.commit();
                         
             viewProductBean.setDimesionProductSpecifications(dimensionProductSpecifications);
@@ -1686,7 +1799,12 @@ public class FurnitureAction {
             viewProductBean.setDimesionProductSpecifications(productDimensionSpecifications);
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
-            persistenceHelper.remove(productSpecification);
+            
+            persistenceHelper.remove(productSpecification);            
+            Product product = viewProductBean.getProduct();
+            product.getProductspecifications().remove(productSpecification);
+            //product = persistenceHelper.editPersist(product);
+            
             persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
             userTransaction.commit();
             
@@ -1881,6 +1999,37 @@ public class FurnitureAction {
             goError(e);
         }
     }
+    
+    
+    public void saveScopeCompanies() {
+        UserTransaction userTransaction = null;
+        try {
+            
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");            
+            List<Company> companies = viewProductBean.getScopeCompanies().getTarget();
+            Product product = viewProductBean.getProduct();
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();            
+            product.setScopeCompanies(companies);
+            product = persistenceHelper.editPersist(product);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);            
+            userTransaction.commit(); 
+            viewProductBean.setProduct(product);
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+           
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
     
     public void openSelectImageViewDlg() {
         try {
@@ -2488,7 +2637,107 @@ public class FurnitureAction {
             return false;
         }
     }
+    
+    
+    public void morerows() {
+        ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+        viewProductBean.setRows("40");
+    }
+     public void lessrows() {
+        ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+        viewProductBean.setRows("5");
+    }
 
+     
+     
+     public void preProcessPDF(Object document) throws IOException, BadElementException, DocumentException {  
+        ProductSearchBean productSearchBean = (ProductSearchBean) FacesUtils.getManagedBean("productSearchBean");
+        List<Product> products = productSearchBean.getProducts();
+        
+        
+                
+        Document pdf = (Document) document;  
+        
+        pdf.open();  
+        pdf.setPageSize(PageSize.A4);  
+
+         String logo = FacesUtils.getServletContext().getRealPath("")+ File.separator + "resources" + File.separator + "images" + File.separator+"efurn-logo.png";
+                 //servletContext.getRealPath("") + File.separator + "images" + File.separator + "prime_logo.png";  
+        
+         System.out.println(logo);
+         pdf.add(Image.getInstance(logo));  
+        PdfPTable table = new PdfPTable(4);
+        
+        String FONT = "c:\\Windows\\Fonts\\Arial.ttf";
+        BaseFont bf = BaseFont.createFont(FONT,BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        
+        
+        Font f = new Font(bf, 12);
+        f.setColor(Color.WHITE);
+        PdfPCell cell = new PdfPCell(new Phrase("1", f));
+        
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);        
+        table.addCell(cell);
+        
+         cell = new PdfPCell(new Phrase("2", f));
+        cell.setBackgroundColor(Color.BLACK);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);        
+        table.addCell(cell);
+        
+         cell = new PdfPCell(new Phrase("3", f));
+        cell.setBackgroundColor(Color.BLACK);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);        
+        table.addCell(cell);
+        
+         cell = new PdfPCell(new Phrase("4", f));
+        cell.setBackgroundColor(Color.BLACK);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);        
+        table.addCell(cell);
+        
+        table.getDefaultCell().setBackgroundColor(Color.LIGHT_GRAY); 
+        f.setColor(Color.BLACK);
+        for (int i = 0; i < products.size(); i++) {
+             Product product = products.get(i);
+             table.addCell(String.valueOf(i+1) );
+             table.addCell(new Phrase(product.getName(),f));
+             table.addCell(new Phrase(product.getFirstCompany().getName(),f));
+             List<Productspecification> ps = product.getProductspecifications();
+             
+             
+             String txt = "";
+             for (int j = 0; j < ps.size(); j++) {
+                Productspecification productspecification = ps.get(j);
+                txt = txt + productspecification.getSpecification().getName()+": ";
+                 System.out.println(txt);
+                List<Productvalue> values =  productspecification.getProductvalues();
+                 for (int k = 0; k < values.size(); k++) {
+                     Productvalue productvalue = values.get(k);
+                     if (productspecification.getSpecification().getFreetext().equals(BigDecimal.ONE)){
+                       txt = txt + productvalue.getValue();
+                       System.out.println(txt);
+                     } else if (productspecification.getSpecification().getFreetext().equals(BigDecimal.ZERO) ) {   //&& productspecification.getSpecification().getMultiplevalues().equals(BigDecimal.ZERO
+                        txt = txt +productvalue.getSvalue().getName();
+                        System.out.println(txt);
+                     }                     
+                 }                                                
+             } 
+             
+             
+             
+             table.addCell(new Phrase(txt,f));
+             
+         }
+        
+        pdf.add(table);
+        
+        //pdf.close();
+        
+//        ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();  
+//        String logo = servletContext.getRealPath("") + File.separator + "images" + File.separator + "prime_logo.png";  
+//
+//        pdf.add(Image.getInstance(logo));  
+    }  
+     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                          TEMPLATES!!!!!!!!!!!!!!

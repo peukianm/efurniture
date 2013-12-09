@@ -28,6 +28,10 @@ public class Productvalue implements java.io.Serializable {
     private Productspecification productspecification;
     private Svalue svalue;
     private String value;
+    private String red;
+    private String green;
+    private String blue;
+    private String hexcolor;
     private BigDecimal ordered;
     private BigDecimal active;
     private Timestamp createdTimestamp;
@@ -116,6 +120,42 @@ public class Productvalue implements java.io.Serializable {
 
     public void setValue(String value) {
         this.value = value;
+    }
+    
+    
+    @Column(name = "RED", length = 100)
+    public String getRed() {
+        return this.red;
+    }
+
+    public void setRed(String red) {
+        this.red = red;
+    }
+    @Column(name = "GREEN", length = 100)
+    public String getGreen() {
+        return this.green;
+    }
+
+    public void setGreen(String green) {
+        this.green = green;
+    }
+    @Column(name = "BLUE", length = 100)
+    public String getBlue() {
+        return this.blue;
+    }
+
+    public void setBlue(String blue) {
+        this.blue = blue;
+    }
+    
+    
+    @Column(name = "HEXCOLOR", length = 100)
+    public String getHexcolor() {
+        return this.hexcolor;
+    }
+
+    public void setHexcolor(String hexcolor) {
+        this.hexcolor = hexcolor;
     }
 
     @Column(name = "ORDERED", precision = 22, scale = 0)

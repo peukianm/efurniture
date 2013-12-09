@@ -71,6 +71,8 @@ public class NewProductBean implements Serializable {
     
     private DualListModel<Product> products;
     private DualListModel<Product> subProducts;
+    private DualListModel<Company> scopeCompanies;
+    
     //private List<Company> selectedCompanies = new ArrayList<Company>(0);
     //private List<Productline> productLines = new ArrayList<Productline>(0);
     //private List<Productline> selectedProductLines = new ArrayList<Productline>(0);
@@ -124,6 +126,16 @@ public class NewProductBean implements Serializable {
             });
             products = new DualListModel<Product>(pr, new ArrayList<Product>());
             subProducts = new DualListModel<Product>(pr, new ArrayList<Product>());
+            
+            ApplicationBean appBean = (ApplicationBean)FacesUtils.getManagedBean("applicationBean");                        
+            List<Company> companies = new ArrayList<Company>(0);
+            for (int i = 0; i < appBean.getCompanies().size(); i++) {
+                Company comp = appBean.getCompanies().get(i);
+                if (!comp.equals(company)) {
+                    companies.add(comp);
+                }                
+            }
+            scopeCompanies = new DualListModel<Company>(companies,new ArrayList<Company>());                      
         }
     }
 
@@ -140,6 +152,14 @@ public class NewProductBean implements Serializable {
         this.selectedNodePath = selectedNodePath;
     }
 
+    public DualListModel<Company> getScopeCompanies() {
+        return scopeCompanies;
+    }
+
+    public void setScopeCompanies(DualListModel<Company> scopeCompanies) {
+        this.scopeCompanies = scopeCompanies;
+    }
+    
     
     public Imageproduct getSelectedImage() {
         return selectedImage;

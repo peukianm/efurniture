@@ -282,7 +282,7 @@ img.right {
 }
 
 .ui-widget {
-    font-size: 12px !important;
+    font-size: 11px !important;
 }
 
 .left-font {
@@ -575,8 +575,24 @@ img.right {
 }
 
 .ui-datatable thead tr th, .ui-datatable thead tr, .ui-datatable thead  {
-    font-weight: bold ! important;
+    font-weight: bold ! important;    
+}
+
+.noBorderTable tbody td {
+    border-style: none !important; 
+}
+
+#coloring {
+    float:left;border:1px solid black; 
+    width:20px; height:20px;
+    margin: 2px;
+    line-height:0;
+    display: inline-block;
     
+    
+    /*border-right:100px solid #AAC32B;
+    border-bottom:100px solid #C2C2C2;
+    border-left:100px solid #3D3D3D; */
 }
 
 

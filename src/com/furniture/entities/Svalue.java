@@ -24,6 +24,8 @@ public class Svalue implements java.io.Serializable {
     // Fields
     private BigDecimal valueid;
     private String name;
+    private String enname;
+    private String hex;
     private String comments;
     private BigDecimal hasimage;
     private Set<Specificationvalue> specificationvalues = new HashSet<Specificationvalue>(0);
@@ -82,6 +84,24 @@ public class Svalue implements java.io.Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+    
+    @Column(name = "ENNAME", nullable = false, length = 300)
+    public String getEnname() {
+        return this.enname;
+    }
+
+    public void setEnname(String enname) {
+        this.enname = enname;
+    }
+    
+     @Column(name = "HEX", nullable = false, length = 300)
+    public String getHex() {
+        return this.hex;
+    }
+
+    public void setHex(String hex) {
+        this.hex = hex;
     }
 
     @Column(name = "COMMENTS", length = 400)

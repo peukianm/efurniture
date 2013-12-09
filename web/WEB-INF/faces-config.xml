@@ -103,6 +103,10 @@
   <converter-class>com.furniture.converter.MeasurmentConverter</converter-class>
  </converter>
  
+ <converter>
+  <converter-id>CategoryConverter</converter-id>
+  <converter-class>com.furniture.converter.CategoryConverter</converter-class>
+ </converter>
  
  
  
@@ -155,6 +159,12 @@
  <managed-bean>
   <managed-bean-name>furnitureAction</managed-bean-name>
   <managed-bean-class>com.furniture.action.FurnitureAction</managed-bean-class>
+  <managed-bean-scope>request</managed-bean-scope>
+ </managed-bean>
+ 
+ <managed-bean>
+  <managed-bean-name>companyAction</managed-bean-name>
+  <managed-bean-class>com.furniture.action.CompanyAction</managed-bean-class>
   <managed-bean-scope>request</managed-bean-scope>
  </managed-bean>
  

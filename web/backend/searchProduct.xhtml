@@ -79,9 +79,13 @@
 
                         <p:column headerText="#{bundle.name}" sortBy="#{product.name}" style="width: 1px; white-space: nowrap;vertical-align: top;font-weight: bold" >                                                            
                             <h:outputText value="#{product.name}" />                                                           
-                        </p:column>  
+                        </p:column> 
+                        
+                        <p:column headerText="#{bundle.price}" sortBy="#{product.firstPrice.amount}" style="width: 1px; white-space: nowrap;vertical-align: top;font-weight: bold" >                                                            
+                            <h:outputText value="#{product.firstPrice.amount}" />                                                           
+                        </p:column> 
 
-                        <p:column headerText="#{bundle.company}"  style="width:20%;vertical-align: top">                                                            
+                        <p:column headerText="#{bundle.company}"  style="width:20%;vertical-align: top" exportable="false">                                                            
                             <ui:repeat var="companyProduct" value="#{product.orderedCompanies}" >
                                 <h:outputText value="#{companyProduct.name}"/><br/>                                     
                             </ui:repeat>
@@ -95,32 +99,36 @@
 
 
 
-                        <p:column headerText="#{bundle.charecteristics}"  style="width:56%;vertical-align: top; " >                                                            
+                        <p:column headerText="#{bundle.charecteristics}"  exportable="false" style="width:56%;vertical-align: top; " >                                                            
                             <p:dataTable  var="pss" value="#{product.productspecifications}" style="font-size: 8px;float: left"  styleClass="hide-column-names noBord" emptyMessage="#{bundle.noSpecs}" >
-                                <p:column width="20%" >  
+                                <p:column width="20%"  >  
                                     <p:outputLabel value="#{pss.specification.name}: " style="font-weight: bold;vertical-align: top;float: right"/> 
                                 </p:column> 
-                                <p:column width="80%">                                         
+                                <p:column width="80%" >                                         
                                     <ui:repeat var="prr" value="#{pss.productvalues}" >
-                                        <h:outputText value="#{prr.svalue.name} " rendered="#{prr.svalue!=null}" /> 
-                                        <h:outputText value="#{prr.value} " rendered="#{prr.svalue==null}" /> 
+                                        <h:outputText value="#{prr.svalue.name} " rendered="#{prr.svalue!=null and pss.specification.color!=1}" /> 
+                                        <h:outputText value="#{prr.value} " rendered="#{prr.svalue==null  and pss.specification.color!=1}" />
+                                        
+                                         <p:outputPanel rendered="#{prr.svalue==null and pss.specification.color==1}" style=""  >
+                                             <div id="coloring" style="background-color: ##{prr.value};" title="#{prr.value}"></div>
+                                         </p:outputPanel>
+                                        
+                                        
+                                        <p:outputPanel rendered="#{prr.svalue!=null and pss.specification.color==1}" style=""  >
+                                            <div id="coloring" style="background-color:#{prr.svalue.enname} "  title="#{prr.svalue.name}" ></div>
+                                        </p:outputPanel> 
+                                        
+                                        
                                     </ui:repeat>                                         
                                 </p:column>  
 
                             </p:dataTable>                                                    
                         </p:column>  
 
-                        <p:column headerText="#{bundle.actions}" exportable="false"  style="font-weight: bold;vertical-align: top;width: 1px; white-space: nowrap;">                                                            
-                            <!--<p:commandButton immediate="true"  icon="ui-icon-search"  action="{furnitureAction.showProductDetails()}" >
-                                <f:setPropertyActionListener value="{product}" target="{productSearchBean.selectedProduct}" />
-                            </p:commandButton>-->
-                            <!--<p:commandButton id="editButton" icon="ui-icon-pencil"  title="Αλλαγή"  action="{furnitureAction.editProduct(product)}" 
-                                             rendered="{furnitureAction.checkProductInCompany(product)}"  />  -->
-                            
-                            <p:commandButton  icon="ui-icon-search" title="#{bundle.viewProduct}" action="#{furnitureAction.viewProduct(product)}" />
-                                
+                        <p:column headerText="#{bundle.actions}" exportable="false"  style="font-weight: bold;vertical-align: top;width: 1px; white-space: nowrap;">                                                                                        
+                            <p:commandButton  icon="ui-icon-search" title="#{bundle.viewProduct}" action="#{furnitureAction.viewProduct(product)}" />                                
                             <p:commandButton id="deleteButton"  icon="ui-icon-closethick" title="Διαγραφή" action="#{furnitureAction.removeProduct()}" immediate="true" update="productResults"
-                                             rendered="#{furnitureAction.checkProductInCompany(product)}">  <!--oncomplete="confDeleteProductDlg.show()" -->
+                                             rendered="#{furnitureAction.checkProductInCompany(product)}">  
                                 <f:setPropertyActionListener value="#{product}" target="#{productSearchBean.selectedProduct}" />
                                 <p:confirm header="#{bundle.confirmation}" message="#{bundle.confDeleteProduct}" icon="ui-icon-alert" /> 
                             </p:commandButton>
@@ -128,22 +136,16 @@
 
                     </p:dataTable>
                     
-                   
-
-
-                    <p:confirmDialog  id="confDeleteProductDlgID" message="#{bundle.confDeleteProduct}" header="#{bundle.warning}" severity="alert" widgetVar="confDeleteProductDlg" >                                                                                             
-                        <p:commandButton action="#{furnitureAction.removeProduct()}" value="#{bundle.yes}" update="searchProductForm" onclick="confDeleteProductDlg.hide()"/>                                                       
-                        <p:commandButton value="#{bundle.no}"  onclick="confDeleteProductDlg.hide()" type="button" />                                                     
-                    </p:confirmDialog> 
+                  
 
                    <!-- <h:commandLink rendered="#{productSearchBean.productsModel.rowCount >0}">  
                         <p:graphicImage value="../resources/images/excel.png" /> <h:outputText  style="color:blue;text-decoration: underline;font-weight:bold;" value="#{bundle.excelExport}" /> 
                         <p:dataExporter    type="xls" target="productResults" fileName="furnitures"/>  
-                    </h:commandLink>  
+                    </h:commandLink> 
 
                     <h:commandLink rendered="#{productSearchBean.productsModel.rowCount >0}">  
                         <p:graphicImage value="../resources/images/pdf.png" /> <h:outputText  style="color:blue;text-decoration: underline;font-weight:bold;" value="#{bundle.pdfExport}" /> 
-                        <p:dataExporter    type="pdf" target="productResults" fileName="furnitures"/>  
+                        <p:dataExporter encoding="UTF-8"   type="pdf" target="productResults" fileName="furnitures" preProcessor="{furnitureAction.preProcessPDF}"/>  
                     </h:commandLink>  -->
 
                 </p:panel>
@@ -262,9 +264,19 @@
                                     <p:column width="80%">                                         
                                         <ui:repeat var="prr" value="#{pss.productvalues}" >
                                             <h:outputText value="#{prr.svalue.name}" rendered="#{prr.svalue!=null}" /> 
-                                            <h:outputText value="#{prr.value}" rendered="#{prr.svalue==null}" /> 
+                                            <h:outputText value="#{prr.value}" rendered="#{prr.svalue==null  and pss.specification.color!=1}" /> 
+                                            
+                                            <p:outputPanel rendered="#{prr.svalue==null and pss.specification.color==1}" style="display: block"  >
+                                                <div id="coloring" style="border-top:20px solid ##{prr.value};"></div>
+                                            </p:outputPanel>
+                                            
+                                            <!-- <p:outputPanel rendered="#{prr.svalue!=null and pss.specification.color==1}"  >
+                                                <div id="coloring" style="border-top:20px solid #{prr.svalue.enname};"></div>
+                                            </p:outputPanel> -->
+                                            
+                                            
                                         </ui:repeat>                                         
-                                    </p:column>  
+                                    </p:column>   
 
                                 </p:dataTable>                           
                             </p:column>                       

@@ -1,5 +1,5 @@
 /*
- * To change this template, choose Tools | Templates
+  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package com.furniture.bean;
@@ -20,6 +20,7 @@ import com.furniture.entities.Specification;
 import com.furniture.entities.Specificationcategory;
 import com.furniture.entities.Specificationvalue;
 import com.furniture.entities.Videoproduct;
+import com.furniture.util.FacesUtils;
 import com.furniture.util.FurnitureUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ public class ViewProductBean implements Serializable {
     private List<Price> prices = new ArrayList<Price>(0);
     private DualListModel subProducts;
     private DualListModel products;
+    private DualListModel<Company> scopeCompanies;
     
     private List<Imageproduct> images;
     private Imageproduct newImage = new Imageproduct();
@@ -60,13 +62,13 @@ public class ViewProductBean implements Serializable {
     private List<Videoproduct> videos;
     private Videoproduct newVideo = new Videoproduct();
     private Videoproduct selectedVideo = new Videoproduct();
-    
+       
     private Category selectedCategory;
     private TreeNode root;
     private TreeNode selectedNode;
     
     private Double amount;
-    private Double discount;
+    private Double discount; 
     private Double initialAmount;
     private Currency currency;
     private Date priceDate;
@@ -91,12 +93,14 @@ public class ViewProductBean implements Serializable {
     private Productspecification productSpecification;
     
     private Boolean showButton;
+    private String rows ="5";
     
     
     
 
     @PostConstruct
     public void init() {
+        //System.out.println("PRODUCT BEFORE INT="+product);
         System.out.println("INITIALIZING IN VIEWPRODUCT BEAN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1111");
         if (sessionBean.getParameter() != null && sessionBean.getParameter() instanceof Product) {
 
@@ -137,14 +141,53 @@ public class ViewProductBean implements Serializable {
             dimesionProductSpecifications = product.getDimesnionProductSpecifications();
             prices = product.getPrices();
 
+            
+            
+            
+            List<Product> pr1 = new ArrayList<Product>(pr);            
+            pr.removeAll(product.getParentproducts());
+            pr1.removeAll(product.getSubproducts());
             products = new DualListModel<Product>(pr, product.getParentproducts());
-            subProducts = new DualListModel<Product>(pr, product.getSubproducts());
+            subProducts = new DualListModel<Product>(pr1, product.getSubproducts());
+            
+            ApplicationBean appBean = (ApplicationBean)FacesUtils.getManagedBean("applicationBean");                                 
+            List<Company> companies = new ArrayList<Company>(0);
+            for (int i = 0; i < appBean.getCompanies().size(); i++) {
+                Company comp = appBean.getCompanies().get(i);
+                if (!comp.equals(company)) {
+                    companies.add(comp);
+                }                
+            }
+            
+            companies.removeAll(product.getScopeCompanies());
+            scopeCompanies = new DualListModel<Company>(companies,product.getScopeCompanies());  
         }
     }
 
     public void reset() {
     }
 
+    public DualListModel<Company> getScopeCompanies() {
+        return scopeCompanies;
+    }
+
+    public void setScopeCompanies(DualListModel<Company> scopeCompanies) {
+        this.scopeCompanies = scopeCompanies;
+    }
+
+    
+    
+    
+    
+    public String getRows() {
+        return rows;
+    }
+
+    public void setRows(String rows) {
+        this.rows = rows;
+    }
+
+    
     
     public Boolean getShowButton() {
         if (product.getFirstCompany().equals(sessionBean.getUsers().getCompany())) {

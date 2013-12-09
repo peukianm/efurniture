@@ -63,25 +63,20 @@
                                         <p:message for="selectCompany" display="icon"/>
 
                                     </td>     
-
-                                    <td style="vertical-align: top;float: right"><h:outputLabel value="#{bundle.insertDate}: " style="font-weight: bold" /></td>
-                                    <td style="vertical-align: top;"> 
-                                        <p:calendar locale="el" size="12"  readonlyInput="true"  required="false" navigator="true" showOn="button" 
-                                                    pattern="dd/MM/yyyy" value="#{newProductBean.newProduct.createddate}" id="createdate"/> 
-                                    </td>                                                                                            
+                                                                                                                               
                                 </tr>                                
 
 
 
 
-                                <tr>
-                                    <td style="vertical-align: top;float: right"><p:outputLabel value="#{bundle.description}* :"  style="font-weight: bold"/></td>
-                                    <td style="vertical-align: top;"><p:inputTextarea required="true" requiredMessage="#{bundle.productDescription}: #{bundle.mandatoryField}"  value="#{newProductBean.newProduct.description}" id="productDescription" rows="5" cols="30" />
+                                <tr> 
+                                    <td style="vertical-align: top;float: right" rowspan="2" ><p:outputLabel value="#{bundle.description}* :"  style="font-weight: bold"/></td>
+                                    <td style="vertical-align: top;" rowspan="2" ><p:inputTextarea required="true" requiredMessage="#{bundle.productDescription}: #{bundle.mandatoryField}"  value="#{newProductBean.newProduct.description}" id="productDescription" rows="5" cols="30" />
                                         <p:message for="productDescription" display="icon"/>
                                     </td>
 
                                     <td style="vertical-align: top;float: right"> <p:outputLabel value="#{bundle.category}* :"  style="font-weight: bold"/> </td>
-                                    <td style="vertical-align: top;" colspan="3"><p:outputLabel  id="showTree"  value="#{newProductBean.selectedNode.data.name}" /><br/>
+                                    <td style="vertical-align: top;" ><p:outputLabel  id="showTree"  value="#{newProductBean.selectedNode.data.name}" /><br/>
                                         
                                         <p:commandButton id="treeBtn" immediate="true"  value="#{bundle.selectCategory}" />
                                         <p:overlayPanel id="treepanel" for="treeBtn" hideEffect="fade" >
@@ -95,6 +90,16 @@
                                                                                                                        
                                     </td>
                                 </tr>
+                                <tr><td></td>
+                                    <td style="vertical-align: top;float: right"><h:outputLabel value="#{bundle.insertDate}: " style="font-weight: bold" /></td>
+                                    <td style="vertical-align: top;"> 
+                                        <p:calendar locale="el" size="12"  readonlyInput="true"  required="false" navigator="true" showOn="button" 
+                                                    pattern="dd/MM/yyyy" value="#{newProductBean.newProduct.createddate}" id="createdate"/> 
+                                    </td> 
+                                    
+                                </tr>
+                                
+                                
                             </table>
                         </p:panel>   
                     </td>
@@ -160,14 +165,25 @@
                                                 <p:commandButton id="charBtn" immediate="true"  disabled="#{newProductBean.productSpecifications.size()==0}"   oncomplete="" update="" value="#{bundle.view}" />
 
                                                 <p:overlayPanel id="charPanel" for="charBtn" hideEffect="fade" >  
-                                                    <p:dataTable id="charTable" var="char" value="#{newProductBean.productSpecifications}" rows="10" paginator="false">  
-                                                        <p:column headerText="#{bundle.name}" width="20%">  
+                                                    <p:dataTable id="charTable" var="char" value="#{newProductBean.productSpecifications}" rows="30" paginator="false">  
+                                                        <p:column headerText="#{bundle.name}" width="45%">  
                                                             <h:outputText value="#{char.specification.name}" />                                        
                                                         </p:column>  
-                                                        <p:column headerText="#{bundle.values}" width="70%">                                         
+                                                        <p:column headerText="#{bundle.values}" width="45%">                                         
                                                             <ui:repeat var="pr" value="#{char.productvalues}" >
-                                                                <h:outputText value="#{pr.svalue.name} " rendered="#{pr.svalue!=null}" /> 
-                                                                <h:outputText value="#{pr.value} " rendered="#{pr.svalue==null}" /> 
+                                                                <h:outputText value="#{pr.svalue.name} " rendered="#{pr.svalue!=null and  char.specification.color!=1}" /> 
+                                                                <h:outputText value="#{pr.value} " rendered="#{pr.svalue==null and char.specification.color!=1}" /> 
+                                                               
+                                                                
+                                                                <p:outputPanel rendered="#{pr.svalue==null and char.specification.color==1}" style=""  >
+                                                                  <div id="coloring" style="background-color: ##{pr.value};"   title="#{pr.value}" ></div>
+                                                                </p:outputPanel>
+                                                                
+                                                                 <p:outputPanel rendered="#{pr.svalue!=null and char.specification.color==1}"  >
+                                                                     <div id="coloring" style="background-color: #{pr.svalue.enname};" title="#{pr.svalue.name}"  ></div>
+                                                                 </p:outputPanel>
+                                                                
+                                                                
                                                             </ui:repeat>                                         
                                                         </p:column>  
 
@@ -192,7 +208,8 @@
 
                                         <p:tab id="dimensionTab" title="#{bundle.dimensions}"  style="padding:0px ! important; margin-left: 0px;  "  >
                                             <h:form id="dimensionForm">  
-                                                <p:dataTable id="dimensionDatatable" widgetVar="dimensionDatatableWidget" value="#{newProductBean.dimesionProductSpecifications}" var="dimesionProductSpecification" rows="10" paginator="false" emptyMessage="#{bundle.noPriceInserted}"> 
+                                                <p:dataTable id="dimensionDatatable" widgetVar="dimensionDatatableWidget" value="#{newProductBean.dimesionProductSpecifications}" var="dimesionProductSpecification" 
+                                                                      rows="30" paginator="false" emptyMessage="#{bundle.noPriceInserted}"> 
                                                     <p:column headerText="#{bundle.dimensionType}"> 
                                                         <p:outputLabel value="#{dimesionProductSpecification.specification.name}" />                                                                    
                                                     </p:column>
@@ -317,10 +334,30 @@
                                                     </p:dataList>  
                                                 </h:form>                                                
                                             </p:panel>
-                                        </p:tab>  
+                                        </p:tab>
+                                        <p:tab id="rulesTab" title="#{bundle.rules}"  style="padding:0px ! important; margin-left: 0px;"  >
+                                            <p:panel widgetVar="scopPanelWidget" id="rulesPanelID"   >
+                                                <h:form id="scopForm">
+                                                    <p:dataList value="#{newProductBean.scopeCompanies.target}" var="sc" id="scopid" emptyMessage="#{bundle.noCompanies}" 
+                                                                paginator="false" rows="5" paginatorTemplate="{PreviousPageLink} {CurrentPageReport} {NextPageLink} {RowsPerPageDropdown}"  
+                                                                rowsPerPageTemplate="5,10,15" type="none">  
+                                                        <f:facet name="header">  
+                                                            #{bundle.accessCompanies}  
+                                                        </f:facet>                                                          
+                                                        <h:outputText value="#{sc.name}"  /> 
+                                                        <br />  
+                                                    </p:dataList>
+                                                    
+                                                    <p:separator />
+                                                    <p:commandButton value="#{bundle.addCompany}" onclick="selectSCompanyIDDialog.show()" process="@this" immediate="true" update="@widgetVar(selectSCompanyPanelWidget)" />  
+                                                    
+                                                    
+                                                
+                                                </h:form>                                                
+                                            </p:panel>
+                                        </p:tab>    
 
-
-
+                                            
                                     </p:tabView>                                          
                                 </td>                                                                
                             </tr>
@@ -349,22 +386,22 @@
                         <table >  
                             <tr >
                                 <td colspan="3">
-                                    <p:graphicImage id="image" value="/media/temp/#{image.filename}"   height="300" width="400"   />   
+                                    <p:graphicImage cache="true" id="image" value="/media/temp/#{image.filename}"   height="300" width="400"   />   
                                 </td>
                             </tr>
                             <tr >   
-                                <td style="width:1%; white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.ordered}: "  style="font-weight: bold"/></td>
+                                <td style="width:1px; white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.ordered}: "  style="font-weight: bold"/></td>
                                 <td ><h:outputText  value="#{image.primary}" /> <p:spacer width="10"/></td>
-                                <td style="width:1%; white-space:nowrap;">   
+                                <td style="width:1px; white-space:nowrap;">   
                                     <p:commandButton icon="ui-icon-pencil" immediate="true"  alt="#{bundle.update}"   update=":updateImagetOrderForm:updateImageOrderPanel" onclick="updateImageOrderDialog.show()" >
                                         <f:setPropertyActionListener value="#{image}" target="#{newProductBean.selectedImage}" /> 
                                     </p:commandButton> 
                                 </td>    
                             </tr>
                             <tr>
-                                <td style="width:1%; white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.description}: "  style="font-weight: bold"/></td>
+                                <td style="width:1px; white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.description}: "  style="font-weight: bold"/></td>
                                 <td ><h:outputText  value="#{image.description}" /><p:spacer width="10"/></td>
-                                <td style="width:1%; white-space:nowrap;">   
+                                <td style="width:1px; white-space:nowrap;">   
                                     <p:commandButton icon="ui-icon-pencil" immediate="true"  alt="#{bundle.update}"   update=":updateImagetDescriptionForm:updateImageDescriptionPanel" onclick="updateImageDescriptionDialog.show()" >
                                         <f:setPropertyActionListener value="#{image}" target="#{newProductBean.selectedImage}" /> 
                                     </p:commandButton>
@@ -428,28 +465,28 @@
         <h:form id="updateVideoForm"> 
             <p:dialog header="#{bundle.updateVideo}" id="updateVideoID" position="top" widgetVar="updateVideoDialog" modal="true" draggable="false"   resizable="false">
                 <p:outputPanel id="updateVideoPanel" widgetVar="updateVideoPanelWidget">                                        
-                    <p:dataTable value="#{newProductBean.videos}" var="video" rows="1" paginator="true"> 
+                    <p:dataTable value="#{newProductBean.videos}" var="video" rows="1" paginator="true" styleClass="noBorderTable"> 
                         <p:column> 
 
                             <table >  
                                 <tr>
-                                    <p:media value="/media/temp/#{video.filename}" width="480" height="450"    >  
+                                    <p:media value="/media/temp/#{video.filename}" width="480" height="420"    >  
                                         <f:param name="autoPlay" value="false" />  
                                     </p:media>
                                 </tr>
                                 <tr >   
-                                    <td style="width:1%; white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.ordered}: "  style="font-weight: bold"/></td>
+                                    <td style="width:1px; white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.ordered}: "  style="font-weight: bold"/></td>
                                     <td ><h:outputText  value="#{video.primary}" /> <p:spacer width="10"/></td>
-                                    <td style="width:1%; white-space:nowrap;">   
+                                    <td style="width:1px; white-space:nowrap;">   
                                         <p:commandButton icon="ui-icon-pencil" immediate="true"  alt="#{bundle.update}"   update=":updateVideoOrderForm:updateVideoOrderPanel" onclick="updateVideoOrderDialog.show()" >
                                             <f:setPropertyActionListener value="#{video}" target="#{newProductBean.selectedVideo}" /> 
                                         </p:commandButton> 
                                     </td>    
                                 </tr>
                                 <tr>
-                                    <td style="width:1%; white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.description}: "  style="font-weight: bold"/></td>
+                                    <td style="width:1px; white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.description}: "  style="font-weight: bold"/></td>
                                     <td ><h:outputText  value="#{video.description}" /><p:spacer width="10"/></td>
-                                    <td style="width:1%; white-space:nowrap;">   
+                                    <td style="width:1px; white-space:nowrap;">   
                                         <p:commandButton icon="ui-icon-pencil" immediate="true"  alt="#{bundle.update}"   update=":updateVideoDescriptionForm:updateVideoDescriptionPanel" onclick="updateVideoDescriptionDialog.show()" >
                                             <f:setPropertyActionListener value="#{video}" target="#{newProductBean.selectedVideo}" /> 
                                         </p:commandButton>
@@ -550,18 +587,35 @@
                 </p:panel>
             </p:dialog>
         </h:form>
+        
+        <h:form id="selectSCompanyForm"> 
+            <p:dialog header="#{bundle.selectCompany}" id="selectSCompanyID" position="center" widgetVar="selectSCompanyIDDialog" modal="true" minWidth="200" minHeight="500" resizable="false">
+                <p:panel id="selectSCompanyPanel" widgetVar="selectSCompanyPanelWidget">
+                    <p:pickList id="scList" value="#{newProductBean.scopeCompanies}" var="sc"  itemValue="#{sc}" itemLabel="#{sc.name}" converter="CompanyConverter"  
+                                showSourceControls="false" showTargetControls="false" showCheckbox="false" showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" >  
+                        <f:facet name="sourceCaption">#{bundle.available}</f:facet>  
+                        <f:facet name="targetCaption">#{bundle.selected}</f:facet>  
+                        <p:ajax event="transfer" listener="#{furnitureAction.selectPProduct}" />  
+                        <p:column>  
+                            #{sc.name}  
+                        </p:column>  
+                    </p:pickList>                     
+                    <p:commandButton value="#{bundle.save}" onclick="selectSCompanyIDDialog.hide()" process="@this" immediate="true" update="@widgetVar(scopPanelWidget)" />
+                </p:panel>
+            </p:dialog>
+        </h:form>
 
 
 
  
         <h:form id="selectSpecForm">  
-            <p:dialog header="#{bundle.selectSpecification}" id="selectSpecID" position="center" widgetVar="selectSpecDialog" modal="true" minWidth="200" minHeight="500" resizable="false">
+            <p:dialog header="#{bundle.selectSpecification}" id="selectSpecID" position="center" widgetVar="selectSpecDialog" modal="true"  resizable="false">
                 <p:dataTable id="specsTable" var="spec" value="#{newProductBean.specifications}" selection="#{newProductBean.specification}" widgetVar="specsTableWIdget"
                              emptyMessage="#{bundle.noRecordsFound}" rowIndexVar="tt"  rowKey="#{spec}" paginator="true" rows="15" >
-                    <p:column headerText="#{bundle.name}" style="width:24%">  
+                    <p:column headerText="#{bundle.name}" >  
                         <h:outputText value="#{spec.name}" />  
                     </p:column>  
-                    <p:column style="width:4%">  
+                    <p:column >  
                         <p:commandButton id="selectButton" icon="ui-icon-search" action="#{furnitureAction.selectSpecification()}" update=":selectValueForm"  >
                             <f:setPropertyActionListener value="#{spec}" target="#{newProductBean.specification}" />
                         </p:commandButton>
@@ -580,21 +634,32 @@
                 <p:outputLabel style="font-weight: bold;font-style: italic" value=" (#{bundle.multipleSelection})" rendered="#{newProductBean.specification.freetext==0 and newProductBean.specification.multiplevalues==1}"/> 
 
 
-                <p:selectManyCheckbox id="grid1" value="#{newProductBean.selectedSvalues}" converter="SpecificationvalueConverter"  layout="grid" columns="3" rendered="#{newProductBean.specification.freetext==0 and newProductBean.specification.multiplevalues==1}">  
+                <p:selectManyCheckbox id="grid1" value="#{newProductBean.selectedSvalues}" converter="SpecificationvalueConverter"  layout="grid" columns="5" rendered="#{newProductBean.specification.freetext==0 and newProductBean.specification.multiplevalues==1}">  
                     <f:selectItems value="#{newProductBean.svalues}"  var="svalue" itemLabel="#{svalue.svalue.name}"  itemValue="#{svalue}"  /> 
                     <p:ajax update="bt1" />
                 </p:selectManyCheckbox>
 
 
-                <p:selectOneRadio id="grid2" value="#{newProductBean.selectedSvalue}"  converter="omnifaces.SelectItemsConverter" layout="grid" columns="3" rendered="#{newProductBean.specification.freetext==0 and newProductBean.specification.multiplevalues==0}">  
+                <p:selectOneRadio id="grid2" value="#{newProductBean.selectedSvalue}"  converter="omnifaces.SelectItemsConverter" layout="grid" columns="5" rendered="#{newProductBean.specification.freetext==0 and newProductBean.specification.multiplevalues==0}">  
                     <f:selectItems value="#{newProductBean.svalues}" var="sval" itemLabel="#{sval.svalue.name}"  itemValue="#{sval}"/>  
                     <p:ajax update="bt2" /> 
                 </p:selectOneRadio>
 
 
-                <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor}  #{newProductBean.specification.name} :* " rendered="#{newProductBean.specification.freetext==1}"  />  
-                <p:inputTextarea rows="5" cols="40" value="#{newProductBean.svalue}" rendered="#{newProductBean.specification.freetext==1}" required="true" requiredMessage="#{bundle.value}: #{bundle.mandatoryField}"/>
+                <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor}  #{newProductBean.specification.name} :* " rendered="#{newProductBean.specification.freetext==1 and newProductBean.specification.color!=1}"  />  
+                <p:inputTextarea rows="5" cols="40" value="#{newProductBean.svalue}" rendered="#{newProductBean.specification.freetext==1 and newProductBean.specification.color!=1}" required="true" requiredMessage="#{bundle.value}: #{bundle.mandatoryField}"/>
 
+                
+                <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor}  #{newProductBean.specification.name} :* " rendered="#{newProductBean.specification.freetext==1 and newProductBean.specification.color==1}"  />  
+                <p:colorPicker required="true" requiredMessage="#{bundle.value}: #{bundle.mandatoryField}"  id="popupCP"  value="#{newProductBean.svalue}" rendered="#{newProductBean.specification.freetext==1 and newProductBean.specification.color==1}" /> 
+                <br/>
+                <h:outputLink value="http://www.ralcolor.com/" target="new" rendered="#{newProductBean.specification.freetext==1 and newProductBean.specification.color==1}" style="color: blue;text-decoration: underline">
+                              RAL Colors
+                </h:outputLink>
+               
+                
+                
+                
                 <p:separator />
 
                 <p:commandButton id="bt1" update="@widgetVar(specsPanelWidget)" action="#{furnitureAction.selectSValues}"  value="#{bundle.insert}" disabled="#{newProductBean.selectedSvalues.size()==0}" rendered="#{newProductBean.specification.freetext==0 and newProductBean.specification.multiplevalues==1}"/>
@@ -675,7 +740,7 @@
             <h:form id="imgData">
                 <p:panel widgetVar="imageDataPanel" id="productPhoto">
                     <h:panelGrid>
-                        <p:graphicImage cache="false" id="imagemTmp" value="/media/temp/#{newProductBean.newImage.filename}" height="300" style="margin: 0 auto;"/>
+                        <p:graphicImage cache="true" id="imagemTmp" value="/media/temp/#{newProductBean.newImage.filename}" height="300" style="margin: 0 auto;"/>
                         <h:outputText style="font-weight: bold" value="#{bundle.ordered}*" rendered="#{newProductBean.newImage.filename!=null}" />
                         <p:inputMask mask="9" value="#{newProductBean.newImage.primary}" size="5" required="true" requiredMessage="#{bundle.ordered}: #{bundle.mandatoryField}" rendered="#{newProductBean.newImage.filename!=null}" />
                         <h:outputText style="font-weight: bold" value="#{bundle.description}" rendered="#{newProductBean.newImage.filename!=null}"/>
@@ -691,7 +756,7 @@
         <h:form id="galeriaForm">
             <p:dialog id="dialogGaleriaID" widgetVar="dialogGaleria" modal="true" position="top" minWidth="440" minHeight="500">
                 <p:galleria value="#{newProductBean.images}" var="image" panelWidth="500" panelHeight="400" showCaption="true">  
-                    <p:graphicImage value="/media/temp/#{image.filename}" alt="#{image.description}" title="#{image.filename}" width="500" height="400"/>  
+                    <p:graphicImage cache="true" value="/media/temp/#{image.filename}" alt="#{image.description}" title="#{image.filename}" width="500" height="400"/>  
                 </p:galleria>
             </p:dialog>
         </h:form>
@@ -797,7 +862,7 @@
                         <p:column rowspan="3" style="border-style:none ! important;padding: 0px">
                             <p:galleria id="imageGaler" value="#{newProductBean.newProduct.imageproducts}" var="image" panelWidth="500" panelHeight="363" autoPlay="false" 
                                         effect="clip" showCaption="true">  
-                                <p:graphicImage id="produImage" value="/media/temp/#{image.filename}"   alt="#{image.description}" title="#{image.primary}" width="500" height="363" />    
+                                <p:graphicImage cache="true" id="produImage" value="/media/temp/#{image.filename}"   alt="#{image.description}" title="#{image.primary}" width="500" height="363" />    
                             </p:galleria> 
                         </p:column>  
                     </p:row>
@@ -835,14 +900,24 @@
                             <p:tabView>
                                 <p:tab  title="#{bundle.characteristics}"  style="padding:0px ! important; margin-left: 0px;  "  >
                                     <p:outputPanel>
-                                        <p:dataTable var="pss" value="#{newProductBean.newProduct.productspecifications}" styleClass="hide-column-names noCollapse" style="border-style:none ! important;border-collapse: separate;">
+                                        <p:dataTable var="pss" value="#{newProductBean.productSpecifications}" styleClass="hide-column-names noCollapse" style="border-style:none ! important;border-collapse: separate;">
                                             <p:column  style="border-style:none ! important; width:1%; white-space:nowrap;" >  
                                                 <p:outputLabel value="#{pss.specification.name}: " style="font-weight: bold;vertical-align: top;float: right"/> 
                                             </p:column> 
                                             <p:column  style="border-style:none ! important;">                                        
                                                 <ui:repeat var="prr" value="#{pss.productvalues}" >
-                                                    <h:outputText value="#{prr.svalue.name}" rendered="#{prr.svalue!=null}" /> <p:spacer width="5" />
-                                                    <h:outputText value="#{prr.value}" rendered="#{prr.svalue==null}" /> <p:spacer width="5" />
+                                                    <h:outputText value="#{prr.svalue.name} " rendered="#{prr.svalue!=null  and pss.specification.color!=1}" /> 
+                                                    <h:outputText value="#{prr.value} " rendered="#{prr.svalue==null  and pss.specification.color!=1}" /> 
+                                                    
+                                                    <p:outputPanel rendered="#{prr.svalue==null and pss.specification.color==1}" style=""  >
+                                                        <div id="coloring" style="background-color: ##{prr.value};"  title="#{prr.value}" ></div>
+                                                    </p:outputPanel>
+
+                                                    <p:outputPanel rendered="#{prr.svalue!=null and pss.specification.color==1}" style=""  >
+                                                        <div id="coloring" style="background-color: #{prr.svalue.enname}; "  title="#{prr.svalue.name}"></div>
+                                                    </p:outputPanel> 
+                                                    
+                                                    
                                                 </ui:repeat>                                         
                                             </p:column>  
 
@@ -898,6 +973,19 @@
                                             <h:outputText value="#{sub.name}" style="margin-left:10px" />  
                                             <br />  
                                         </p:dataList>  
+                                    </p:outputPanel>
+                                </p:tab>
+                                <p:tab title="#{bundle.rules}" style="padding:0px ! important; margin-left: 0px;"  >
+                                    <p:outputPanel>
+                                        <p:dataList value="#{newProductBean.scopeCompanies.target}" var="scoop" emptyMessage="#{bundle.noCompanies}" 
+                                                    paginator="false" rows="5" paginatorTemplate="{PreviousPageLink} {CurrentPageReport} {NextPageLink} {RowsPerPageDropdown}"  
+                                                    rowsPerPageTemplate="5,10,15" type="none">  
+                                            <f:facet name="header">  
+                                                #{bundle.accessCompanies}  
+                                            </f:facet>  
+                                            <h:outputText value="#{scoop.name}" style="margin-left:10px" />  
+                                            <br />  
+                                        </p:dataList> 
                                     </p:outputPanel>
                                 </p:tab>
 

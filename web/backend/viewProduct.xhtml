@@ -5,6 +5,14 @@
                 xmlns:p="http://primefaces.org/ui"
                 template="templates/uiBackend.xhtml"> 
 
+    
+    
+    <!--<f:metadata>
+        <f:viewParam id="product_id" name="productid" value="#{viewProductBean.product}"  required="true" requiredMessage="NoProductSelected." 
+                       converter="ProductConverter" converterMessage="Unknown product ID." />
+        <f:event type="preRenderView" listener="#{viewProductBean.init()}" />       
+    </f:metadata>-->
+    
     <ui:define name="head">
         <style type="text/css">
             .ui-confirm-dialog-severity {
@@ -23,6 +31,9 @@
         </style>
     </ui:define>
 
+    
+    
+    
     <ui:define name="content">   
         <p:growl autoUpdate="true"/> 
         <div class="entry" style="line-height:120%;" >
@@ -73,19 +84,33 @@
                         <p:column colspan="5" style="border-style:none ! important;vertical-align: top;padding: 1px">   
                             <p:tabView>
                                 <p:tab  title="#{bundle.characteristics}"  style="padding:0px ! important; margin-left: 0px;  "  >
-                                    <p:outputPanel>
-                                        <p:dataTable id="charTable" var="pss" value="#{viewProductBean.productSpecifications}" styleClass="hide-column-names noCollapse" style="border-style:none ! important;border-collapse: separate;">
+                                    <p:outputPanel id="charPan">
+                                        <p:dataTable id="charTable" var="pss" value="#{viewProductBean.productSpecifications}" rows="#{viewProductBean.rows}" styleClass="hide-column-names noCollapse" 
+                                                     style="border-style:none ! important;border-collapse: separate;" >
                                             <p:column  style="border-style:none ! important; width:1%; white-space:nowrap;" >  
                                                 <p:outputLabel value="#{pss.specification.name}: " style="font-weight: bold;vertical-align: top;float: right"/> 
                                             </p:column> 
                                             <p:column  style="border-style:none ! important;">                                        
-                                                <ui:repeat var="prr" value="#{pss.productvalues}" >
-                                                    <h:outputText value="#{prr.svalue.name}" rendered="#{prr.svalue!=null}" /> <p:spacer width="4" rendered="#{prr.svalue!=null}" />
-                                                    <h:outputText value="#{prr.value}" rendered="#{prr.svalue==null}" /> <p:spacer width="4" rendered="#{prr.svalue==null}"/>
+                                                <ui:repeat var="prr" value="#{pss.productvalues}" > 
+                                                    <h:outputText value="#{prr.svalue.name}" rendered="#{prr.svalue!=null and pss.specification.color!=1}" /> 
+                                                    <h:outputText value="#{prr.value}" rendered="#{prr.svalue==null and pss.specification.color!=1}" /> <!--<p:spacer width="4" rendered="#{prr.svalue==null}"/>-->
+                                                    
+                                                    <p:outputPanel rendered="#{prr.svalue==null and pss.specification.color==1}" style=""  >
+                                                            <div id="coloring" style="background-color: ##{prr.value};" title="#{prr.value}"></div>
+                                                    </p:outputPanel> 
+                                         
+                                                <p:outputPanel rendered="#{prr.svalue!=null and pss.specification.color==1}"  >
+                                                        <div id="coloring" style="background-color: #{prr.svalue.enname};" title="#{prr.svalue.name}"></div>
+                                                </p:outputPanel> 
+                                                    
                                                 </ui:repeat>                                         
                                             </p:column>  
 
-                                        </p:dataTable><br/>
+                                        </p:dataTable>
+                                        <p:commandLink   value="#{bundle.more}" rendered="#{viewProductBean.productSpecifications.size()>5 and viewProductBean.rows==5}" update="charPan"  immediate="true" action="#{furnitureAction.morerows}" 
+                                                                  style="color: blue;margin-left:80%;font-weight: bold" />
+                                        <p:commandLink   value="#{bundle.less}" rendered="#{viewProductBean.productSpecifications.size()>5 and viewProductBean.rows!=5}" update="charPan"  immediate="true" action="#{furnitureAction.lessrows}" 
+                                                                  style="color: blue;margin-left:80%;font-weight: bold" />
                                         <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:95%"  onclick="specsDialogWidget.show()" update=":specsFormID" rendered="#{viewProductBean.showButton}" />
                                     </p:outputPanel>
                                 </p:tab>
@@ -148,9 +173,33 @@
                                                          immediate="true" update="@widgetVar(selectSProductPanelWidget)" rendered="#{viewProductBean.showButton}"/>
                                     </p:outputPanel>
                                 </p:tab>
+                                
+                               <p:tab id="rulesTab" title="#{bundle.rules}"  style="padding:0px ! important; margin-left: 0px;"  >                                                                            
+                                    <p:panel widgetVar="scopPanelWidget" id="rulesPanelID"   >
+                                       
+                                            <p:dataList value="#{viewProductBean.scopeCompanies.target}" var="sc" id="scopid" emptyMessage="#{bundle.noCompanies}" 
+                                                        paginator="false" rows="5" paginatorTemplate="{PreviousPageLink} {CurrentPageReport} {NextPageLink} {RowsPerPageDropdown}"  
+                                                        rowsPerPageTemplate="5,10,15" type="none">  
+                                                <f:facet name="header">  
+                                                    #{bundle.accessCompanies}  
+                                                </f:facet>                                                          
+                                                <h:outputText value="#{sc.name}"  /> 
+                                                <br />  
+                                            </p:dataList>
+
+                                            <p:separator />
+                                            <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:95%" onclick="selectSCompanyIDDialog.show()" process="@this" 
+                                                         immediate="true" update="@widgetVar(selectSCompanyPanelWidget)" rendered="#{viewProductBean.showButton}"/>                                            
+                                                                                                                     
+                                    </p:panel>
+                                </p:tab>  
 
 
                             </p:tabView>
+                            
+                           <!-- <p:commandButton value="Print" type="button">
+                                <p:printer target="cont1" />
+                            </p:commandButton> -->
                            
                         </p:column>                       
                     </p:row>   
@@ -160,7 +209,7 @@
                             <ui:repeat var="video" value="#{viewProductBean.videos}" varStatus="var" >    
                                 <p:lightBox styleClass="imagebox">
                                     <h:outputLink value="#"  style="color:blue;text-decoration: underline;font-weight:bold; ">  
-                                        <h:outputText value="Video #{var.index}"/><p:spacer width="10" />  
+                                        <h:outputText value="Video #{var.index+1}"/><p:spacer width="10" />  
                                     </h:outputLink>  
 
                                     <f:facet name="inline">  
@@ -266,12 +315,20 @@
                         <p:overlayPanel id="charPanel" for="charBtn">  
                             <p:dataTable id="charTable" var="char" value="#{viewProductBean.productSpecifications}" rows="10" paginator="false">  
                                 <p:column headerText="#{bundle.name}" width="20%">  
-                                    <h:outputText value="#{char.specification.name}" />                                        
+                                    <h:outputText value="#{char.specification.name}" />                                       
                                 </p:column>  
                                 <p:column headerText="#{bundle.values}" width="70%">                                         
                                     <ui:repeat var="pr" value="#{char.productvalues}" >
-                                        <h:outputText value="#{pr.svalue.name} " rendered="#{pr.svalue!=null}" /> 
-                                        <h:outputText value="#{pr.value} " rendered="#{pr.svalue==null}" /> 
+                                        <h:outputText value="#{pr.svalue.name} " rendered="#{pr.svalue!=null and char.specification.color!=1}" /> 
+                                        <h:outputText value="#{pr.value} " rendered="#{pr.svalue==null  and char.specification.color!=1}" /> 
+                                        
+                                         <p:outputPanel rendered="#{pr.svalue==null and char.specification.color==1}" style=""  >
+                                                <div id="coloring" style="background-color: ##{pr.value};" title="#{pr.value}" ></div>
+                                         </p:outputPanel>
+                                        
+                                         <p:outputPanel rendered="#{pr.svalue!=null and char.specification.color==1}"  >
+                                                <div id="coloring" style="background-color: #{pr.svalue.enname};" title="#{pr.svalue.name}"  ></div>
+                                         </p:outputPanel>                                         
                                     </ui:repeat>                                         
                                 </p:column>  
 
@@ -320,28 +377,38 @@
 
 
 
-            <h:form id="selectValueForm">
+            <h:form id="selectValueForm">      
                 <p:dialog header="#{bundle.selectSpecificationValue}" id="selectValueID" position="center" widgetVar="selectValueDialog" modal="true" resizable="false" >
                     <p:messages autoUpdate="true" severity="error"/>
                     <p:outputLabel style="font-weight: bold" value="#{bundle.valuesFor} #{viewProductBean.specification.name} " rendered="#{viewProductBean.specification.freetext==0}" />  
                     <p:outputLabel style="font-weight: bold;font-style: italic" value=" (#{bundle.multipleSelection})" rendered="#{viewProductBean.specification.freetext==0 and viewProductBean.specification.multiplevalues==1}"/> 
 
 
-                    <p:selectManyCheckbox id="grid1" value="#{viewProductBean.selectedSvalues}" converter="SpecificationvalueConverter"  layout="grid" columns="3" rendered="#{viewProductBean.specification.freetext==0 and viewProductBean.specification.multiplevalues==1}">  
+                    <p:selectManyCheckbox id="grid1" value="#{viewProductBean.selectedSvalues}" converter="SpecificationvalueConverter"  layout="grid" columns="5" rendered="#{viewProductBean.specification.freetext==0 and viewProductBean.specification.multiplevalues==1}">  
                         <f:selectItems value="#{viewProductBean.svalues}"  var="svalue" itemLabel="#{svalue.svalue.name}"  itemValue="#{svalue}"  /> 
                         <p:ajax update="bt1" />
                     </p:selectManyCheckbox>
 
 
-                    <p:selectOneRadio id="grid2" value="#{viewProductBean.selectedSvalue}"  converter="omnifaces.SelectItemsConverter" layout="grid" columns="3" rendered="#{viewProductBean.specification.freetext==0 and viewProductBean.specification.multiplevalues==0}">  
+                    <p:selectOneRadio id="grid2" value="#{viewProductBean.selectedSvalue}"  converter="omnifaces.SelectItemsConverter" layout="grid" columns="5" rendered="#{viewProductBean.specification.freetext==0 and viewProductBean.specification.multiplevalues==0}">  
                         <f:selectItems value="#{viewProductBean.svalues}" var="sval" itemLabel="#{sval.svalue.name}"  itemValue="#{sval}"/>  
                         <p:ajax update="bt2" /> 
                     </p:selectOneRadio>
 
 
-                    <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor}  #{viewProductBean.specification.name} :* " rendered="#{viewProductBean.specification.freetext==1}"  />  
-                    <p:inputTextarea rows="5" cols="40" value="#{viewProductBean.svalue}" rendered="#{viewProductBean.specification.freetext==1}" required="true" requiredMessage="#{bundle.value}: #{bundle.mandatoryField}"/>
+                    <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor}  #{viewProductBean.specification.name} :* " rendered="#{viewProductBean.specification.freetext==1  and viewProductBean.specification.color!=1}"  />  
+                    <p:inputTextarea rows="5" cols="40" value="#{viewProductBean.svalue}" rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.color!=1}" required="true" requiredMessage="#{bundle.value}: #{bundle.mandatoryField}"/>
 
+                    
+                    <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor}  #{viewProductBean.specification.name} :* " rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.color==1}"  />  
+                    <p:colorPicker required="true" requiredMessage="#{bundle.value}: #{bundle.mandatoryField}"  id="popupCP"  value="#{viewProductBean.svalue}" rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.color==1}" /> 
+                    <br/>
+                    <h:outputLink value="http://www.ralcolor.com/" target="new" rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.color==1}" style="color: blue;text-decoration: underline">
+                                  RAL Colors
+                    </h:outputLink>
+                    
+                    
+                    
                     <p:separator />
 
                     <p:commandButton id="bt1" update=":specsFormID:noChars :viewProductForm" action="#{furnitureAction.selectSValuesView}"  value="#{bundle.insert}" disabled="#{viewProductBean.selectedSvalues.size()==0}" rendered="#{viewProductBean.specification.freetext==0 and viewProductBean.specification.multiplevalues==1}"/>
@@ -390,9 +457,9 @@
 
                         <p:separator />
 
-                        <p:dataTable id="dimensionTable1" value="#{viewProductBean.dimesionProductSpecifications}" var="dimesionProductSpecification"   
+                       <p:dataTable id="dimensionTable1" value="#{viewProductBean.dimesionProductSpecifications}" var="dimesionProductSpecification"   
                                      paginator="false" emptyMessage="#{bundle.noDimensionInserted}" style="border-collapse: separate;" widgetVar="dimensionDatatableWidget1"> 
-                            <p:column headerText="#{bundle.name}" style="border-style:none ! important;width:1%; white-space:nowrap;"> 
+                            <p:column headerText="#{bundle.name}" style="border-style:none ! important; white-space:nowrap;"> 
                                 <p:outputLabel value="#{dimesionProductSpecification.specification.name}:" style="font-weight: bold;vertical-align: top;float: right" />                                                                    
                             </p:column>
                             <p:column headerText="#{bundle.value}" style="border-style:none ! important;"> 
@@ -405,7 +472,7 @@
                                                  action="#{furnitureAction.deleteProductDimensionSpecificationView(dimesionProductSpecification)}">                                   
                                 </p:commandButton>
                             </p:column>
-                        </p:dataTable>                        
+                        </p:dataTable>    
                     </p:panel>    
                     <p:separator />
 
@@ -514,6 +581,23 @@
                         </p:pickList>
                         <p:commandButton value="#{bundle.save}" onclick="selectSProductIDDialog.hide()"  update=":viewProductForm" action="#{furnitureAction.saveSProducts}" />
                         <p:commandButton value="#{bundle.close}" onclick="selectSProductIDDialog.hide()" process="@this" immediate="true"  />
+                    </p:panel>
+                </p:dialog>
+            </h:form>
+            
+            <h:form id="selectSCompanyForm"> 
+                <p:dialog header="#{bundle.selectCompany}" id="selectSCompanyID" position="center" widgetVar="selectSCompanyIDDialog" modal="true" minWidth="200" minHeight="500" resizable="false">
+                    <p:panel id="selectSCompanyPanel" widgetVar="selectSCompanyPanelWidget">
+                        <p:pickList id="scList" value="#{viewProductBean.scopeCompanies}" var="sc"  itemValue="#{sc}" itemLabel="#{sc.name}" converter="CompanyConverter"  
+                                    showSourceControls="false" showTargetControls="false" showCheckbox="false" showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" >  
+                            <f:facet name="sourceCaption">#{bundle.available}</f:facet>  
+                            <f:facet name="targetCaption">#{bundle.selected}</f:facet>  
+                            <p:ajax event="transfer" />  
+                            <p:column>  
+                                #{sc.name}  
+                            </p:column>  
+                        </p:pickList>                     
+                        <p:commandButton value="#{bundle.save}" onclick="selectSCompanyIDDialog.hide()" process="@this" immediate="true" update="@widgetVar(scopPanelWidget)" />
                     </p:panel>
                 </p:dialog>
             </h:form>
@@ -635,18 +719,18 @@
                                     </td>
                                 </tr>
                                 <tr >   
-                                    <td style="width:1%; white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.ordered}: "  style="font-weight: bold"/></td>
+                                    <td style=" white-space:nowrap;text-align: right;width: 1px; white-space:nowrap;"><h:outputLabel value="#{bundle.ordered}: "  style="font-weight: bold"/></td>
                                     <td ><h:outputText  value="#{image.primary}" /> <p:spacer width="10"/></td>
-                                    <td style="width:1%; white-space:nowrap;">   
+                                    <td style="white-space:nowrap;">   
                                         <p:commandButton icon="ui-icon-pencil" immediate="true"  alt="#{bundle.update}"   update=":updateImagetOrderForm:updateImageOrderPanel" onclick="updateImageOrderDialog.show()" >
                                             <f:setPropertyActionListener value="#{image}" target="#{viewProductBean.selectedImage}" /> 
                                         </p:commandButton> 
                                     </td>    
                                 </tr>
                                 <tr>
-                                    <td style="width:1%; white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.description}: "  style="font-weight: bold"/></td>
+                                    <td style="white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.description}: "  style="font-weight: bold"/></td>
                                     <td ><h:outputText  value="#{image.description}" /><p:spacer width="10"/></td>
-                                    <td style="width:1%; white-space:nowrap;">   
+                                    <td style=" white-space:nowrap;">   
                                         <p:commandButton icon="ui-icon-pencil" immediate="true"  alt="#{bundle.update}"   update=":updateImagetDescriptionForm:updateImageDescriptionPanel" onclick="updateImageDescriptionDialog.show()" >
                                             <f:setPropertyActionListener value="#{image}" target="#{viewProductBean.selectedImage}" /> 
                                         </p:commandButton>
@@ -656,7 +740,7 @@
 
 
 
-                            <p:commandButton style="color:blue;font-weight: bold;float: right" update="@widgetVar(mediaPanelWidget)  :viewProductForm"  title="#{bundle.deleteImage}" 
+                            <p:commandButton style="color:blue;font-weight: bold;float: left" update="@widgetVar(mediaPanelWidget)  :viewProductForm"  title="#{bundle.deleteImage}" 
                                              action="#{furnitureAction.removeImageView()}" value="#{bundle.deleteImage}" >    
                                 <f:setPropertyActionListener value="#{image}" target="#{viewProductBean.selectedImage}" />  
                             </p:commandButton>                          
@@ -710,28 +794,28 @@
             <h:form id="updateVideoForm"> 
                 <p:dialog header="#{bundle.updateVideo}" id="updateVideoID" position="top" widgetVar="updateVideoDialog" modal="true" draggable="false"   resizable="false">
                     <p:outputPanel id="updateVideoPanel" widgetVar="updateVideoPanelWidget">                                        
-                        <p:dataTable value="#{viewProductBean.videos}" var="video" rows="1" paginator="true"> 
+                        <p:dataTable value="#{viewProductBean.videos}" var="video" rows="1" paginator="true" styleClass="noBorderTable"> 
                             <p:column> 
 
                                 <table >  
                                     <tr>
-                                        <p:media value="/media/products/#{viewProductBean.product.productid}/videos/#{video.filename}" width="480" height="450"    >  
+                                        <p:media value="/media/products/#{viewProductBean.product.productid}/videos/#{video.filename}" width="440" height="370"    >  
                                             <f:param name="autoPlay" value="false" />  
                                         </p:media>
                                     </tr>
                                     <tr >   
-                                        <td style="width:1%; white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.ordered}: "  style="font-weight: bold"/></td>
+                                        <td style=" white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.ordered}: "  style="font-weight: bold"/></td>
                                         <td ><h:outputText  value="#{video.primary}" /> <p:spacer width="10"/></td>
-                                        <td style="width:1%; white-space:nowrap;">   
+                                        <td style=" white-space:nowrap;">   
                                             <p:commandButton icon="ui-icon-pencil" immediate="true"  alt="#{bundle.update}"   update=":updateVideoOrderForm:updateVideoOrderPanel" onclick="updateVideoOrderDialog.show()" >
                                                 <f:setPropertyActionListener value="#{video}" target="#{viewProductBean.selectedVideo}" /> 
                                             </p:commandButton> 
                                         </td>    
                                     </tr>
                                     <tr>
-                                        <td style="width:1%; white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.description}: "  style="font-weight: bold"/></td>
+                                        <td style="white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.description}: "  style="font-weight: bold"/></td>
                                         <td ><h:outputText  value="#{video.description}" /><p:spacer width="10"/></td>
-                                        <td style="width:1%; white-space:nowrap;">   
+                                        <td style="white-space:nowrap;">   
                                             <p:commandButton icon="ui-icon-pencil" immediate="true"  alt="#{bundle.update}"   update=":updateVideoDescriptionForm:updateVideoDescriptionPanel" onclick="updateVideoDescriptionDialog.show()" >
                                                 <f:setPropertyActionListener value="#{video}" target="#{viewProductBean.selectedVideo}" /> 
                                             </p:commandButton>
@@ -741,7 +825,7 @@
 
 
 
-                                <p:commandButton style="color:blue;font-weight: bold;float: right" update="@widgetVar(mediaPanelWidget)  :viewProductForm"  title="#{bundle.deleteVideo}" 
+                                <p:commandButton style="color:blue;font-weight: bold;float: left" update="@widgetVar(mediaPanelWidget)  :viewProductForm"  title="#{bundle.deleteVideo}" 
                                                  action="#{furnitureAction.removeVideoView()}" value="#{bundle.deleteVideo}" >    
                                     <f:setPropertyActionListener value="#{video}" target="#{viewProductBean.selectedVideo}" />  
                                 </p:commandButton>  
@@ -784,39 +868,12 @@
                     <p:commandButton value="#{bundle.cancel}" onclick="updateVideoDescriptionDialog.hide()" process="@this" immediate="true" update=":updateVideoForm:updateVideoPanel" />
                 </p:dialog>
             </h:form>
-
-
-
-
-
-
-
-
-
-
         </div>
     </ui:define>
+        
+
 
 </ui:composition>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

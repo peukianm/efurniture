@@ -67,6 +67,8 @@ public class Product implements java.io.Serializable {
     private List<Category> categories = new ArrayList<Category>(0);
     private List<Product> subproducts = new ArrayList<Product>(0);
     private List<Product> parentproducts = new ArrayList<Product>(0);
+    private List<Company> scopeCompanies = new ArrayList<Company>(0);
+    
 
     // Constructors
     /**
@@ -227,6 +229,7 @@ public class Product implements java.io.Serializable {
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
+    @OrderColumn(name="ordered")
     public List<Productspecification> getProductspecifications() {
         return this.productspecifications;
     }
@@ -336,12 +339,37 @@ public class Product implements java.io.Serializable {
     public List<Category> getCategories() {
         return categories;
     }
-
+    
     /**
      * @param categories the books to set
      */
     public void setCategories(List<Category> categories) {
         this.categories = categories;
+    }
+    
+    
+    
+    /**
+     * @return the SCOPE COMPANIES
+     */
+    @ManyToMany(cascade = {CascadeType.REFRESH})
+    @JoinTable(name = "PRODUCTSCOPE",
+    joinColumns = {
+        @JoinColumn(name = "PRODUCTID")
+    },
+    inverseJoinColumns = {
+        @JoinColumn(name = "COMPANYID")
+    })
+    public List<Company> getScopeCompanies() {
+        return scopeCompanies;
+    }
+    
+    
+    /**
+     * @param scopecompanies the books to set
+     */
+    public void setScopeCompanies(List<Company> scopeCompanies) {
+        this.scopeCompanies = scopeCompanies;
     }
 
     @ManyToMany(cascade = CascadeType.REFRESH)
@@ -403,6 +431,12 @@ public class Product implements java.io.Serializable {
                 }                
             }
         }
+        
+        Collections.sort(retVal, new Comparator<Productspecification>() {
+                public int compare(Productspecification one, Productspecification other) {
+                    return one.getOrdered().compareTo(other.getOrdered());
+                }
+            });
         return retVal;
     }
     
@@ -418,6 +452,13 @@ public class Product implements java.io.Serializable {
                 }                
             }
         }
+        
+        
+         Collections.sort(retVal, new Comparator<Productspecification>() {
+                public int compare(Productspecification one, Productspecification other) {
+                    return one.getOrdered().compareTo(other.getOrdered());
+                }
+            });
         return retVal;
     }
     
