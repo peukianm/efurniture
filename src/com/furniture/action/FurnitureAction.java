@@ -4,6 +4,7 @@
  */
 package com.furniture.action;
 
+import com.furniture.bean.ApplicationBean;
 import com.furniture.bean.ErrorBean;
 import com.furniture.bean.NewProductBean;
 import com.furniture.bean.PriceBean;
@@ -205,8 +206,21 @@ public class FurnitureAction {
                 }
             });
              
+            newProductBean.setSelectedNode(null);
             newProductBean.setProducts(new DualListModel<Product>(products, new ArrayList<Product>()));
             newProductBean.setSubProducts(new DualListModel<Product>(products, new ArrayList<Product>()));
+            
+            ApplicationBean appBean = (ApplicationBean)FacesUtils.getManagedBean("applicationBean");                        
+            List<Company> companies = new ArrayList<Company>(0);
+            for (int i = 0; i < appBean.getCompanies().size(); i++) {
+                Company comp = appBean.getCompanies().get(i);
+                if (!comp.equals(company)) {
+                    companies.add(comp);
+                }                
+            }
+            newProductBean.setScopeCompanies(new DualListModel<Company>(companies,new ArrayList<Company>()));             
+            //FacesUtils.updateHTMLComponnetWIthJS("@form:showTree");
+            
         }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -325,21 +339,18 @@ public class FurnitureAction {
             List<Specificationcategory> specs = newProductBean.getSelectedSpecificationCat();
             SpecificationDAO dao = new SpecificationDAO();
             Set<Specification> specifications = new HashSet<Specification>(0);
+            
+            if (newProductBean.getNewProduct().getItem() != null) {
+                ItemspecificationDAO d = new ItemspecificationDAO();                                
+                specifications.addAll(d.fetchItemSpecifications(newProductBean.getNewProduct().getItem(), true, false));
+            }
+            
             for (int i = 0; i < specs.size(); i++) {
                 Specificationcategory specificationcategory = (Specificationcategory) specs.get(i);
                 specifications.addAll(dao.findByProperty("specificationcategory", specificationcategory));
             }
 
-            if (newProductBean.getNewProduct().getItem() != null) {
-                ItemspecificationDAO d = new ItemspecificationDAO();
-//                List<Specification> tempSpecs = d.fetchItemSpecifications(newProductBean.getNewProduct().getItem(), true, false); 
-//                for (int i = 0; i < tempSpecs.size(); i++) {
-//                    Specification specification = tempSpecs.get(i);
-//                    System.out.println(specification);
-//                }                                
-                specifications.addAll(d.fetchItemSpecifications(newProductBean.getNewProduct().getItem(), true, false));
-            }
-
+            
             List<Specification> tempList = new ArrayList<Specification>(specifications);
             Collections.sort(tempList, new Comparator<Specification>() {
                 public int compare(Specification one, Specification other) {
@@ -443,7 +454,12 @@ public class FurnitureAction {
             
              Collections.sort(productSpecifications, new Comparator<Productspecification>() {
                 public int compare(Productspecification one, Productspecification other) {
-                    return one.getOrdered().compareTo(other.getOrdered());
+                    if (one.getOrdered()!=null && other.getOrdered()!=null)
+                        return one.getOrdered().compareTo(other.getOrdered());
+                    else if (one.getSpecification().getOrdered()!= null && other.getSpecification().getOrdered()!=null)
+                        return one.getSpecification().getOrdered().compareTo(other.getSpecification().getOrdered());
+                    else
+                        return one.getSpecification().getName().compareTo(other.getSpecification().getName()); 
                 }
             });
             newProductBean.setProductSpecifications(productSpecifications);
@@ -826,8 +842,10 @@ public class FurnitureAction {
 
             if (newProductBean.getSelectedNode() == null ) {
                 sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noCategorySelected"));
-                FacesUtils.callRequestContext("alertMessageDlg.show()"); 
-                FacesUtils.updateHTMLComponnetWIthJS(":alertMsgForm:primePanel");
+//                FacesUtils.callRequestContext("alertMessageDlg.show()"); 
+//                FacesUtils.updateHTMLComponnetWIthJS(":alertMsgForm:primePanel");
+                FacesUtils.callRequestContext("alertMessageDlg.show()");        
+                FacesUtils.updateHTMLComponnetWIthJS("primeAlertPanel");
                 return;
             }
             
@@ -1532,20 +1550,25 @@ public class FurnitureAction {
             List<Specificationcategory> specs = viewProductBean.getSelectedSpecificationCat();
             SpecificationDAO dao = new SpecificationDAO();
             Set<Specification> specifications = new HashSet<Specification>(0);
+            
+            ItemspecificationDAO d = new ItemspecificationDAO();
+            specifications.addAll(d.fetchItemSpecifications(viewProductBean.getProduct().getItem(), true, false));
+            
             for (int i = 0; i < specs.size(); i++) {
                 Specificationcategory specificationcategory = (Specificationcategory) specs.get(i);
                 specifications.addAll(dao.findByProperty("specificationcategory", specificationcategory));
             }
 
-
-            ItemspecificationDAO d = new ItemspecificationDAO();
-            specifications.addAll(d.fetchItemSpecifications(viewProductBean.getProduct().getItem(), true, false));
-            
+           
             List<Specification> tempSpecs = new ArrayList<Specification>(specifications);
             
              Collections.sort(tempSpecs, new Comparator<Specification>() {
                 public int compare(Specification one, Specification other) {
-                    return one.getOrdered().compareTo(other.getOrdered());
+                    try {
+                        return one.getOrdered().compareTo(other.getOrdered());
+                    } catch (Exception ex) {
+                        return 0;
+                    }    
                 }
             });
                 
@@ -1684,7 +1707,12 @@ public class FurnitureAction {
             Collections.sort(productSpecifications, new Comparator<Productspecification>() {
                 public int compare(Productspecification one, Productspecification other) {                   
                      try {
+                       if (one.getOrdered()!=null && other.getOrdered()!=null)
                         return one.getOrdered().compareTo(other.getOrdered());
+                       else if (one.getSpecification().getOrdered()!= null && other.getSpecification().getOrdered()!=null)
+                        return one.getSpecification().getOrdered().compareTo(other.getSpecification().getOrdered());
+                       else
+                        return one.getSpecification().getName().compareTo(other.getSpecification().getName()); 
                     } catch (Exception ex) {
                         return 0;
                     }
@@ -2646,6 +2674,15 @@ public class FurnitureAction {
      public void lessrows() {
         ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
         viewProductBean.setRows("5");
+    }
+     
+     public void morerowsView() {
+        NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
+        newProductBean.setRows("40");
+    }
+     public void lessrowsView() {
+        NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
+        newProductBean.setRows("5");
     }
 
      

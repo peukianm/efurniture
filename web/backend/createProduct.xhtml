@@ -58,7 +58,7 @@
 
                                         <p:selectOneMenu id="selectCompany" value="#{newProductBean.selectedCompany}" converter="CompanyConverter" required="true" disabled="#{sessionBean.users.role.roleid!=1}" requiredMessage="#{bundle.company}: #{bundle.mandatoryField}" >                                            
                                             <f:selectItems value="#{applicationBean.companies}" var="comp" itemLabel="#{comp.name}" itemValue="#{comp}"   /> 
-                                            <p:ajax  listener="#{furnitureAction.handleCompanySelect}"  update="categoryTree"   /> 
+                                            <p:ajax  listener="#{furnitureAction.handleCompanySelect}"  update="categoryTree showTree"   /> 
                                         </p:selectOneMenu>
                                         <p:message for="selectCompany" display="icon"/>
 
@@ -162,10 +162,10 @@
                                                 <p:separator  /> 
 
 
-                                                <p:commandButton id="charBtn" immediate="true"  disabled="#{newProductBean.productSpecifications.size()==0}"   oncomplete="" update="" value="#{bundle.view}" />
-
-                                                <p:overlayPanel id="charPanel" for="charBtn" hideEffect="fade" >  
-                                                    <p:dataTable id="charTable" var="char" value="#{newProductBean.productSpecifications}" rows="30" paginator="false">  
+                                               <!-- <p:commandButton id="charBtn" immediate="true"  disabled="#{newProductBean.productSpecifications.size()==0}"   oncomplete="" update="" value="#{bundle.view}" /> -->
+                                                <!--for="charBtn" hideEffect="fade" -->
+                                                <p:panel id="charPanel"  >  
+                                                    <p:dataTable id="charTable" var="char" value="#{newProductBean.productSpecifications}" emptyMessage="#{bundle.noSpecificationsInserted}" rows="#{newProductBean.rows}" paginator="false">  
                                                         <p:column headerText="#{bundle.name}" width="45%">  
                                                             <h:outputText value="#{char.specification.name}" />                                        
                                                         </p:column>  
@@ -195,9 +195,15 @@
                                                         </p:column> 
 
                                                     </p:dataTable>  
-                                                </p:overlayPanel>  
+                                                    
+                                                    <p:commandLink   value="#{bundle.more}" rendered="#{newProductBean.productSpecifications.size()>5 and newProductBean.rows==5}" update="charPanel"  immediate="true" action="#{furnitureAction.morerowsView()}" 
+                                                                  style="color: blue;margin-left:80%;font-weight: bold" />
+                                                    <p:commandLink   value="#{bundle.less}" rendered="#{newProductBean.productSpecifications.size()>5 and newProductBean.rows!=5}" update="charPanel"  immediate="true" action="#{furnitureAction.lessrowsView()}" 
+                                                                  style="color: blue;margin-left:80%;font-weight: bold" />
+                                                    
+                                                </p:panel>  
 
-                                                <p:spacer width="30" height="0" />
+                                                <!--<p:spacer width="30" height="0" />-->
                                                 <p:outputLabel style="font-weight: bold;color: black" value="#{bundle.charecteristics}  " /> <p:outputLabel  style="font-weight: bold;" value="(#{newProductBean.productSpecifications.size()})" />  
 
 

@@ -147,7 +147,13 @@ public class SpecificationDAO {
                     }
                 }
             }
-            return query.getResultList();
+            
+            List<Specification> specs = query.getResultList();
+            for (int i = 0; i < specs.size(); i++) {
+                Specification specification = specs.get(i);
+                specification.setOrdered(new BigDecimal(9999));
+            }
+            return specs;
         } catch (RuntimeException re) {
             logger.error("Error on finding entity", re);
             throw re;

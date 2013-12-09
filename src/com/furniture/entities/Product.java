@@ -434,7 +434,12 @@ public class Product implements java.io.Serializable {
         
         Collections.sort(retVal, new Comparator<Productspecification>() {
                 public int compare(Productspecification one, Productspecification other) {
-                    return one.getOrdered().compareTo(other.getOrdered());
+                    if (one.getOrdered()!=null && other.getOrdered()!=null)
+                        return one.getOrdered().compareTo(other.getOrdered());
+                    else if (one.getSpecification().getOrdered()!= null && other.getSpecification().getOrdered()!=null)
+                        return one.getSpecification().getOrdered().compareTo(other.getSpecification().getOrdered());
+                    else
+                        return one.getSpecification().getName().compareTo(other.getSpecification().getName()); 
                 }
             });
         return retVal;
@@ -456,7 +461,12 @@ public class Product implements java.io.Serializable {
         
          Collections.sort(retVal, new Comparator<Productspecification>() {
                 public int compare(Productspecification one, Productspecification other) {
-                    return one.getOrdered().compareTo(other.getOrdered());
+                    if (one.getOrdered()!=null && other.getOrdered()!=null)
+                        return one.getOrdered().compareTo(other.getOrdered());
+                    else if (one.getSpecification().getOrdered()!= null && other.getSpecification().getOrdered()!=null)
+                        return one.getSpecification().getOrdered().compareTo(other.getSpecification().getOrdered());
+                    else
+                        return one.getSpecification().getName().compareTo(other.getSpecification().getName());                        
                 }
             });
         return retVal;

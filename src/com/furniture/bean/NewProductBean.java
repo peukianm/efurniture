@@ -99,6 +99,8 @@ public class NewProductBean implements Serializable {
     //private List<Product> parentProductList = new ArrayList<Product>(0);
     private List<Item> items = new ArrayList<Item>(0);
     private Item selectedItem;
+    
+    private String rows = "5";
 
     @PostConstruct
     public void init() {
@@ -152,6 +154,16 @@ public class NewProductBean implements Serializable {
         this.selectedNodePath = selectedNodePath;
     }
 
+    public String getRows() {
+        return rows;
+    }
+
+    public void setRows(String rows) {
+        this.rows = rows;
+    }
+
+    
+    
     public DualListModel<Company> getScopeCompanies() {
         return scopeCompanies;
     }

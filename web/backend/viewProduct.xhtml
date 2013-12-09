@@ -284,12 +284,12 @@
 
 
 
+  
 
 
-
-            <p:dialog header="#{bundle.updateProduct}" id="specsDialogID" position="center" widgetVar="specsDialogWidget" modal="true" minWidth="200" minHeight="500" resizable="false">               
+            <p:dialog header="#{bundle.updateProduct}" id="specsDialogID" position="center" widgetVar="specsDialogWidget" modal="true" resizable="false">               
                 <h:form id="specsFormID"> 
-                    <p:scrollPanel id="specsPanel" widgetVar="specsPanelWidget">
+                    <p:panel id="specsPanel" widgetVar="specsPanelWidget">
                         <table>
                             <tr>
                                 <td style="vertical-align: top"><p:outputLabel style="font-weight: bold;color: black" value="#{bundle.productTemplate}:  " /></td>
@@ -300,11 +300,11 @@
                             </tr>
 
                             <td style="vertical-align: top"><p:outputLabel style="font-weight: bold;color: black" value="#{bundle.selectSpecCat}:  " /> </td>
-                            <td><p:selectCheckboxMenu value="#{viewProductBean.selectedSpecificationCat}" label="#{bundle.categories}" filter="false" 
+                            <td><p:selectCheckboxMenu value="#{viewProductBean.selectedSpecificationCat}" label="#{bundle.categories}" filter="true" 
                                                       filterMatchMode="startsWith"   converter="SpecificationcategoryConverter"
                                                       style="">  
                                     <f:selectItems value="#{applicationBean.specificationCategories}" var="category" itemLabel="#{category.name}" itemValue="#{category}" />
-                                    <p:ajax    update="showSpecsButton"   /> 
+                                   <p:ajax    update="showSpecsButton"   /> 
                                 </p:selectCheckboxMenu> </td>
                         </table>
 
@@ -346,7 +346,7 @@
                         <p:spacer width="30" height="0" />
                         <p:outputLabel style="font-weight: bold;color: black" value="#{bundle.charecteristics}  " /> <p:outputLabel id="noChars" style="font-weight: bold;" value="(#{viewProductBean.productSpecifications.size()})" />  
 
-                    </p:scrollPanel>                
+                    </p:panel>                
                 </h:form>
             </p:dialog>
 
