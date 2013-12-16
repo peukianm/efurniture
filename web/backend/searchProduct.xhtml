@@ -77,15 +77,15 @@
                             <h:outputText value="#{tt+1}" />  
                         </p:column> -->
 
-                        <p:column headerText="#{bundle.name}" sortBy="#{product.name}" style="width: 1px; white-space: nowrap;vertical-align: top;font-weight: bold" >                                                            
+                        <p:column exportable="false" headerText="#{bundle.name}" sortBy="#{product.name}" style="width: 1px; white-space: nowrap;vertical-align: top;font-weight: bold" >                                                            
                             <h:outputText value="#{product.name}" />                                                           
                         </p:column> 
                         
-                        <p:column headerText="#{bundle.price}" sortBy="#{product.firstPrice.amount}" style="width: 1px; white-space: nowrap;vertical-align: top;font-weight: bold" >                                                            
-                            <h:outputText value="#{product.firstPrice.amount}" />                                                           
+                        <p:column exportable="false" headerText="#{bundle.price}" sortBy="#{product.firstPrice.amount}" style="width: 1px; white-space: nowrap;vertical-align: top;font-weight: bold" >                                                            
+                            <h:outputText value="#{product.firstPrice.amount} " /> <h:outputText value=" #{product.firstPrice.currency.symbol}" />                                                           
                         </p:column> 
 
-                        <p:column headerText="#{bundle.company}"  style="width:20%;vertical-align: top" exportable="false">                                                            
+                        <p:column headerText="#{bundle.company}"  style="width:20%;vertical-align: top" exportable="false" sortBy="#{product.firstCompany.name}">                                                            
                             <ui:repeat var="companyProduct" value="#{product.orderedCompanies}" >
                                 <h:outputText value="#{companyProduct.name}"/><br/>                                     
                             </ui:repeat>
@@ -132,6 +132,14 @@
                                 <f:setPropertyActionListener value="#{product}" target="#{productSearchBean.selectedProduct}" />
                                 <p:confirm header="#{bundle.confirmation}" message="#{bundle.confDeleteProduct}" icon="ui-icon-alert" /> 
                             </p:commandButton>
+                            
+                            
+                           <!-- <p:commandButton value="Select Product" icon="ui-icon-extlink" actionListener="{furnitureAction.showProduct(product.productid)}">                                 
+                            </p:commandButton>  -->
+                             <!--<p:ajax event="dialogReturn" listener="{dialogBean.onCarChosen}" update="growl" />  -->
+                            
+                            
+                            
                         </p:column>
 
                     </p:dataTable>
@@ -141,9 +149,9 @@
                    <!-- <h:commandLink rendered="#{productSearchBean.productsModel.rowCount >0}">  
                         <p:graphicImage value="../resources/images/excel.png" /> <h:outputText  style="color:blue;text-decoration: underline;font-weight:bold;" value="#{bundle.excelExport}" /> 
                         <p:dataExporter    type="xls" target="productResults" fileName="furnitures"/>  
-                    </h:commandLink> 
+                    </h:commandLink> -->
 
-                    <h:commandLink rendered="#{productSearchBean.productsModel.rowCount >0}">  
+                  <!--  <h:commandLink rendered="#{productSearchBean.productsModel.rowCount >0}">  
                         <p:graphicImage value="../resources/images/pdf.png" /> <h:outputText  style="color:blue;text-decoration: underline;font-weight:bold;" value="#{bundle.pdfExport}" /> 
                         <p:dataExporter encoding="UTF-8"   type="pdf" target="productResults" fileName="furnitures" preProcessor="{furnitureAction.preProcessPDF}"/>  
                     </h:commandLink>  -->
@@ -151,7 +159,7 @@
                 </p:panel>
 
             </h:form> 
-
+  
 
             <h:form id="productPreviewForm">
                 <p:dialog header="#{bundle.productPreview}" id="productPreviewID" position="top" widgetVar="productPreviewDialog" modal="true" resizable="false" >

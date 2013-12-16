@@ -217,7 +217,7 @@ public class Category implements java.io.Serializable {
      /**
      * @return the companies
      */
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.REFRESH)
     @JoinTable(name = "COMPCAT",
     joinColumns = {
         @JoinColumn(name = "CATEGORYID")

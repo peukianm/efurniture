@@ -1,0 +1,123 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="templates/uiBackend.xhtml"> 
+
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-confirm-dialog-severity {
+                margin: 0 7px 7px 0;
+            }
+
+
+            .noBord, .noBord tbody, .noBord tbody td, .noBord tbody tr {
+                padding: 1px 5px;
+                border-style: none !important; 
+            }
+
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <p:growl autoUpdate="true"/> 
+        <div class="entry" style="line-height:100%;" >
+            <h:form id="searchAuditFormID">                		         		   
+                <p:panel id="searchAuditPanelID" widgetVar="searchAuditPanelWidget" header="#{bundle.searchCriteria} " toggleable="false" style="padding:0px ! important; width:auto;white-space: nowrap;margin:  5px" > 
+                    <table  cellpadding="5" class="content1" style="margin-bottom: 10px" >  
+                        <tr>
+                            <td style="width: auto;white-space: nowrap;"><h:outputLabel value="#{bundle.date} #{bundle.from}:"  style="font-weight: bold"  /></td>
+                            <td style="width: auto;white-space: nowrap;"> 
+                                <p:calendar locale="el" size="12"  readonlyInput="true"  navigator="true" showOn="button" 
+                                            pattern="dd/MM/yyyy" value="#{auditBean.searchFromActionDate}" id="searchFromActionDate"/> 
+
+                            </td>
+                            <td><h:outputLabel value="#{bundle.date} #{bundle.to}:" style="font-weight: bold"  /></td>
+                            <td> 
+                                <p:calendar locale="el" size="12"  readonlyInput="true"  navigator="true" showOn="button" 
+                                            pattern="dd/MM/yyyy" value="#{auditBean.searchToActionDate}" id="searchToActionDate" /> 
+
+                            </td>
+                            <td style="width: auto;white-space: nowrap;"> <h:outputLabel value="#{bundle.action}:"  style="font-weight: bold" /></td>
+                            <td style="width: auto;white-space: nowrap;">
+                                <p:selectOneMenu value="#{auditBean.searchAction}" converter="ActionConverter" >						 
+                                    <f:selectItem itemLabel="" itemValue=""  />
+                                    <f:selectItems value="#{applicationBean.actions}" var="action" itemLabel="#{action.name}" itemValue="#{action}"   />						     
+                                </p:selectOneMenu>	
+                            </td>      
+
+                        </tr>
+                        <tr>
+                            <td style="width: auto;white-space: nowrap;"><h:outputLabel value="#{bundle.user}:" style="font-weight: bold; float: right"/></td>
+                            <td style="width: auto;white-space: nowrap;" colspan="2" >   
+                                <p:outputLabel  id="name1" value="#{auditBean.searchUser.username}" /><br/>
+                                <p:autoComplete widgetVar="acUser" queryDelay="300" scrollHeight="550" id="userComplete" value="#{auditBean.selectUser}" completeMethod="#{administrationAction.completeUser}" size="40" required="false"  
+                                                var="user" itemLabel="#{user.username}" itemValue="#{user}" converter="UserConverter" forceSelection="true">  
+                                    <p:ajax event="itemSelect" listener="#{administrationAction.autocompleteUsernameSelectUser}" update="@form:searchAuditPanelID:name1 @widgetVar(acUser)"  />  
+                                </p:autoComplete>
+                                <br/>
+
+                            </td>    
+                            <td style="width: auto;white-space: nowrap;"><h:outputLabel value="#{bundle.product}:" style="font-weight: bold; float: right"/></td>
+                            <td style="width: auto;white-space: nowrap;" colspan="2">   
+                                <p:outputLabel id="name2" value="#{auditBean.searchProduct.name}" /><br/>
+                                <p:autoComplete widgetVar="acProduct" queryDelay="300" scrollHeight="550" id="productComplete" value="#{auditBean.selectProduct}" completeMethod="#{administrationAction.completeProduct}" size="40" required="false"  
+                                                var="product" itemLabel="#{product.name}" itemValue="#{product}" converter="ProductConverter" forceSelection="true">  
+                                    <p:ajax event="itemSelect" listener="#{administrationAction.autocompleteNameSelectProduct}" update="@form:searchAuditPanelID:name2 @widgetVar(acProduct)" />  
+                                </p:autoComplete>
+                                <br/>
+
+                            </td>
+                            
+                            
+                        </tr>
+
+
+                    </table>
+                    <p:commandButton value="#{bundle.search}" action="#{administrationAction.searchAudit()}" update="searchAuditFormID"  />
+                    <p:commandButton  value="#{bundle.reset}" action="#{administrationAction.resetSearchAudit()}" />
+                </p:panel>  
+
+                <p:spacer height="20"/>
+
+                <p:panel id="audits" header="#{bundle.searchResults}"  toggleable="false" style="padding:0px ! important; width:100%; margin-bottom: 10px; font-weight: 7px " > 
+                    <p:dataTable id="auditResultsID" var="audit" value="#{auditBean.audits}"  widgetVar="auditResultsWidget"
+                                 paginator="true" rows="20" emptyMessage="#{bundle.noRecordsFound}" rowIndexVar="tt"  style="font-size: 8px" 
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                 rowsPerPageTemplate="20,40,60,100" >  
+
+                        <!--<p:column headerText="A/A" style="width:2%;font-weight: bold">  
+                            <h:outputText value="#{tt+1}" />  
+                        </p:column> -->
+
+                       
+                         <p:column exportable="false" headerText="#{bundle.time}" sortBy="#{audit.actiondate}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
+                            <h:outputText value="#{audit.actiondate}" />                                                           
+                        </p:column> 
+                        
+                         <p:column exportable="false" headerText="#{bundle.user}" sortBy="#{audit.users.name}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
+                             <h:outputText value="#{audit.users.username}" />                                                           
+                        </p:column>
+                        
+                        <p:column exportable="false" headerText="#{bundle.action}" sortBy="#{audit.action.name}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
+                            <h:outputText value="#{audit.action.name}" />                                                           
+                        </p:column> 
+                         
+                       
+                        <p:column exportable="false" headerText="#{bundle.product}" sortBy="#{audit.product.name}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
+                            <h:outputText value="#{audit.product.name}" />                                                           
+                        </p:column> 
+                       
+                    </p:dataTable>   
+                </p:panel>
+
+            </h:form> 
+
+
+
+        </div>
+    </ui:define>
+
+</ui:composition>
+

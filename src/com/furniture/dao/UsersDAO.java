@@ -294,4 +294,27 @@ public class UsersDAO {
             throw new RuntimeException(ne);
         }
     }
+    
+    
+    
+    public List<Users> fetchUserAutoCompleteUsername(String name) {
+        try {
+            name = name.trim();
+
+            String queryString = "Select user from Users  user  "
+                    + " where (LOWER(user.username) like '" + ((String) name).toLowerCase() + "%'"
+                    + " OR UPPER(user.username)  like '" + ((String) name).toUpperCase() + "%') "                    
+                    + " order by user.username";
+
+            Query query = getEntityManager().createQuery(queryString);
+            
+            query.setMaxResults(20);
+            return query.getResultList();
+        } catch (RuntimeException re) {
+            logger.error("Error on finding entity", re);
+            throw re;
+        }
+    }
+    
+    
 }

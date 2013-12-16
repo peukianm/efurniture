@@ -1,6 +1,7 @@
 package com.furniture.converter;
 
 import com.furniture.entities.Product;
+import com.furniture.entities.Users;
 import java.math.BigDecimal;
 import javax.faces.application.FacesMessage;
 
@@ -12,7 +13,7 @@ import javax.faces.convert.ConverterException;
 import com.furniture.util.EJBUtil;
 import com.furniture.util.PersistenceHelper;
 
-public class ProductConverter implements Converter { 
+public class UserConverter implements Converter {
     
     private PersistenceHelper persistenceHelper = EJBUtil.lookupPersistenceHelperBean();
     
@@ -22,8 +23,8 @@ public class ProductConverter implements Converter {
         } else {
             try {
                 BigDecimal number = new BigDecimal(submittedValue);
-                Product product = persistenceHelper.getEntityManager().find(Product.class, number);
-                return product;
+                Users user = persistenceHelper.getEntityManager().find(Users.class, number);
+                return user;
 
             } catch (Exception exception) {
                 exception.printStackTrace();
@@ -37,7 +38,7 @@ public class ProductConverter implements Converter {
             if (value == null || value.equals("")) {
                 return "";
             } else {
-                return String.valueOf(((Product) value).getProductid());
+                return String.valueOf(((Users) value).getUserid());
             }
         } catch (Exception e) {
             e.printStackTrace();

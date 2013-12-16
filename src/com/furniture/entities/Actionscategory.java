@@ -69,5 +69,30 @@ public class Actionscategory implements java.io.Serializable {
 	public void setActions(Set<Action> actions) {
 		this.actions = actions;
 	}
+        
+        
+         @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (!(obj instanceof Actionscategory)) {
+            return false;
+        }
+
+        Actionscategory  compare = (Actionscategory) obj;
+        return compare.categoryid.equals(this.categoryid);
+    }
+
+    @Override
+    public int hashCode() {
+        return categoryid != null ? this.getClass().hashCode() + categoryid.hashCode() : super.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Actioncategory{id=" + categoryid + ", name=" + getName()  + "}";
+    }
 
 }

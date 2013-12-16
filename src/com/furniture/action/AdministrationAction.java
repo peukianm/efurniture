@@ -11,12 +11,14 @@ import com.furniture.util.*;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.transaction.UserTransaction;
 import org.apache.log4j.Logger;
+import org.primefaces.event.SelectEvent;
 
 public class AdministrationAction implements Serializable {
 
@@ -137,6 +139,130 @@ public class AdministrationAction implements Serializable {
         String propertyValue = SystemParameters.getInstance().getProperty(key);
         return propertyValue;
     }
+    
+    
+    
+     public String auditControl() {
+        try {
+            AuditBean auditBean = (AuditBean) FacesUtils.getManagedBean("auditBean");
+            auditBean.reset();
+            sessionBean.setPageCode(SystemParameters.getInstance().getProperty("PAGE_AUDIT_CONTROL"));
+            sessionBean.setPageName(MessageBundleLoader.getMessage("audit"));
+            return "auditControl?faces-redirect=true ";
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+            return "";
+        }
+    }
+    
+    
+    public List<Users> completeUser(String username) {
+        try {
+            if (username != null && !username.trim().isEmpty() && username.trim().length() >= 1) {
+                username = username.trim();
+                UsersDAO userDAO = new UsersDAO();
+                List<Users> users = userDAO.fetchUserAutoCompleteUsername(username);                
+                return users;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+            return null;
+        }
+    }
+
+    public void autocompleteUsernameSelectUser(SelectEvent event) {
+        try {
+            AuditBean auditBean = (AuditBean) FacesUtils.getManagedBean("auditBean");
+            Users user = auditBean.getSelectUser();
+            auditBean.setSearchUser(user);
+            auditBean.setSelectUser(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+    
+    public List<Product> completeProduct(String name) {
+        try {
+            if (name != null && !name.trim().isEmpty() && name.trim().length() >= 1) {
+                name = name.trim();
+                ProductDAO dao = new ProductDAO();
+                List<Product> products = dao.fetchProductAutoCompleteName(name, null);                
+                return products;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+            return null;
+        }
+    }
+
+    public void autocompleteNameSelectProduct(SelectEvent event) {
+        try {
+            AuditBean auditBean = (AuditBean) FacesUtils.getManagedBean("auditBean");
+            Product product = auditBean.getSelectProduct();
+            auditBean.setSearchProduct(product);
+            auditBean.setSelectProduct(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+     public String resetSearchAudit() {
+        try {
+           return auditControl(); 
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+            return "";
+        }
+    }
+    
+     
+     public void searchAudit() {
+        try {
+            
+            AuditBean auditBean = (AuditBean) FacesUtils.getManagedBean("auditBean");
+            
+            
+            Timestamp from = null;
+            if (auditBean.getSearchFromActionDate()!=null) {
+                from = FormatUtils.formatDateToTimestamp(auditBean.getSearchFromActionDate());            
+            }
+            
+            Timestamp to = null;
+            if (auditBean.getSearchToActionDate()!=null) {
+                to = FormatUtils.formatDateToTimestamp(auditBean.getSearchToActionDate());
+            }
+            
+            AuditingDAO dao = new AuditingDAO();
+            List<Auditing> auditings = dao.searchAudit(auditBean.getSearchUser(),auditBean.getSearchAction(), from,to, auditBean.getSearchProduct(), auditBean.getSearchCompany());
+            auditBean.setAudits(auditings);                        
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);            
+        }
+    }
+    
+    
+    
 
     public void goError(Exception ex) {
         try {

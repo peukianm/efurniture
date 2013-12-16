@@ -1,0 +1,141 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <f:view> 
+
+        <f:metadata>
+            <f:viewParam id="company_id" name="companyid" value="#{companyBean.company}"  required="true" requiredMessage="#{bundle.noCompanySelected}" 
+                         converter="CompanyConverter" converterMessage="Unknown company ID." />
+            <f:event type="preRenderView" listener="#{companyBean.init()}" />       
+        </f:metadata>
+
+
+        <h:head>
+            <style type="text/css">
+                .ui-confirm-dialog-severity {
+                    margin: 0 7px 7px 0;
+                }
+
+                .ui-panelgrid td, .ui-panelgrid tr
+                {
+                    border-style: none !important; 
+                }
+                .ui-datatable tbody td {
+                    padding: 1px 5px;
+                }
+
+
+            </style>
+        </h:head>
+
+
+
+
+        <h:body  styleClass="mainBG">
+            <h:outputStylesheet name="css/default.css" />             
+            <div class="entry" style="line-height:120%;" >
+                <p:panelGrid style="border-style:none ! important;width: 100%">
+                    <f:facet name="header"> 
+                        <p:row style="border-style:none ! important;">                               
+                            <p:column colspan="6" >
+                                <p:outputLabel value="#{companyBean.company.name}" style="float: left; font-weight: bold; font-size: 19px ! important"/>                                                                                                         
+                            </p:column>  
+                        </p:row> 
+                    </f:facet>
+
+
+                    <!-- <p:row style="border-style:none ! important;">  
+                         <p:column rowspan="3" style="border-style:none ! important;padding: 0px;vertical-align: top">
+                             <p:galleria id="imageGaler" value="{companyBean.company.}" var="image" panelWidth="500" panelHeight="363" autoPlay="false" 
+                                         effect="clip" showCaption="true">  
+                                 <p:graphicImage id="produImage" value="/media/companies/{companyBean.company.companyid}/images/#{image.filename}"   alt="#{image.description}" title="#{image.primary}" width="500" height="363" />    
+                             </p:galleria>
+
+                         </p:column>  
+                     </p:row> -->
+
+
+                    <p:row style="border-style:none ! important;">                                                       
+                        <p:column  style="border-style:none ! important;vertical-align: top;line-height: 100%;font-weight: bold;width: 20%">
+                            <p:outputLabel value="#{bundle.description}:" />                                                           
+                        </p:column> 
+                        <p:column colspan="5" style="border-style:none ! important;vertical-align: top;line-height: 100%">
+                            <p:outputLabel value="#{companyBean.company.description}" />                                                           
+                        </p:column>  
+                    </p:row> 
+
+                    <p:row style="border-style:none ! important;">                                                       
+                        <p:column  style="border-style:none ! important;vertical-align: top;line-height: 100%;font-weight: bold">
+                            <p:outputLabel value="#{bundle.phone}1:" />                                                           
+                        </p:column> 
+                        <p:column  style="border-style:none ! important;vertical-align: top;line-height: 100%">
+                            <p:outputLabel value="#{companyBean.company.phone1}" />                                                           
+                        </p:column>  
+                        <p:column  style="border-style:none ! important;vertical-align: top;line-height: 100%;font-weight: bold">
+                            <p:outputLabel value="#{bundle.phone}2:" />                                                           
+                        </p:column> 
+                        <p:column  style="border-style:none ! important;vertical-align: top;line-height: 100%">
+                            <p:outputLabel value="#{companyBean.company.phone2}" />                                                           
+                        </p:column>  
+                        <p:column  style="border-style:none ! important;vertical-align: top;line-height: 100%;font-weight: bold">
+                            <p:outputLabel value="email:" />                                                           
+                        </p:column> 
+                        <p:column  style="border-style:none ! important;vertical-align: top;line-height: 100%">
+                            <p:outputLabel value="#{companyBean.company.email}" />                                                           
+                        </p:column>  
+                    </p:row> 
+
+                    <p:row style="border-style:none ! important;">                                                       
+                        <p:column  style="border-style:none ! important;vertical-align: top;line-height: 100%;font-weight: bold">
+                            <p:outputLabel value="#{bundle.contactPerson}:" />                                                           
+                        </p:column> 
+                        <p:column colspan="2" style="border-style:none ! important;vertical-align: top;line-height: 100%">
+                            <p:outputLabel value="#{companyBean.company.contactperson}" />                                                           
+                        </p:column>  
+                        <p:column  style="border-style:none ! important;vertical-align: top;line-height: 100%;font-weight: bold">
+                            <p:outputLabel value="#{bundle.afm}:" />                                                           
+                        </p:column> 
+                        <p:column colspan="2" style="border-style:none ! important;vertical-align: top;line-height: 100%">
+                            <p:outputLabel value="#{companyBean.company.afm}" />                                                           
+                        </p:column>  
+
+                    </p:row> 
+
+                    <p:row style="border-style:none ! important;" rendered="#{companyBean.company.addresses.size()>0}">                                                       
+                        <p:column  style="border-style:none ! important;vertical-align: top;line-height: 100%;font-weight: bold">
+                            <p:outputLabel value="#{bundle.address}:" />                                                           
+                        </p:column> 
+                        <p:column colspan="5" style="border-style:none ! important;vertical-align: top;line-height: 100%">
+                            <ui:repeat var="address" value="#{companyBean.company.addresses}" >
+                                <p:outputLabel value="#{address.address} "/>   <p:outputLabel value="#{address.city} "/>  <p:outputLabel value=" #{address.postalcode} "/> <br/>                                
+                            </ui:repeat>
+                        </p:column>                                                        
+                    </p:row> 
+
+
+                    <p:row style="border-style:none ! important;" rendered="#{companyBean.company.categories.size()>0}">                                                       
+                        <p:column  style="border-style:none ! important;vertical-align: top;line-height: 100%;font-weight: bold">
+                            <p:outputLabel value="#{bundle.categories}:" />                                                           
+                        </p:column> 
+                        <p:column colspan="5" style="border-style:none ! important;vertical-align: top;line-height: 100%">
+                            <p:dataTable id="categoriesTable" var="category" value="#{companyBean.company.categories}" styleClass="hide-column-names noCollapse" 
+                                         style="border-style:none ! important;border-collapse: separate;" rows="5" paginatorPosition="bottom" >
+                                <p:column  style="border-style:none ! important; width:1%; white-space:nowrap;" >  
+                                    <p:outputLabel value="#{category.name}" style=""/> 
+                                </p:column> 
+                            </p:dataTable>
+                        </p:column>                                                        
+                    </p:row>                        
+
+                </p:panelGrid>
+
+            </div>
+        </h:body>
+    </f:view>
+</html>
+
+

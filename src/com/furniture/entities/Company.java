@@ -47,7 +47,7 @@ public class Company implements java.io.Serializable {
     private String phone2;
     private Date createddate;
     private Set<Companyproduct> companyproducts = new HashSet<Companyproduct>(0);
-    private Set<Address> addresses = new HashSet<Address>(0);
+    private List<Address> addresses = new ArrayList<Address>(0);
     private Set<Auditing> auditings = new HashSet<Auditing>(0);
     private Set<Users> useres = new HashSet<Users>(0);
     private Set<Companycatalogue> companycatalogues = new HashSet<Companycatalogue>(0);
@@ -74,7 +74,7 @@ public class Company implements java.io.Serializable {
      * full constructor
      */
     public Company(BigDecimal companyid, String name, String description, String email, String afm, String contactperson, Timestamp createdTimestamp, List<Category> categories,
-            Timestamp modifiedTimestamp, String phone1, String phone2, Set<Companyproduct> companyproducts, Set<Address> addresses, Set<Auditing> auditings,
+            Timestamp modifiedTimestamp, String phone1, String phone2, Set<Companyproduct> companyproducts, List<Address> addresses, Set<Auditing> auditings,
             Set<Companycatalogue> companycatalogues, Set<Users> useres, Set<Price> prices, BigDecimal active, Date createddate, List<Catalogue> catalogues) {
         this.companyid = companyid;
         this.active = active;
@@ -228,11 +228,11 @@ public class Company implements java.io.Serializable {
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "company")
-    public Set<Address> getAddresses() {
+    public List<Address> getAddresses() {
         return this.addresses;
     }
 
-    public void setAddresses(Set<Address> addresses) {
+    public void setAddresses(List<Address> addresses) {
         this.addresses = addresses;
     }
 
@@ -259,7 +259,7 @@ public class Company implements java.io.Serializable {
     /**
      * @return the catalogues
      */
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.REFRESH)
     @JoinTable(name = "COMPANYCATALOGUE",
     joinColumns = {
         @JoinColumn(name = "COMPANYID")
@@ -284,7 +284,7 @@ public class Company implements java.io.Serializable {
     /**
      * @return the categories
      */
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.REFRESH)
     @JoinTable(name = "COMPCAT",
     joinColumns = {
         @JoinColumn(name = "COMPANYID")

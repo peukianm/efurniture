@@ -23,6 +23,7 @@ import com.furniture.entities.Videoproduct;
 import com.furniture.util.FacesUtils;
 import com.furniture.util.FurnitureUtil;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -92,19 +93,20 @@ public class ViewProductBean implements Serializable {
     private List<Productvalue> productValues = new ArrayList<Productvalue>(0);
     private Productspecification productSpecification;
     
-    private Boolean showButton;
+    private Boolean showButton ;
     private String rows ="5";
     
     
     
 
     @PostConstruct
-    public void init() {
-        //System.out.println("PRODUCT BEFORE INT="+product);
+    public void init() {        
         System.out.println("INITIALIZING IN VIEWPRODUCT BEAN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1111");
-        if (sessionBean.getParameter() != null && sessionBean.getParameter() instanceof Product) {
+        if ((sessionBean.getParameter() != null && sessionBean.getParameter() instanceof Product) || product!=null) {
 
-            product = (Product) sessionBean.getParameter();
+            if (product==null)
+                product = (Product) sessionBean.getParameter();
+            
             Company company = product.getFirstCompany();
 
 
@@ -190,7 +192,7 @@ public class ViewProductBean implements Serializable {
     
     
     public Boolean getShowButton() {
-        if (product.getFirstCompany().equals(sessionBean.getUsers().getCompany())) {
+        if ( (product.getFirstCompany().equals(sessionBean.getUsers().getCompany())  || sessionBean.getUsers().getRole().getRoleid().equals(BigDecimal.ONE)) ) {
             return true;
         } else {
             return false;

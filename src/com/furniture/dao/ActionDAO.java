@@ -162,7 +162,7 @@ public class ActionDAO {
     @SuppressWarnings("unchecked")
     public List<Action> findAll(final int... rowStartIdxAndCount) {
         try {
-            final String queryString = "select model from Action model";
+            final String queryString = "select model from Action model order by model.actionid";
             Query query = getEntityManager().createQuery(queryString);
             if (rowStartIdxAndCount != null && rowStartIdxAndCount.length > 0) {
                 int rowStartIdx = Math.max(0, rowStartIdxAndCount[0]);

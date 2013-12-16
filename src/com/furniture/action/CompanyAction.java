@@ -4,12 +4,15 @@
  */
 package com.furniture.action;
 
+import com.furniture.bean.ApplicationBean;
 import com.furniture.bean.CompanyBean;
 import com.furniture.bean.ErrorBean;
 import com.furniture.bean.NewProductBean;
 import com.furniture.bean.ProductSearchBean;
 import com.furniture.bean.SessionBean;
 import com.furniture.dao.CompanyproductDAO;
+import com.furniture.entities.Address;
+import com.furniture.entities.Category;
 import com.furniture.entities.Company;
 import com.furniture.entities.Product;
 import com.furniture.util.FacesUtils;
@@ -19,10 +22,14 @@ import com.furniture.util.PersistenceUtil;
 import com.furniture.util.SystemParameters;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.transaction.UserTransaction;
 import org.apache.log4j.Logger;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -68,9 +75,16 @@ public class CompanyAction {
                 product.setActive(BigDecimal.ZERO);
                 persistenceHelper.edit(product);
             }
+            
+            
             persistenceHelper.edit(company);
             persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_DELETECOMPANY")), null, null, null, null, null, null);
             userTransaction.commit();
+            
+            ApplicationBean appBean = (ApplicationBean)FacesUtils.getManagedBean("applicationBean");           
+            appBean.resetCompanies();
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("companyDeleted"));
+            
             return adminCompany();
         } catch (Exception e) {
             try {
@@ -87,17 +101,21 @@ public class CompanyAction {
 
     public String insertCompany() {
 
+        ApplicationBean appBean = (ApplicationBean)FacesUtils.getManagedBean("applicationBean");
+        appBean.setCompanies(null);  
+        appBean.resetCompanies();
+            
         UserTransaction userTransaction = null;
-        try {
-            userTransaction = persistenceHelper.getUserTransaction();
-            userTransaction.begin();            
+        try {                       
             Company company = companyBean.getCompany();
-            company.setCategories(companyBean.getSelectedCategories());
-            System.out.println(persistenceHelper);
-            System.out.println(company);
-            persistenceHelper.create(company);
+            company.setActive(BigDecimal.ONE);
+            company.setCategories(companyBean.getSelectedCategories());                        
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin(); 
+            persistenceHelper.create(company);            
             persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_INSERTCOMPANY")), null, null, null, null, null, null);
             userTransaction.commit();
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("companyInserted"));
             return adminCompany();
         } catch (Exception e) {
             try {
@@ -126,15 +144,65 @@ public class CompanyAction {
             goError(e);
         }
     }
+    
+    
+     public void goInsertAddress() {
+
+        try {            
+            Address address = new Address();
+            companyBean.setAddress(address);
+            FacesUtils.callRequestContext("editAddressDialogWidget.show()");            
+            FacesUtils.updateHTMLComponnetWIthJS("editAddressForm");
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+          
+             
+     public void insertAddress() {
+
+                   
+        UserTransaction userTransaction = null;
+        try {                       
+            Address address = companyBean.getAddress();
+            address.setCompany(companyBean.getCompany());
+            companyBean.getCompany().getAddresses().add(address);
+            
+            if (!companyBean.getIsInsert()) {
+                userTransaction = persistenceHelper.getUserTransaction();
+                userTransaction.begin(); 
+                persistenceHelper.create(address);            
+                persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATECOMPANY")), null, null, null, null, null, null);
+                userTransaction.commit();
+                FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("addressInserted"));
+            }
+            
+            FacesUtils.callRequestContext("editAddressDialogWidget.hide()");
+            
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    } 
+     
 
     public void goUpdateCompany(Company company) {
 
-        try {
+        try {            
             companyBean.setIsInsert(false);
             companyBean.setCompany(company);
-            companyBean.setSelectedCategories(company.getCategories());
-            FacesUtils.callRequestContext("editCompanyDialogWidget.show()");
-            FacesUtils.updateHTMLComponnetWIthJS(":editCompanyForm:editCompanyPanelID");            
+            companyBean.setSelectedCategories(company.getCategories());              
+            FacesUtils.callRequestContext("editCompanyDialogWidget.show()");  
+//            FacesUtils.updateHTMLComponnetWIthJS(":editCompanyForm");
         } catch (Exception e) {
             e.printStackTrace();
             sessionBean.setErrorMsgKey("errMsg_GeneralError");
@@ -144,6 +212,10 @@ public class CompanyAction {
 
     public String updateCompany() {
 
+        ApplicationBean appBean = (ApplicationBean)FacesUtils.getManagedBean("applicationBean");
+        appBean.setCompanies(null);  
+        appBean.resetCompanies();
+        
         UserTransaction userTransaction = null;
         try {
             userTransaction = persistenceHelper.getUserTransaction();
@@ -153,6 +225,7 @@ public class CompanyAction {
             persistenceHelper.edit(company);
             persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATECOMPANY")), null, null, null, null, null, null);
             userTransaction.commit();
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("companyUpdated"));
             return adminCompany();
         } catch (Exception e) {
             try {
@@ -166,6 +239,62 @@ public class CompanyAction {
             return "";
         }
     }
+    
+    
+    public void deleteAddress(Address address) {
+        
+        UserTransaction userTransaction = null;
+        try {
+            userTransaction = persistenceHelper.getUserTransaction();            
+            if (!companyBean.getIsInsert()) {
+                userTransaction.begin();
+                persistenceHelper.remove(address);
+                persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATECOMPANY")), null, null, null, null, null, null);
+                userTransaction.commit();            
+                FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("addressDeleted"));
+            }
+            companyBean.getCompany().getAddresses().remove(address);
+            
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    public void showCompany(BigDecimal companyID) {
+        try {
+            
+            Map<String,Object> options = new HashMap<String, Object>();  
+            options.put("modal", true);  
+            options.put("draggable", false);  
+            options.put("resizable", false);  
+            options.put("contentHeight", 550);  
+            options.put("contentWidth", 760); 
+            //options.put("productid", productID);
+            
+            
+            Map<String,List<String>> params = new HashMap<String, List<String>>(); 
+            List<String> data = new ArrayList<String>(0);
+            data.add(companyID.toString());
+            params.put("companyid", data);
+            
+            RequestContext.getCurrentInstance().openDialog("viewOnlyCompany.jsf?companyid="+companyID, options, params);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);            
+        }
+    }
+    
+    
+    
 
     
     

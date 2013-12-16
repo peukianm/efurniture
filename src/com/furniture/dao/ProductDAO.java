@@ -182,7 +182,7 @@ public class ProductDAO {
     @SuppressWarnings("unchecked")
     public List<Product> findAll(final int... rowStartIdxAndCount) {
         try {
-            final String queryString = "select model from Product model";
+            final String queryString = "select model from Product model order by model.name";
             Query query = getEntityManager().createQuery(queryString);
             if (rowStartIdxAndCount != null && rowStartIdxAndCount.length > 0) {
                 int rowStartIdx = Math.max(0, rowStartIdxAndCount[0]);
@@ -340,6 +340,7 @@ public class ProductDAO {
                     List<Companyproduct> companyProducts = new ArrayList(company.getCompanyproducts());
                     for (int j = 0; j < companyProducts.size(); j++) {
                         Companyproduct companyproduct = companyProducts.get(j);
+                        System.out.println(companyproduct);
                         if (companyproduct.getProduct().getActive().equals(BigDecimal.ONE)) {
                             products.add(companyproduct.getProduct());
                         }

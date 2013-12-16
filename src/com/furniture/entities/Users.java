@@ -34,6 +34,8 @@ public class Users implements java.io.Serializable {
     private String description;
     private String name;
     private String surname;
+    private String email;
+    private String phone;
     private Timestamp createdTimestamp;
     private Timestamp modifiedTimestamp;
     private List<Userroles> userroleses = new ArrayList<Userroles>(0);
@@ -94,7 +96,7 @@ public class Users implements java.io.Serializable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "COMPANYID")
+    @JoinColumn(name = "COMPANYID",nullable=false)
     public Company getCompany() {
         return this.company;
     }
@@ -147,6 +149,28 @@ public class Users implements java.io.Serializable {
     public void setSurname(String surname) {
         this.surname = surname;
     }
+    
+    
+    @Column(name = "EMAIL", length = 200, nullable=false)
+    public String getEmail() {
+        return this.email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    
+    @Column(name = "PHONE", length = 200)
+    public String getPhone() {
+        return this.phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    
+    
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "users")
     public List<Userroles> getUserroleses() {
@@ -174,4 +198,32 @@ public class Users implements java.io.Serializable {
     public void setModifiedTimestamp(Timestamp modifiedTimestamp) {
         this.modifiedTimestamp = modifiedTimestamp;
     }
+    
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (!(obj instanceof Users)) {
+            return false;
+        }
+
+        Users compare = (Users) obj;
+        return compare.userid.equals(this.userid);
+    }
+
+    @Override
+    public int hashCode() {
+        return userid != null ? this.getClass().hashCode() + userid.hashCode() : super.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "User{id=" + userid + ", name=" + getName() + ", username=" + getUsername() + "}";
+    }
+    
+    
+    
 }

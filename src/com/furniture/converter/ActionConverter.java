@@ -1,5 +1,6 @@
 package com.furniture.converter;
 
+import com.furniture.entities.Action;
 import com.furniture.entities.Product;
 import java.math.BigDecimal;
 import javax.faces.application.FacesMessage;
@@ -12,7 +13,7 @@ import javax.faces.convert.ConverterException;
 import com.furniture.util.EJBUtil;
 import com.furniture.util.PersistenceHelper;
 
-public class ProductConverter implements Converter { 
+public class ActionConverter implements Converter {
     
     private PersistenceHelper persistenceHelper = EJBUtil.lookupPersistenceHelperBean();
     
@@ -22,12 +23,12 @@ public class ProductConverter implements Converter {
         } else {
             try {
                 BigDecimal number = new BigDecimal(submittedValue);
-                Product product = persistenceHelper.getEntityManager().find(Product.class, number);
-                return product;
+                Action action = persistenceHelper.getEntityManager().find(Action.class, number);
+                return action;
 
             } catch (Exception exception) {
                 exception.printStackTrace();
-                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid product"));
+                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid action"));
             }
         }
     }
@@ -37,7 +38,7 @@ public class ProductConverter implements Converter {
             if (value == null || value.equals("")) {
                 return "";
             } else {
-                return String.valueOf(((Product) value).getProductid());
+                return String.valueOf(((Action) value).getActionid());
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -70,5 +70,30 @@ public class Action implements java.io.Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
+        
+        
+        @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (!(obj instanceof Action)) {
+            return false;
+        }
+
+        Action  compare = (Action) obj;
+        return compare.actionid.equals(this.actionid);
+    }
+
+    @Override
+    public int hashCode() {
+        return actionid != null ? this.getClass().hashCode() + actionid.hashCode() : super.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Action{id=" + actionid + ", name=" + getName() + ", actioncategory=" + getActionscategory() + "}";
+    }
 
 }

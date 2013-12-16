@@ -32,7 +32,7 @@ public class Auditing implements java.io.Serializable {
 	private Item item;
 	private Catalogue catalogue;
 	private String comments;
-	private Date actiondate;
+	private Timestamp actiondate;
 	private Timestamp actiontime;
 
 	// Constructors
@@ -42,7 +42,7 @@ public class Auditing implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public Auditing(BigDecimal auditingid, Action action, Users users, Date actiondate) {
+	public Auditing(BigDecimal auditingid, Action action, Users users, Timestamp actiondate) {
 		this.auditingid = auditingid;
 		this.action = action;
 		this.users = users;
@@ -51,7 +51,7 @@ public class Auditing implements java.io.Serializable {
 
 	/** full constructor */
 	public Auditing(BigDecimal auditingid, Specification specification, Action action, Productline productline, Company company, Product product, Users users,
-			Item item, Catalogue catalogue, String comments, Date actiondate, Timestamp actiontime) {
+			Item item, Catalogue catalogue, String comments, Timestamp actiondate, Timestamp actiontime) {
 		this.auditingid = auditingid;
 		this.specification = specification;
 		this.action = action;
@@ -166,13 +166,13 @@ public class Auditing implements java.io.Serializable {
 		this.comments = comments;
 	}
 
-	@Temporal(TemporalType.DATE)
+	//@Temporal(TemporalType.DATE)
 	@Column(name = "ACTIONDATE", nullable = false, length = 7)
-	public Date getActiondate() {
+	public Timestamp getActiondate() {
 		return this.actiondate;
 	}
 
-	public void setActiondate(Date actiondate) {
+	public void setActiondate(Timestamp actiondate) {
 		this.actiondate = actiondate;
 	}
 

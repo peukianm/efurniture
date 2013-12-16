@@ -4,12 +4,14 @@
  */
 package com.furniture.bean;
 
+import com.furniture.entities.Address;
 import com.furniture.entities.Category;
 import com.furniture.entities.Company;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
@@ -21,23 +23,32 @@ import org.primefaces.model.TreeNode;
  */
 @ManagedBean
 @ViewScoped
-public class CompanyBean implements Serializable{
-    
-@ManagedProperty(value = "#{sessionBean}")
-    private SessionBean sessionBean;  
+public class CompanyBean implements Serializable {
+
+    @ManagedProperty(value = "#{sessionBean}")
+    private SessionBean sessionBean;
     private List<Company> companies = new ArrayList<Company>(0);
     private Company company;
     private List<Category> selectedCategories = new ArrayList<Category>(0);
     private Boolean isInsert = false;
-    
-    
-    
-    
+    private Address address;
+
     @PostConstruct
     public void init() {        
+        System.out.println("INITIALIZING IN Company Bean!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1111");
+
     }
-    
+
+    @PreDestroy
     public void reset() {
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public Boolean getIsInsert() {
@@ -48,7 +59,6 @@ public class CompanyBean implements Serializable{
         this.isInsert = isInsert;
     }
 
-   
     public List<Category> getSelectedCategories() {
         return selectedCategories;
     }
@@ -57,7 +67,6 @@ public class CompanyBean implements Serializable{
         this.selectedCategories = selectedCategories;
     }
 
-    
     public List<Company> getCompanies() {
         return companies;
     }
@@ -80,6 +89,5 @@ public class CompanyBean implements Serializable{
 
     public void setSessionBean(SessionBean sessionBean) {
         this.sessionBean = sessionBean;
-    }        
-    
+    }
 }

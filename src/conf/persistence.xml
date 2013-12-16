@@ -4,7 +4,7 @@
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <!--<jta-data-source>jdbc/OracleProduction</jta-data-source>-->
     <jta-data-source>jdbc/OracleFe</jta-data-source>
-    
+       
     <class>com.furniture.entities.Action</class>
     <class>com.furniture.entities.Actionscategory</class>
     <class>com.furniture.entities.Address</class>

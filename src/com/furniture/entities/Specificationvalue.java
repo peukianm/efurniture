@@ -137,13 +137,13 @@ public class Specificationvalue implements java.io.Serializable {
 
         Specificationvalue compare = (Specificationvalue) obj;
        
-//        if (compare.id==null)
-//            return compare.specification.equals(this.specification); 
-//        else {
-//            return compare.id.equals(this.id);
-//        }
+        if (compare.id==null)
+            return compare.specification.equals(this.specification); 
+        else {
+            return compare.id.equals(this.id);
+        }
         
-        return compare.id.equals(this.id);
+//        return compare.id.equals(this.id);
     }
 
     @Override

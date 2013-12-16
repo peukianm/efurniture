@@ -13,6 +13,8 @@ import java.util.logging.Level;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import org.apache.log4j.Logger;
+import org.eclipse.persistence.config.CacheUsage;
+import org.eclipse.persistence.config.QueryHints;
 import org.omnifaces.util.Ajax;
 
 /**
@@ -153,6 +155,7 @@ public class CompanyDAO {
                     }
                 }
             }
+            //return query.setHint(QueryHints.CACHE_USAGE, CacheUsage.DoNotCheckCache).getResultList();
             return query.getResultList();
         } catch (RuntimeException re) {
             logger.error("Error on finding entity", re);

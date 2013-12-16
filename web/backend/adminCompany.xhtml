@@ -5,17 +5,17 @@
                 xmlns:p="http://primefaces.org/ui"
                 template="templates/uiBackend.xhtml"> 
 
-     <ui:define name="head">
-         <style type="text/css">
-             .ui-confirm-dialog-severity {
-                 margin: 0 7px 7px 0;
-             }
-             
-             table tr td {
-                 vertical-align: top
-             }
-         </style>
-     </ui:define> 
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-confirm-dialog-severity {
+                margin: 0 7px 7px 0;
+            }
+
+            table tr td {
+                vertical-align: top
+            }
+        </style>
+    </ui:define> 
 
     <ui:define name="content">
         <p:growl autoUpdate="true"/> 
@@ -24,12 +24,12 @@
             <h:form id="companyFormID">                
 
                 <p:panel id="companyPanelID" widgetVar="companyPanelWidget" header="#{bundle.companyList} " toggleable="false" rowIndexVar="indx"
-                         style="padding:0px ! important; width:auto;white-space: nowrap;margin:  5px;" > 
-                    <p:dataTable id="companyTable" var="company" value="#{applicationBean.companies}"  paginator="true" rows="10">
-                        <p:column  style="width:1px; white-space:nowrap;" headerText="#{bundle.company}" >  
+                         style="padding:0px ! important; white-space: nowrap;margin:  5px;" > 
+                    <p:dataTable id="companyTable" var="company" value="#{applicationBean.companies}"  paginator="false" rows="20">
+                        <p:column  style="white-space:nowrap;" headerText="#{bundle.company}" >  
                             <p:outputLabel value="#{company.name}"/> 
                         </p:column> 
-                        <p:column  style="width:1px; white-space:nowrap;" headerText="#{bundle.contactPerson}" >  
+                       <!-- <p:column  style="width:1px; white-space:nowrap;" headerText="#{bundle.contactPerson}" >  
                             <p:outputLabel value="#{company.contactperson}"/> 
                         </p:column> 
                         <p:column  style="width:1px; white-space:nowrap;" headerText="email" >  
@@ -43,44 +43,48 @@
                         </p:column> 
                         <p:column  style="width:1px; white-space:nowrap;" headerText="#{bundle.afm}" >  
                             <p:outputLabel value="#{company.afm}"/> 
-                        </p:column> 
+                        </p:column> -->
 
-                        <p:column headerText="#{bundle.actions}" exportable="false"  style="font-weight: bold;vertical-align: top;width: 1px; white-space: nowrap;">                                                                                        
-                            <p:commandButton  icon="ui-icon-pencil" title="#{bundle.updateCompany}" action="#{companyAction.goUpdateCompany(company)}" immediate="true"/>                                
+                        <p:column headerText="#{bundle.actions}" exportable="false"  style="font-weight: bold;vertical-align: top;white-space: nowrap;width: 20%">                                                                                        
+                            <p:commandButton  icon="ui-icon-search" actionListener="#{companyAction.showCompany(company.companyid)}">  
+                                <!--<p:ajax event="dialogReturn" listener="{dialogBean.onCarChosen}" update="growl" />  -->
+                            </p:commandButton> 
+                            <p:commandButton  icon="ui-icon-pencil" title="#{bundle.update}" update=":editCompanyForm" action="#{companyAction.goUpdateCompany(company)}"  immediate="true"/>                                
                             <p:commandButton id="deleteButton"  icon="ui-icon-closethick" title="Διαγραφή" action="#{companyAction.removeCompany(company)}" immediate="true" 
                                              rendered="#{sessionBean.users.role.roleid==1}">  
                                 <f:setPropertyActionListener value="#{company}" target="#{companyBean.company}" />
                                 <p:confirm header="#{bundle.confirmation}" message="#{bundle.confDeleteCompany}" icon="ui-icon-alert" /> 
                             </p:commandButton>
                         </p:column>
-                    </p:dataTable>                
+                    </p:dataTable>     
+                    <br/>
+                    <p:commandButton  action="#{companyAction.goInsertCompany()}"  value="#{bundle.newCompany}" immediate="true" /> 
                 </p:panel>
-                <p:commandButton  action="#{companyAction.goInsertCompany()}"  value="#{bundle.newCompany}" immediate="true" /> 
+
             </h:form>
-            
-            
-            
+
+
+
             <h:form id="editCompanyForm">
-                <p:dialog header="#{bundle.companyData}" id="editCompanyDialogID" position="center" widgetVar="editCompanyDialogWidget" modal="true" resizable="false" >
-                    <p:messages autoUpdate="true" severity="error" />
+                <p:dialog header="#{bundle.companyData}" id="editCompanyDialogID" position="center" widgetVar="editCompanyDialogWidget" modal="true" resizable="false" >                    
                     <p:panel id="editCompanyPanelID" widgetVar="editCompanyPanelWidget">
                         <table >
                             <tr>
                                 <td><p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.name} :*"   /> </td>
                                 <td>
-                                    <p:inputText size="25" value="#{companyBean.company.name}" required="true" requiredMessage="#{bundle.name}: #{bundle.mandatoryField}" id="name" />                                        
+                                    <p:inputText size="20" value="#{companyBean.company.name}" required="true" requiredMessage="#{bundle.name}: #{bundle.mandatoryField}" id="name" />                                        
                                     <p:message for="name" display="icon" /> 
                                 </td>
                                 <td><p:outputLabel  style="font-weight: bold; vertical-align: top" value="#{bundle.description} :"   /> </td>
                                 <td>
-                                    <p:inputTextarea  rows="6" cols="20" value="#{companyBean.company.description}"/>                                                                            
+                                    <p:inputTextarea  rows="6" cols="30" value="#{companyBean.company.description}"/>                                                                            
                                 </td>
                                 <td><p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.contactPerson} :"   /> </td>
                                 <td>
                                     <p:inputText size="25" value="#{companyBean.company.contactperson}" />
                                 </td>                                                        
                             </tr>
-                            
+
                             <tr>
                                 <td><p:outputLabel style="font-weight: bold; vertical-align: top" value="email :"   /> </td>
                                 <td>
@@ -100,31 +104,92 @@
                                 <td>
                                     <p:inputText size="25" value="#{companyBean.company.afm}"  />                                        
                                 </td>
-                                
+
                                 <td style="vertical-align: top;float: right"> <p:outputLabel value="#{bundle.category}* :"  style="font-weight: bold"/> </td>
                                 <td style="vertical-align: top;white-space: nowrap" colspan="3">
 
                                     <p:selectManyMenu   value="#{companyBean.selectedCategories}" required="true" requiredMessage="#{bundle.category}: #{bundle.mandatoryField}"
-                                                    converter="CategoryConverter"  id="selectCategory" style="width:150px;height:130px" var="category" showCheckbox="true"> 						                                                                                                                                                                              
+                                                        converter="CategoryConverter"  id="selectCategory" style="width:150px;height:130px" var="category" showCheckbox="true"> 						                                                                                                                                                                              
                                         <f:selectItems value="#{applicationBean.rootCategories}" var="category" itemLabel="#{category.name}" itemValue="#{category}"   />						                                      
                                         <p:column>#{category.name}</p:column>                                                                    
                                     </p:selectManyMenu> 
-                                    <p:message for="selectCategory" display="icon" /> 
+                                    <p:message for="selectCategory" display="icon" /> <br/>
                                 </td>                                
                             </tr>
-                        </table> <br/>
-                        
-                        <p:commandButton rendered="#{companyBean.isInsert}"  action="#{companyAction.insertCompany()}"  value="#{bundle.insert}" update="@form:editCompanyPanelID"/> 
-                        <p:commandButton rendered="#{!companyBean.isInsert}"  action="#{companyAction.updateCompany()}"  value="#{bundle.update}" update="@form:editCompanyPanelID" />                        
 
-                       
+                            <tr>
+                                <td>
+                                    <p:outputLabel value="#{bundle.address} :" style="font-weight: bold"/> <br/>
+                                </td>
+                                <td colspan="5">      
+                                    <p:dataTable widgetVar="addressTableWidget" id="addressTable" var="address" value="#{companyBean.company.addresses}" styleClass="" emptyMessage="#{bundle.noAddress}"
+                                                 style="width: auto;" rows="5" paginatorPosition="bottom" >
+                                        <p:column  style="white-space:nowrap;" headerText="#{bundle.addressData}" >  
+                                            <p:outputLabel value="#{address.address} " style=""/>  <p:outputLabel value=" #{address.city} " style=""/> <p:outputLabel value=" TK:#{address.postalcode} " style=""/>
+                                        </p:column> 
+                                        <p:column headerText="#{bundle.actions}" style="width: 20%"> 
+                                            <p:commandButton alt="#{bundle.delete}" immediate="true" icon="ui-icon-trash" update="@form:addressTable" action="#{companyAction.deleteAddress(address)}">                                   
+                                                <p:confirm header="#{bundle.confirmation}" message="#{bundle.confDeleteAddress}" icon="ui-icon-alert" /> 
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:dataTable>
+                                </td>      
+                            </tr>
+                        </table> 
+
+
+                        <p:spacer height="30px" width="0px" />  
+                        <p:commandButton  action="#{companyAction.goInsertAddress()}"  value="#{bundle.newAddress}" immediate="true" /> 
+
+
                     </p:panel>    
                     <p:separator />
 
+                    <p:commandButton rendered="#{companyBean.isInsert}"  action="#{companyAction.insertCompany()}"  value="#{bundle.insert}" update="@form:editCompanyPanelID"/> 
+                    <p:commandButton rendered="#{!companyBean.isInsert}"  action="#{companyAction.updateCompany()}"  value="#{bundle.update}" update="@form:editCompanyPanelID" />   
                     <p:commandButton value="#{bundle.close}" type="button" onclick="editCompanyDialogWidget.hide()" />
                 </p:dialog>
             </h:form>
-            
+
+
+            <h:form id="editAddressForm">
+                <p:dialog header="#{bundle.addressData}" id="editAddressDialogID" position="center" widgetVar="editAddressDialogWidget" modal="true" resizable="false" >                    
+                    <p:panel id="editAddressPanelID" widgetVar="editAddressPanelWidget">
+                        <table>
+                            <tr>
+                                <td>
+                                    <p:outputLabel value="#{bundle.address}*:" style="font-weight: bold"/>
+                                </td>
+                                <td>
+                                    <p:inputText value="#{companyBean.address.address}" required="true" requiredMessage="#{bundle.address} :#{bundle.mandatoryField}" id="addr"  />
+                                    <p:message for="addr" display="icon" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p:outputLabel value="#{bundle.cityRegion}*:" style="font-weight: bold"/>
+                                </td>
+                                <td>
+                                    <p:inputText value="#{companyBean.address.city}" required="true" requiredMessage="#{bundle.cityRegion} :#{bundle.mandatoryField}" id="city"  />
+                                    <p:message for="city" display="icon" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p:outputLabel value="#{bundle.postalCode}*:" style="font-weight: bold"/>
+                                </td>
+                                <td>
+                                    <p:inputText value="#{companyBean.address.postalcode}" required="true" requiredMessage="#{bundle.postalCode} :#{bundle.mandatoryField}" id="pcode"  />
+                                    <p:message for="pcode" display="icon" />
+                                </td>
+                            </tr>
+                        </table>
+                        <p:commandButton  value="#{bundle.insert}" action="#{companyAction.insertAddress}" update="@widgetVar(addressTableWidget) @form:editAddressPanelID"  />
+                        <p:commandButton type="button" value="#{bundle.close}" onclick="editAddressDialogWidget.hide()" />
+                    </p:panel>
+                </p:dialog>
+            </h:form>
+
 
 
 

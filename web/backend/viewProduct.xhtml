@@ -8,10 +8,10 @@
     
     
     <!--<f:metadata>
-        <f:viewParam id="product_id" name="productid" value="#{viewProductBean.product}"  required="true" requiredMessage="NoProductSelected." 
+        <f:viewParam id="product_id" name="productid" value="{viewProductBean.product}"  required="true" requiredMessage="NoProductSelected." 
                        converter="ProductConverter" converterMessage="Unknown product ID." />
-        <f:event type="preRenderView" listener="#{viewProductBean.init()}" />       
-    </f:metadata>-->
+        <f:event type="preRenderView" listener="{viewProductBean.init()}" />       
+    </f:metadata> -->
     
     <ui:define name="head">
         <style type="text/css">
@@ -51,7 +51,7 @@
                                     </ui:repeat>
                                 </div> 
                                 <span class="top" style="float: right; margin-top: -32px" >
-                                    <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" onclick="nameDialogWidget.show()" update=":nameFormID" rendered="#{viewProductBean.showButton}" />
+                                    <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" onclick="nameDialogWidget.show()" update=":nameFormID" rendered="#{viewProductBean.showButton }" />
                                 </span>
 
                             </p:column>  
@@ -152,13 +152,16 @@
                                             <f:facet name="header">  
                                                 #{bundle.parentProducts}  
                                             </f:facet>  
-                                            <h:outputText value="#{parent.name}" style="margin-left:10px" />  
+                                            
+                                            <p:commandLink style="color: blue;text-decoration: underline;font-weight: bold" actionListener="#{furnitureAction.showProduct(parent.productid)}">
+                                                <h:outputText value="#{parent.name}" style="margin-left:10px" />  
+                                            </p:commandLink>
                                             <br />  
                                         </p:dataList> 
-                                        <br/>
+                                        
                                         <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:95%" onclick="selectPProductIDDialog.show()" process="@this" 
                                                          immediate="true" update="@widgetVar(selectPProductPanelWidget)"  rendered="#{viewProductBean.showButton}"/>
-                                        <p:separator />                                       
+                                       <!--<p:separator /> -->                                       
                                         <br/>
                                         <p:dataList value="#{viewProductBean.subProducts.target}" var="sub" emptyMessage="#{bundle.noProducts}" 
                                                     paginator="false" rows="5" paginatorTemplate="{PreviousPageLink} {CurrentPageReport} {NextPageLink} {RowsPerPageDropdown}"  
@@ -166,15 +169,18 @@
                                             <f:facet name="header">  
                                                 #{bundle.subproducts}  
                                             </f:facet>  
-                                            <h:outputText value="#{sub.name}" style="margin-left:10px" />  
+                                            
+                                            <p:commandLink style="color: blue;text-decoration: underline;font-weight: bold" actionListener="#{furnitureAction.showProduct(sub.productid)}">
+                                                <h:outputText value="#{sub.name}" style="margin-left:10px" />
+                                            </p:commandLink>
                                             <br />  
-                                        </p:dataList> <br/>
+                                        </p:dataList> 
                                         <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:95%" onclick="selectSProductIDDialog.show()" process="@this" 
                                                          immediate="true" update="@widgetVar(selectSProductPanelWidget)" rendered="#{viewProductBean.showButton}"/>
                                     </p:outputPanel>
                                 </p:tab>
                                 
-                               <p:tab id="rulesTab" title="#{bundle.rules}"  style="padding:0px ! important; margin-left: 0px;"  >                                                                            
+                               <p:tab id="rulesTab" title="#{bundle.settings}"  style="padding:0px ! important; margin-left: 0px;"  >                                                                            
                                     <p:panel widgetVar="scopPanelWidget" id="rulesPanelID"   >
                                        
                                             <p:dataList value="#{viewProductBean.scopeCompanies.target}" var="sc" id="scopid" emptyMessage="#{bundle.noCompanies}" 
@@ -187,7 +193,7 @@
                                                 <br />  
                                             </p:dataList>
 
-                                            <p:separator />
+                                           <!-- <p:separator />-->
                                             <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:95%" onclick="selectSCompanyIDDialog.show()" process="@this" 
                                                          immediate="true" update="@widgetVar(selectSCompanyPanelWidget)" rendered="#{viewProductBean.showButton}"/>                                            
                                                                                                                      

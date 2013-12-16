@@ -4,6 +4,7 @@
  */
 package com.furniture.bean;
 
+import com.furniture.dao.ActionDAO;
 import com.furniture.dao.CompanyDAO;
 import com.furniture.dao.CurrencyDAO;
 import com.furniture.dao.ItemDAO;
@@ -11,6 +12,7 @@ import com.furniture.dao.MeasurmentDAO;
 import com.furniture.dao.ProductcategoryDAO;
 import com.furniture.dao.SpecificationDAO;
 import com.furniture.dao.SpecificationcategoryDAO;
+import com.furniture.entities.Action;
 import com.furniture.entities.Category;
 import com.furniture.entities.Company;
 import com.furniture.entities.Companyproduct;
@@ -45,9 +47,6 @@ public class ApplicationBean implements Serializable {
         propertyValue = SystemParameters.getInstance().getProperty(key);
         return propertyValue;
     }
-    
-    
-    
     List<Specificationcategory> specificationCategories;
 
     public List<Specificationcategory> getSpecificationCategories() {
@@ -61,9 +60,6 @@ public class ApplicationBean implements Serializable {
     public void setSpecificationCategories(List<Specificationcategory> specificationCategories) {
         this.specificationCategories = specificationCategories;
     }
-    
-    
-    
     List<Company> companies;
 
     public List<Company> getCompanies() {
@@ -77,11 +73,10 @@ public class ApplicationBean implements Serializable {
     public void setCompanies(List<Company> companies) {
         this.companies = companies;
     }
-    
-    public void resetCompanies(){
+
+    public void resetCompanies() {
         this.companies = null;
     }
-    
     List<Productcategory> productcategories;
 
     public List<Productcategory> getProductcategories() {
@@ -95,9 +90,6 @@ public class ApplicationBean implements Serializable {
     public void setProductcategories(List<Productcategory> Productcategories) {
         this.productcategories = productcategories;
     }
-    
-    
-    
     List<Item> items;
 
     public List<Item> getItems() {
@@ -111,9 +103,6 @@ public class ApplicationBean implements Serializable {
     public void setItems(List<Item> Items) {
         this.items = items;
     }
-    
-    
-    
     List<Currency> currencies;
 
     public List<Currency> getCurrencies() {
@@ -127,9 +116,19 @@ public class ApplicationBean implements Serializable {
     public void setCurrencies(List<Currency> currencies) {
         this.currencies = currencies;
     }
-    
-    
-    
+    List<Action> actions;
+
+    public List<Action> getActions() {
+        if (actions == null) {
+            ActionDAO dao = new ActionDAO();
+            actions = dao.findAll();
+        }
+        return actions;
+    }
+
+    public void setActions(List<Action> actions) {
+        this.actions = actions;
+    }
     List<Specification> dimensionSpecifications;
 
     public List<Specification> getDimensionSpecifications() {
@@ -143,8 +142,6 @@ public class ApplicationBean implements Serializable {
     public void setDimensionSpecifications(List<Specification> dimensionSpecifications) {
         this.dimensionSpecifications = dimensionSpecifications;
     }
-    
-    
     List<Measurment> measurments;
 
     public List<Measurment> getmeasurments() {
@@ -158,10 +155,6 @@ public class ApplicationBean implements Serializable {
     public void setMeasurments(List<Measurment> measurments) {
         this.measurments = measurments;
     }
-    
-    
-    
-    
     List<Companyproduct> companyproducts = new ArrayList<Companyproduct>(0);
 
     public List<Companyproduct> getCompanyproducts() {
@@ -182,41 +175,27 @@ public class ApplicationBean implements Serializable {
     public void setCompanyproducts(List<Companyproduct> companyproducts) {
         this.companyproducts = companyproducts;
     }
-    
-    
-    private TreeNode root; 
-    
+    private TreeNode root;
+
     public TreeNode getRoot() {
         CompanyDAO dao = new CompanyDAO();
-        List<Category> categories = dao.getAllRootCategories(true);  
-        root = FurnitureUtil.getCategoriesTree(categories);   
+        List<Category> categories = dao.getAllRootCategories(true);
+        root = FurnitureUtil.getCategoriesTree(categories);
         return root;
     }
-    
-     public void setRoot(TreeNode root) {
+
+    public void setRoot(TreeNode root) {
         this.root = root;
     }
-     
-     
-      
-     
-    private List<Category> rootCategories; 
-    
+    private List<Category> rootCategories;
+
     public List<Category> getRootCategories() {
         CompanyDAO dao = new CompanyDAO();
-        rootCategories = dao.getAllRootCategories(true);          
+        rootCategories = dao.getAllRootCategories(true);
         return rootCategories;
     }
-    
-     public void setRootCategories(List<Category> rootCategories) {
+
+    public void setRootCategories(List<Category> rootCategories) {
         this.rootCategories = rootCategories;
     }
-     
-     
-     
-     
-     
-     
-    
-    
 }

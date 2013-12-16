@@ -108,6 +108,23 @@
   <converter-class>com.furniture.converter.CategoryConverter</converter-class>
  </converter>
  
+  <converter>
+  <converter-id>ActionConverter</converter-id>
+  <converter-class>com.furniture.converter.ActionConverter</converter-class>
+ </converter>
+ 
+  <converter>
+  <converter-id>ActioncategoryConverter</converter-id>
+  <converter-class>com.furniture.converter.ActioncategoryConverter</converter-class>
+ </converter>
+ 
+  <converter>
+  <converter-id>UserConverter</converter-id>
+  <converter-class>com.furniture.converter.UserConverter</converter-class>
+ </converter>
+ 
+ 
+ 
  
  
  <managed-bean>
@@ -141,70 +158,75 @@
   <managed-bean-scope>view</managed-bean-scope>
  </managed-bean> 
  
- -->
+    -->
  
- <managed-bean>
-  <managed-bean-name>userBean</managed-bean-name>
-  <managed-bean-class>com.furniture.bean.UserBean</managed-bean-class>
-  <managed-bean-scope>request</managed-bean-scope>
- </managed-bean>
- 
- 
- <managed-bean>
-  <managed-bean-name>administrationAction</managed-bean-name>
-  <managed-bean-class>com.furniture.action.AdministrationAction</managed-bean-class>
-  <managed-bean-scope>request</managed-bean-scope>
- </managed-bean>
- 
- <managed-bean>
-  <managed-bean-name>furnitureAction</managed-bean-name>
-  <managed-bean-class>com.furniture.action.FurnitureAction</managed-bean-class>
-  <managed-bean-scope>request</managed-bean-scope>
- </managed-bean>
- 
- <managed-bean>
-  <managed-bean-name>companyAction</managed-bean-name>
-  <managed-bean-class>com.furniture.action.CompanyAction</managed-bean-class>
-  <managed-bean-scope>request</managed-bean-scope>
- </managed-bean>
+    <managed-bean>
+        <managed-bean-name>userBean</managed-bean-name>
+        <managed-bean-class>com.furniture.bean.UserBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
  
  
- <!-- 
- <navigation-rule>
-  <navigation-case>
-   <from-outcome>insIatreio</from-outcome>
-   <to-view-id>/gui/insertIatreio.jsf</to-view-id>   
-  </navigation-case>
- </navigation-rule> -->
+    <managed-bean>
+        <managed-bean-name>administrationAction</managed-bean-name>
+        <managed-bean-class>com.furniture.action.AdministrationAction</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
  
- <application>
-  <!--  <view-handler>com.sun.facelets.FaceletViewHandler</view-handler> -->
-  <locale-config>
-   <default-locale>gr</default-locale>
-  </locale-config>
+    <managed-bean>
+        <managed-bean-name>furnitureAction</managed-bean-name>
+        <managed-bean-class>com.furniture.action.FurnitureAction</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+ 
+    <managed-bean>
+        <managed-bean-name>companyAction</managed-bean-name>
+        <managed-bean-class>com.furniture.action.CompanyAction</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+ 
+ 
+    <!-- 
+    <navigation-rule>
+     <navigation-case>
+      <from-outcome>insIatreio</from-outcome>
+      <to-view-id>/gui/insertIatreio.jsf</to-view-id>   
+     </navigation-case>
+    </navigation-rule> -->
+ 
+    <application>
+   
+        <action-listener>org.primefaces.application.DialogActionListener</action-listener>
+        <navigation-handler>org.primefaces.application.DialogNavigationHandler</navigation-handler>
+        <view-handler>org.primefaces.application.DialogViewHandler</view-handler>  
+     
+        <!--  <view-handler>com.sun.facelets.FaceletViewHandler</view-handler> -->
+        <locale-config>
+            <default-locale>gr</default-locale>
+        </locale-config>
   
-  <resource-bundle>
-   <base-name>com.furniture.bundle.MessageBundle</base-name>
-   <var>bundle</var>
-  </resource-bundle>
- </application>
+        <resource-bundle>
+            <base-name>com.furniture.bundle.MessageBundle</base-name>
+            <var>bundle</var>
+        </resource-bundle>
+    </application>
  
- <lifecycle>
-   <phase-listener>org.omnifaces.eventlistener.ResetInputAjaxActionListener</phase-listener>
- </lifecycle>
+    <lifecycle>
+        <phase-listener>org.omnifaces.eventlistener.ResetInputAjaxActionListener</phase-listener>
+    </lifecycle>
  
-   <!-- <factory>
-     <exception-handler-factory>com.hosp.exception.ShowcaseExceptionHandlerFactory</exception-handler-factory>
-  </factory> --> 
+    <!-- <factory>
+       <exception-handler-factory>com.hosp.exception.ShowcaseExceptionHandlerFactory</exception-handler-factory>
+    </factory> --> 
     
      
-<!--  <lifecycle>
-  <phase-listener>com.hosp.listener.PhaseTracker</phase-listener>
- </lifecycle> -->
+    <!--  <lifecycle>
+     <phase-listener>com.hosp.listener.PhaseTracker</phase-listener>
+    </lifecycle> -->
  
- <!--  <validator>
-  <validator-id>ListSizeValidator</validator-id>
-  <validator-class>com.validator.ListSizeValidator</validator-class>
- </validator> -->
+    <!--  <validator>
+     <validator-id>ListSizeValidator</validator-id>
+     <validator-class>com.validator.ListSizeValidator</validator-class>
+    </validator> -->
 
 </faces-config>

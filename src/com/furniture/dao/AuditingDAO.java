@@ -1,6 +1,10 @@
 package com.furniture.dao;
 
+import com.furniture.entities.Action;
 import com.furniture.entities.Auditing;
+import com.furniture.entities.Company;
+import com.furniture.entities.Product;
+import com.furniture.entities.Users;
 import com.furniture.util.EJBUtil;
 import com.furniture.util.PersistenceHelper;
 import java.math.BigDecimal;
@@ -186,4 +190,44 @@ public class AuditingDAO {
             throw re;
         }
     }
+    
+    
+    public List<Auditing> searchAudit(Users user, Action action, Timestamp from, Timestamp to,
+			Product product, Company company){
+		try {
+			
+			String queryString = "Select a from Auditing a"
+					+ " where a.auditingid IS NOT NULL "
+					+ (company != null ? " and a.company=:hospital " : " ")
+					+ (user != null ? " and a.users=:usert " : " ")
+					+ (action != null ? " and a.action=:action " : " ")
+                                        + (product != null ? " and a.product=:product " : " ")
+					+ (from != null ? " and a.actiondate>=:from" : " ")
+					+ (to != null ? " and a.actiondate<=:to" : " ")					
+					+ " order by a.actiondate DESC";
+
+			
+
+			Query query = getEntityManager().createQuery(queryString);
+			if (company != null)
+				query.setParameter("company", company);
+			if (user != null)
+				query.setParameter("user", user);
+			if (action != null)
+				query.setParameter("action", action);
+                        if (product != null)
+				query.setParameter("product", product);
+			if (from != null)
+				query.setParameter("from", from);
+			if (to != null)
+				query.setParameter("to", to);
+
+			return query.getResultList();
+		} catch (RuntimeException re) {			
+			throw re;
+		}
+	}
+    
+    
+    
 }

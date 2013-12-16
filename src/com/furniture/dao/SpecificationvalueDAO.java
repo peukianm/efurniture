@@ -1,6 +1,8 @@
 package com.furniture.dao;
 
+import com.furniture.entities.Specification;
 import com.furniture.entities.Specificationvalue;
+import com.furniture.entities.Svalue;
 import com.furniture.util.EJBUtil;
 import com.furniture.util.PersistenceHelper;
 import java.math.BigDecimal;
@@ -178,5 +180,24 @@ public class SpecificationvalueDAO {
             logger.error("Error on finding entity", re);
             throw re;
         }
+    }
+    
+    
+     public Specificationvalue getSpecificationValue(Specification specification, Svalue svalue) {
+        try {
+            Query query = getEntityManager().createQuery("Select sv from Specificationvalue sv  "
+                    + " where sv.specification=:specification "
+                    + " and sv.svalue=:svalue "
+                    + " and sv.active=1" );
+            
+            query.setParameter("specification", specification);
+            query.setParameter("svalue", svalue);
+            
+            return (Specificationvalue)query.getSingleResult();
+        } catch (RuntimeException re) {
+            logger.error("Error fetching specification  ", re);
+            throw re;
+        }
+
     }
 }
