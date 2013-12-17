@@ -109,13 +109,31 @@
                     </p:panel>
 
                 </p:dialog> 
-                
-                 <p:confirmDialog global="true">  
-                        <p:commandButton value="#{bundle.yes}" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>  
-                        <p:commandButton value="#{bundle.no}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>       
-                    </p:confirmDialog>  
+
+                <p:confirmDialog global="true">  
+                    <p:commandButton value="#{bundle.yes}" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>  
+                    <p:commandButton value="#{bundle.no}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>       
+                </p:confirmDialog>  
 
             </h:form>
+            
+             <p:dialog  header="#{bundle.warning}" severity="alert" modal="true" resizable="false"  widgetVar="generalAlertWidget"   >                    
+                 <p:panel widgetVar="alertPanelWidget" id="alertPanel">
+                        <table>
+                            <tr>
+                                <td style="text-align: center">
+                            <h:outputLabel value="#{sessionBean.alertMessage}"/>
+                            </td>
+                            </tr>                    
+                            <tr>
+                                <td style="text-align: center">
+                            <p:commandButton  update="primePanelWidget" value="OK" type="button" onclick="generalAlertWidget.hide()"  />
+                            </td>
+                            </tr>    	                      	                      
+                        </table>
+                   </p:panel>
+
+              </p:dialog> 
 
 
             <!-- <div id="sidebar" class="ui-widget-content ui-corner-bottom ui-helper-clearfix ui-shadow" style="padding:1px; padding-top: 4px">

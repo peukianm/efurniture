@@ -316,9 +316,9 @@
 
                         <p:separator  /> 
 
-                        <p:commandButton id="charBtn" immediate="true"  disabled="#{viewProductBean.productSpecifications.size()==0}"   oncomplete="" update="charTable" value="#{bundle.view}" />
+                       <!-- <p:commandButton id="charBtn" immediate="true"  disabled="#{viewProductBean.productSpecifications.size()==0}"   oncomplete="" update="charTable" value="#{bundle.view}" /> -->
 
-                        <p:overlayPanel id="charPanel" for="charBtn">  
+                        <p:panel id="charPanel" widgetVar="charPanelWidget">  
                             <p:dataTable id="charTable" var="char" value="#{viewProductBean.productSpecifications}" rows="10" paginator="false">  
                                 <p:column headerText="#{bundle.name}" width="20%">  
                                     <h:outputText value="#{char.specification.name}" />                                       
@@ -339,17 +339,23 @@
                                 </p:column>  
 
                                 <p:column headerText="#{bundle.actions}" width="10%"> 
-                                    <p:commandLink value="#{bundle.delete}" process="@this"  style="color:blue;text-decoration: underline;font-weight:bold;"  action="#{furnitureAction.deleteProductSpecificationView}" 
+                                    
+                                    <p:commandButton immediate="true" id="selectButton" title="#{bundle.update}" icon="ui-icon-pencil" action="#{furnitureAction.selectUpdateSpecificationView(char)}" update=":selectUpdateValueForm"  >
+                                        <!--<f:setPropertyActionListener value="{spec}" target="{newProductBean.specification}" />-->
+                                    </p:commandButton>
+                                    <p:commandButton icon="ui-icon-trash" title="#{bundle.delete}" process="@this"  style="color:blue;text-decoration: underline;font-weight:bold;"  action="#{furnitureAction.deleteProductSpecificationView}" 
                                                    update="@form:specsPanel:noChars @form:specsPanel:charTable :viewProductForm"   >
                                         <f:setPropertyActionListener value="#{char}" target="#{viewProductBean.productSpecification}" />                                                                              
-                                    </p:commandLink> 
+                                    </p:commandButton>
+                                    
+                                    
                                 </p:column> 
 
                             </p:dataTable>
 
-                        </p:overlayPanel>  
+                        </p:panel>  
 
-                        <p:spacer width="30" height="0" />
+                        <p:spacer width="0" height="0" />
                         <p:outputLabel style="font-weight: bold;color: black" value="#{bundle.charecteristics}  " /> <p:outputLabel id="noChars" style="font-weight: bold;" value="(#{viewProductBean.productSpecifications.size()})" />  
 
                     </p:panel>                
@@ -417,12 +423,56 @@
                     
                     <p:separator />
 
-                    <p:commandButton id="bt1" update=":specsFormID:noChars :viewProductForm" action="#{furnitureAction.selectSValuesView}"  value="#{bundle.insert}" disabled="#{viewProductBean.selectedSvalues.size()==0}" rendered="#{viewProductBean.specification.freetext==0 and viewProductBean.specification.multiplevalues==1}"/>
-                    <p:commandButton id="bt2" update=":specsFormID:noChars :viewProductForm" action="#{furnitureAction.selectSValuesView}"  value="#{bundle.insert}" disabled="#{viewProductBean.selectedSvalue==null}" rendered="#{viewProductBean.specification.freetext==0 and viewProductBean.specification.multiplevalues==0}"/>
-                    <p:commandButton id="bt3" update=":specsFormID:noChars :viewProductForm" action="#{furnitureAction.selectSValuesView}"  value="#{bundle.insert}"  rendered="#{viewProductBean.specification.freetext==1}"/>                                                                      
+                    <p:commandButton id="bt1" update=":specsFormID:noChars :viewProductForm @widgetVar(charPanelWidget)" action="#{furnitureAction.selectSValuesView}"  value="#{bundle.insert}" disabled="#{viewProductBean.selectedSvalues.size()==0}" rendered="#{viewProductBean.specification.freetext==0 and viewProductBean.specification.multiplevalues==1}"/>
+                    <p:commandButton id="bt2" update=":specsFormID:noChars :viewProductForm @widgetVar(charPanelWidget)" action="#{furnitureAction.selectSValuesView}"  value="#{bundle.insert}" disabled="#{viewProductBean.selectedSvalue==null}" rendered="#{viewProductBean.specification.freetext==0 and viewProductBean.specification.multiplevalues==0}"/>
+                    <p:commandButton id="bt3" update=":specsFormID:noChars :viewProductForm @widgetVar(charPanelWidget)"  action="#{furnitureAction.selectSValuesView}"  value="#{bundle.insert}"  rendered="#{viewProductBean.specification.freetext==1}"/>                                                                      
 
                 </p:dialog>
             </h:form>
+            
+            
+            
+            <h:form id="selectUpdateValueForm">      
+                <p:dialog header="#{bundle.selectSpecificationValue}" id="selectUpdateValueID" position="center" widgetVar="selectUpdateValueDialog" modal="true" resizable="false" >
+                    <p:messages autoUpdate="true" severity="error"/>
+                    <p:outputLabel style="font-weight: bold" value="#{bundle.valuesFor} #{viewProductBean.specification.name} " rendered="#{viewProductBean.specification.freetext==0}" />  
+                    <p:outputLabel style="font-weight: bold;font-style: italic" value=" (#{bundle.multipleSelection})" rendered="#{viewProductBean.specification.freetext==0 and viewProductBean.specification.multiplevalues==1}"/> 
+                    
+                    <p:selectManyCheckbox id="updategrid1" value="#{viewProductBean.selectedSvalues}" converter="SpecificationvalueConverter"  layout="grid" columns="5" rendered="#{viewProductBean.specification.freetext==0 and viewProductBean.specification.multiplevalues==1}">  
+                        <f:selectItems value="#{viewProductBean.svalues}"  var="svalue" itemLabel="#{svalue.svalue.name}"  itemValue="#{svalue}"  /> 
+                        <p:ajax update="updatebt1" />
+                    </p:selectManyCheckbox>
+
+
+                    <p:selectOneRadio id="updategrid2" value="#{viewProductBean.selectedSvalue}"  converter="omnifaces.SelectItemsConverter" layout="grid" columns="5" rendered="#{viewProductBean.specification.freetext==0 and viewProductBean.specification.multiplevalues==0}">  
+                        <f:selectItems value="#{viewProductBean.svalues}" var="sval" itemLabel="#{sval.svalue.name}"  itemValue="#{sval}"/>  
+                        <p:ajax update="updatebt2" /> 
+                    </p:selectOneRadio>
+
+
+                    <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor}  #{viewProductBean.specification.name} :* " rendered="#{viewProductBean.specification.freetext==1  and viewProductBean.specification.color!=1}"  />  
+                    <p:inputTextarea rows="5" cols="40" value="#{viewProductBean.svalue}" rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.color!=1}" required="true" requiredMessage="#{bundle.value}: #{bundle.mandatoryField}"/>
+
+                    
+                    <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor}  #{viewProductBean.specification.name} :* " rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.color==1}"  />  
+                    <p:colorPicker required="true" requiredMessage="#{bundle.value}: #{bundle.mandatoryField}"  id="updatepopupCP"  value="#{viewProductBean.svalue}" rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.color==1}" /> 
+                    <br/>
+                    <h:outputLink value="http://www.ralcolor.com/" target="new" rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.color==1}" style="color: blue;text-decoration: underline">
+                                  RAL Colors
+                    </h:outputLink>
+                    
+                    
+                    
+                    <p:separator />
+
+                    <p:commandButton id="updatebt1" update=":specsFormID:noChars :viewProductForm @widgetVar(charPanelWidget)" action="#{furnitureAction.selectUpdateSValuesView}"  value="#{bundle.insert}" disabled="#{viewProductBean.selectedSvalues.size()==0}" rendered="#{viewProductBean.specification.freetext==0 and viewProductBean.specification.multiplevalues==1}"/>
+                    <p:commandButton id="updatebt2" update=":specsFormID:noChars :viewProductForm @widgetVar(charPanelWidget)" action="#{furnitureAction.selectUpdateSValuesView}"  value="#{bundle.insert}" disabled="#{viewProductBean.selectedSvalue==null}" rendered="#{viewProductBean.specification.freetext==0 and viewProductBean.specification.multiplevalues==0}"/>
+                    <p:commandButton id="updatebt3" update=":specsFormID:noChars :viewProductForm @widgetVar(charPanelWidget)" action="#{furnitureAction.selectUpdateSValuesView}"  value="#{bundle.insert}"  rendered="#{viewProductBean.specification.freetext==1}"/>                                                                      
+
+                </p:dialog>
+            </h:form>
+            
+            
 
 
 

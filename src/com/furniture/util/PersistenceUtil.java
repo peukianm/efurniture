@@ -31,7 +31,6 @@ public class PersistenceUtil {
             Auditing auditing = new Auditing();
             auditing.setUsers(user);
 
-            System.out.println(FormatUtils.formatDateToTimestamp(new Date(), FormatUtils.FULLDATEPATTERN));
             auditing.setActiondate(FormatUtils.formatDateToTimestamp(new Date(), FormatUtils.FULLDATEPATTERN));
             auditing.setAction(action);
             if (user.getCompany()!=null)
@@ -55,8 +54,6 @@ public class PersistenceUtil {
 
             Auditing auditing = new Auditing();
             auditing.setUsers(user);
-
-            System.out.println(FormatUtils.formatDateToTimestamp(new Date(), FormatUtils.FULLDATEPATTERN));
             auditing.setActiondate(FormatUtils.formatDateToTimestamp(new Date(), FormatUtils.FULLDATEPATTERN));
             auditing.setAction(action);
             auditing.setComments(comments);

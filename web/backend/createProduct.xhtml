@@ -188,7 +188,7 @@
                                                         </p:column>  
 
                                                         <p:column headerText="#{bundle.actions}" width="10%">  
-                                                            <p:commandButton icon="ui-icon-closethick" title="#{bundle.delete}" process="@this"  style="color:blue;text-decoration: underline;font-weight:bold;"  action="#{furnitureAction.deleteProductSpecification}" 
+                                                            <p:commandButton icon="ui-icon-trash" title="#{bundle.delete}" process="@this"  style="color:blue;text-decoration: underline;font-weight:bold;"  action="#{furnitureAction.deleteProductSpecification}" 
                                                                            update="@widgetVar(specsPanelWidget)"   >
                                                                 <f:setPropertyActionListener value="#{char}" target="#{newProductBean.productSpecification}" />    
                                                             </p:commandButton> 

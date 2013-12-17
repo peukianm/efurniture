@@ -407,7 +407,9 @@ public class FurnitureAction {
         try {
             NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
             newProductBean.setProductSpecification(productSpecification);
+            newProductBean.setSpecification(productSpecification.getSpecification());
             Specification spec = newProductBean.getSpecification();
+            
             SpecificationvalueDAO dao = new SpecificationvalueDAO();
             List<Specificationvalue> svalues = dao.findByProperty("specification", spec);
 
@@ -415,16 +417,14 @@ public class FurnitureAction {
                 newProductBean.setSvalue(productSpecification.getProductvalues().get(0).getValue());
             } else if(!productSpecification.getSpecification().getFreetext().equals(BigDecimal.ONE) && !productSpecification.getSpecification().getMultiplevalues().equals(BigDecimal.ONE)) {               
                 SpecificationvalueDAO svdao = new SpecificationvalueDAO();
-                Specificationvalue specificationvalue = svdao.getSpecificationValue(productSpecification.getSpecification(), productSpecification.getProductvalues().get(0).getSvalue());
-                System.out.println("ADDDING SINGLE VAL="+specificationvalue);
+                Specificationvalue specificationvalue = svdao.getSpecificationValue(productSpecification.getSpecification(), productSpecification.getProductvalues().get(0).getSvalue());                
                 newProductBean.setSelectedSvalue(specificationvalue);
             } else if(!productSpecification.getSpecification().getFreetext().equals(BigDecimal.ONE) && productSpecification.getSpecification().getMultiplevalues().equals(BigDecimal.ONE)) {
                 List<Specificationvalue> specificationValues = new ArrayList<Specificationvalue>(0);
                 for (int i = 0; i < productSpecification.getProductvalues().size(); i++) {
                     Productvalue productvalue = productSpecification.getProductvalues().get(i);
                     SpecificationvalueDAO svdao = new SpecificationvalueDAO();
-                    Specificationvalue specificationvalue = svdao.getSpecificationValue(productSpecification.getSpecification(), productvalue.getSvalue());
-                    System.out.println("ADDDING MULTIPLE VAL="+specificationvalue);
+                    Specificationvalue specificationvalue = svdao.getSpecificationValue(productSpecification.getSpecification(), productvalue.getSvalue());                    
                     specificationValues.add(specificationvalue);                    
                 }
                 newProductBean.setSelectedSvalues(specificationValues);
@@ -440,13 +440,63 @@ public class FurnitureAction {
         }
     }
 
+    
+    
+     public void selectUpdateSpecificationView(Productspecification productSpecification) {
+        try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            viewProductBean.setProductSpecification(productSpecification);
+            viewProductBean.setSpecification(productSpecification.getSpecification());
+            Specification spec = viewProductBean.getSpecification();            
+            SpecificationvalueDAO dao = new SpecificationvalueDAO();
+            List<Specificationvalue> svalues = dao.findByProperty("specification", spec);
+
+            if (productSpecification.getSpecification().getFreetext().equals(BigDecimal.ONE)) {
+                viewProductBean.setSvalue(productSpecification.getProductvalues().get(0).getValue());
+            } else if(!productSpecification.getSpecification().getFreetext().equals(BigDecimal.ONE) && !productSpecification.getSpecification().getMultiplevalues().equals(BigDecimal.ONE)) {               
+                SpecificationvalueDAO svdao = new SpecificationvalueDAO();
+                Specificationvalue specificationvalue = svdao.getSpecificationValue(productSpecification.getSpecification(), productSpecification.getProductvalues().get(0).getSvalue());                
+                viewProductBean.setSelectedSvalue(specificationvalue);
+            } else if(!productSpecification.getSpecification().getFreetext().equals(BigDecimal.ONE) && productSpecification.getSpecification().getMultiplevalues().equals(BigDecimal.ONE)) {
+                List<Specificationvalue> specificationValues = new ArrayList<Specificationvalue>(0);
+                for (int i = 0; i < productSpecification.getProductvalues().size(); i++) {
+                    Productvalue productvalue = productSpecification.getProductvalues().get(i);
+                    SpecificationvalueDAO svdao = new SpecificationvalueDAO();
+                    Specificationvalue specificationvalue = svdao.getSpecificationValue(productSpecification.getSpecification(), productvalue.getSvalue());                    
+                    specificationValues.add(specificationvalue);                    
+                }
+                viewProductBean.setSelectedSvalues(specificationValues);
+            }
+            
+            viewProductBean.setSvalues(svalues);
+            FacesUtils.callRequestContext("selectUpdateValueDialog.show();");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+    
     public void selectSValues() {
         try {
             NewProductBean newProductBean = (NewProductBean) FacesUtils.getManagedBean("newProductBean");
             Product newProduct = newProductBean.getNewProduct();
             Specification spec = newProductBean.getSpecification();
-
             List<Productspecification> productSpecifications = newProductBean.getProductSpecifications();
+            
+            for (int i = 0; i < productSpecifications.size(); i++) {
+                Productspecification productspecification = productSpecifications.get(i);
+                if (productspecification.getSpecification().equals(spec)) {                    
+                     sessionBean.setAlertMessage(MessageBundleLoader.getMessage("specAlreadySelected"));
+                     FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
+                     FacesUtils.callRequestContext("generalAlertWidget.show()");                    
+                    return;
+                }                
+            }
+            
             Productspecification productSpecification = new Productspecification();
             productSpecification.setSpecification(spec);
             productSpecification.setProduct(newProduct);
@@ -777,9 +827,18 @@ public class FurnitureAction {
 
             Product newProduct = newProductBean.getNewProduct();
             Specification spec = newProductBean.getSpecification();
-
             List<Productspecification> dimensionProductSpecifications = newProductBean.getDimesionProductSpecifications();
 
+            for (int i = 0; i < dimensionProductSpecifications.size(); i++) {
+                Productspecification productspecification = dimensionProductSpecifications.get(i);
+                if (productspecification.getSpecification().equals(spec)) {                    
+                     sessionBean.setAlertMessage(MessageBundleLoader.getMessage("specAlreadySelected"));
+                     FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
+                     FacesUtils.callRequestContext("generalAlertWidget.show()");                    
+                    return;
+                }                
+            }
+            
             Productspecification productSpecification = new Productspecification();
             productSpecification.setSpecification(spec);
             productSpecification.setProduct(newProduct);
@@ -905,8 +964,11 @@ public class FurnitureAction {
                 sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noCategorySelected"));
 //                FacesUtils.callRequestContext("alertMessageDlg.show()"); 
 //                FacesUtils.updateHTMLComponnetWIthJS(":alertMsgForm:primePanel");
-                FacesUtils.callRequestContext("alertMessageDialog.show()");
-                FacesUtils.updateHTMLComponnetWIthJS("@alertMsgForm:primeAlertPanel");
+//                FacesUtils.callRequestContext("alertMessageDialog.show()");
+//                FacesUtils.updateHTMLComponnetWIthJS("@alertMsgForm:primeAlertPanel");
+                FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
+                //FacesUtils.updateHTMLComponnetWIthJS("@widgetVar(alertPanelWidget)");
+                FacesUtils.callRequestContext("generalAlertWidget.show()");  
                 return;
             }
 
@@ -1644,7 +1706,7 @@ public class FurnitureAction {
             userTransaction = persistenceHelper.getUserTransaction();
 
             product.getProductspecifications().remove(productSpecification);
-            userTransaction.begin();
+            userTransaction.begin();                        
             persistenceHelper.remove(productSpecification);
             //product = persistenceHelper.editPersist(product);
             persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), product, null, null, null, null, null);
@@ -1691,8 +1753,19 @@ public class FurnitureAction {
             ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
             Product newProduct = viewProductBean.getProduct();
             Specification spec = viewProductBean.getSpecification();
-
             List<Productspecification> productSpecifications = viewProductBean.getProductSpecifications();
+            
+            for (int i = 0; i < productSpecifications.size(); i++) {
+                Productspecification productspecification = productSpecifications.get(i);
+                if (productspecification.getSpecification().equals(spec)) {                    
+                     sessionBean.setAlertMessage(MessageBundleLoader.getMessage("specAlreadySelected"));
+                     FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
+                     FacesUtils.callRequestContext("generalAlertWidget.show()");                    
+                    return;
+                }                
+            }
+            
+            
             userTransaction = persistenceHelper.getUserTransaction();
 
             Productspecification productSpecification = new Productspecification();
@@ -1794,6 +1867,120 @@ public class FurnitureAction {
             goError(e);
         }
     }
+    
+    
+    public void selectUpdateSValuesView() {
+        UserTransaction userTransaction = null;
+        try {
+            ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
+            Product newProduct = viewProductBean.getProduct();
+            Specification spec = viewProductBean.getSpecification();
+
+            List<Productspecification> productSpecifications = viewProductBean.getProductSpecifications();
+            userTransaction = persistenceHelper.getUserTransaction();
+            
+            Productspecification productSpecification = viewProductBean.getProductSpecification();            
+            productSpecifications.remove(productSpecification);           
+            userTransaction.begin();
+            for (int i = 0; i < productSpecification.getProductvalues().size(); i++) {
+                    Productvalue productvalue = productSpecification.getProductvalues().get(i);                    
+                    persistenceHelper.remove(productvalue);                    
+            }
+            
+            
+            List<Productvalue> productValues = viewProductBean.getProductValues();
+
+            if (spec.getFreetext().equals(BigDecimal.ZERO) && spec.getMultiplevalues().equals(BigDecimal.ONE)) {                
+                productSpecification.setProductvalues(new ArrayList<Productvalue>(0));                
+                List<Specificationvalue> svalues = viewProductBean.getSelectedSvalues();
+                for (int i = 0; i < svalues.size(); i++) {
+                    Productvalue productvalue = new Productvalue();
+                    productvalue.setProductspecification(productSpecification);
+                    Specificationvalue specificationvalue = svalues.get(i);
+                    productvalue.setSvalue(specificationvalue.getSvalue());
+                    productValues.add(productvalue);
+                    productvalue.setActive(BigDecimal.ONE);
+                    productSpecification.getProductvalues().add(productvalue);
+                }
+
+            }
+
+
+            if (spec.getFreetext().equals(BigDecimal.ZERO) && spec.getMultiplevalues().equals(BigDecimal.ZERO)) {
+                productSpecification.setProductvalues(new ArrayList<Productvalue>(0));
+                Specificationvalue svalue = viewProductBean.getSelectedSvalue();
+                Productvalue productvalue = new Productvalue();
+                productvalue.setProductspecification(productSpecification);
+                productvalue.setSvalue(svalue.getSvalue());
+                productValues.add(productvalue);
+                productvalue.setActive(BigDecimal.ONE);
+                productSpecification.getProductvalues().add(productvalue);
+            }
+
+            if (spec.getFreetext().equals(BigDecimal.ONE)) {
+                productSpecification.setProductvalues(new ArrayList<Productvalue>(0));
+                String svalue = viewProductBean.getSvalue();
+                Productvalue productvalue = new Productvalue();
+                productvalue.setProductspecification(productSpecification);
+                productvalue.setValue(svalue);
+                productValues.add(productvalue);
+                productvalue.setActive(BigDecimal.ONE);
+                productSpecification.getProductvalues().add(productvalue);
+            }
+
+
+
+//            productSpecifications.add(productSpecification);
+//            Collections.sort(productSpecifications, new Comparator<Productspecification>() {
+//                public int compare(Productspecification one, Productspecification other) {
+//                    try {
+//                        if (one.getOrdered() != null && other.getOrdered() != null) {
+//                            return one.getOrdered().compareTo(other.getOrdered());
+//                        } else if (one.getSpecification().getOrdered() != null && other.getSpecification().getOrdered() != null) {
+//                            return one.getSpecification().getOrdered().compareTo(other.getSpecification().getOrdered());
+//                        } else {
+//                            return one.getSpecification().getName().compareTo(other.getSpecification().getName());
+//                        }
+//                    } catch (Exception ex) {
+//                        return 0;
+//                    }
+//                }
+//            });
+            
+
+            //newProduct.getProductspecifications().add(productSpecification);
+            
+            
+            
+            productSpecification = persistenceHelper.editPersist(productSpecification);
+            //newProduct = persistenceHelper.editPersist(newProduct);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), newProduct, null, null, null, null, null);
+            userTransaction.commit();
+
+            productSpecifications.add(productSpecification);                        
+            viewProductBean.setProductSpecifications(productSpecifications);
+            viewProductBean.setProductValues(productValues);
+            viewProductBean.setProduct(newProduct);
+
+            FacesUtils.callRequestContext("selectUpdateValueDialog.hide();");
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+               // ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+    
+    
+    
+    
 
     public void insertDimensionActionView() {
         UserTransaction userTransaction = null;
@@ -1802,10 +1989,20 @@ public class FurnitureAction {
 
             Product newProduct = viewProductBean.getProduct();
             Specification spec = viewProductBean.getSpecification();
-
-
             List<Productspecification> dimensionProductSpecifications = viewProductBean.getDimesionProductSpecifications();
-
+            for (int i = 0; i < dimensionProductSpecifications.size(); i++) {
+                Productspecification productspecification = dimensionProductSpecifications.get(i);
+                if (productspecification.getSpecification().equals(spec)) {                    
+                     sessionBean.setAlertMessage(MessageBundleLoader.getMessage("specAlreadySelected"));
+                     FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
+                     FacesUtils.callRequestContext("generalAlertWidget.show()");                    
+                    return;
+                }                
+            }
+            
+            
+            
+            
             Productspecification productSpecification = new Productspecification();
             productSpecification.setSpecification(spec);
             productSpecification.setOrdered(new BigDecimal(1000));
@@ -2424,9 +2621,22 @@ public class FurnitureAction {
             List<Product> products = new ArrayList<Product>(0);
 
             if ((categories == null || categories.size() == 0) && (productSearchBean.getSearchBySelectedCompanies() == null || productSearchBean.getSearchBySelectedCompanies().size() == 0) && productSearchBean.getSearchByName() == null) {
-                products = dao.findByProperty("active", BigDecimal.ONE);
+                if (sessionBean.getUsers().getRole().getRoleid().equals(BigDecimal.ONE)) {
+                    products = dao.findByProperty("active", BigDecimal.ONE);
+                } else {
+                    List<Company> companies = new ArrayList<Company>(0);
+                    companies.add(sessionBean.getUsers().getCompany());
+                    products = dao.getCategoryProduct(null, companies, null);
+                }
             } else {
-                products = dao.getCategoryProduct(categories, productSearchBean.getSearchBySelectedCompanies(), productSearchBean.getSearchByName());
+                if (sessionBean.getUsers().getRole().getRoleid().equals(BigDecimal.ONE)) {
+                   products = dao.getCategoryProduct(categories, productSearchBean.getSearchBySelectedCompanies(), productSearchBean.getSearchByName());
+                } else {
+                    List<Company> companies = new ArrayList<Company>(0);
+                    companies.add(sessionBean.getUsers().getCompany());
+                    products = dao.getCategoryProduct(categories, companies, productSearchBean.getSearchByName());
+                }
+                
             }
 
 
