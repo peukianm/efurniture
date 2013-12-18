@@ -37,9 +37,9 @@ public class Catalogue implements java.io.Serializable {
     private Timestamp createdTimestamp;
     private Timestamp modifiedTimestamp;
     private Date createddate;
-    private Set<Catalogueproductline> catalogueproductlines = new HashSet<Catalogueproductline>(0);
+    //private Set<Catalogueproductline> catalogueproductlines = new HashSet<Catalogueproductline>(0);
     private Set<Imagecatalogue> imagecatalogues = new HashSet<Imagecatalogue>(0);
-    private Set<Companycatalogue> companycatalogues = new HashSet<Companycatalogue>(0);
+    //private Set<Companycatalogue> companycatalogues = new HashSet<Companycatalogue>(0);
     private Set<Auditing> auditings = new HashSet<Auditing>(0);
     private Set<Price> prices = new HashSet<Price>(0);
     private List<Company> companies = new ArrayList<Company>(0);
@@ -72,9 +72,9 @@ public class Catalogue implements java.io.Serializable {
         this.active = active;
         this.createdTimestamp = createdTimestamp;
         this.modifiedTimestamp = modifiedTimestamp;
-        this.catalogueproductlines = catalogueproductlines;
+        //this.catalogueproductlines = catalogueproductlines;
         this.imagecatalogues = imagecatalogues;
-        this.companycatalogues = companycatalogues;
+        //this.companycatalogues = companycatalogues;
         this.auditings = auditings;
         this.prices = prices;
         this.createddate = createddate;
@@ -148,14 +148,14 @@ public class Catalogue implements java.io.Serializable {
         this.modifiedTimestamp = modifiedTimestamp;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "catalogue")
-    public Set<Catalogueproductline> getCatalogueproductlines() {
-        return this.catalogueproductlines;
-    }
-
-    public void setCatalogueproductlines(Set<Catalogueproductline> catalogueproductlines) {
-        this.catalogueproductlines = catalogueproductlines;
-    }
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "catalogue")
+//    public Set<Catalogueproductline> getCatalogueproductlines() {
+//        return this.catalogueproductlines;
+//    }
+//
+//    public void setCatalogueproductlines(Set<Catalogueproductline> catalogueproductlines) {
+//        this.catalogueproductlines = catalogueproductlines;
+//    }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "catalogue")
     public Set<Imagecatalogue> getImagecatalogues() {
@@ -166,14 +166,14 @@ public class Catalogue implements java.io.Serializable {
         this.imagecatalogues = imagecatalogues;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "catalogue")
-    public Set<Companycatalogue> getCompanycatalogues() {
-        return this.companycatalogues;
-    }
-
-    public void setCompanycatalogues(Set<Companycatalogue> companycatalogues) {
-        this.companycatalogues = companycatalogues;
-    }
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "catalogue")
+//    public Set<Companycatalogue> getCompanycatalogues() {
+//        return this.companycatalogues;
+//    }
+//
+//    public void setCompanycatalogues(Set<Companycatalogue> companycatalogues) {
+//        this.companycatalogues = companycatalogues;
+//    }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "catalogue")
     public Set<Auditing> getAuditings() {
@@ -201,7 +201,7 @@ public class Catalogue implements java.io.Serializable {
         @JoinColumn(name = "CATALOGUEID")
     },
     inverseJoinColumns = {
-        @JoinColumn(name = "COM{ANYID")
+        @JoinColumn(name = "COMPANYID")
     })
       
     /**

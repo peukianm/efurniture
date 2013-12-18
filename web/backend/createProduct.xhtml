@@ -230,10 +230,10 @@
                                                     </p:column>
 
                                                     <p:column headerText="#{bundle.actions}" width="10%">  
-                                                        <p:commandLink value="#{bundle.delete}" immediate="true"  style="color:blue;text-decoration: underline;font-weight:bold;"  action="#{furnitureAction.deleteProductDimensionSpecification}" 
+                                                        <p:commandButton alt="#{bundle.delete}" icon="ui-icon-trash" immediate="true"  style="color:blue;text-decoration: underline;font-weight:bold;"  action="#{furnitureAction.deleteProductDimensionSpecification}" 
                                                                        update="dimensionDatatable"   >
                                                             <f:setPropertyActionListener value="#{dimesionProductSpecification}" target="#{newProductBean.productSpecification}" />    
-                                                        </p:commandLink> 
+                                                        </p:commandButton> 
                                                     </p:column>                                                   
                                                 </p:dataTable> 
                                                 <p:separator />

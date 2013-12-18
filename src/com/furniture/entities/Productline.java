@@ -37,12 +37,14 @@ public class Productline implements java.io.Serializable {
     private Timestamp createdTimestamp;
     private Timestamp modifiedTimestamp;
     private Date createddate;
-    private Set<Catalogueproductline> catalogueproductlines = new HashSet<Catalogueproductline>(0);
+    //private Set<Catalogueproductline> catalogueproductlines = new HashSet<Catalogueproductline>(0);
     private Set<Imageproductline> imageproductlines = new HashSet<Imageproductline>(0);
-    private Set<Productlineproduct> productlineproducts = new HashSet<Productlineproduct>(0);
+    //private Set<Productlineproduct> productlineproducts = new HashSet<Productlineproduct>(0);
     private Set<Auditing> auditings = new HashSet<Auditing>(0);
     private List<Catalogue> catalogues = new ArrayList<Catalogue>(0);
-
+    private List<Product> products = new ArrayList<Product>(0);
+    
+    
     // Constructors
     /**
      * default constructor
@@ -70,9 +72,9 @@ public class Productline implements java.io.Serializable {
         this.active = active;
         this.createdTimestamp = createdTimestamp;
         this.modifiedTimestamp = modifiedTimestamp;
-        this.catalogueproductlines = catalogueproductlines;
+        //this.catalogueproductlines = catalogueproductlines;
         this.imageproductlines = imageproductlines;
-        this.productlineproducts = productlineproducts;
+        //this.productlineproducts = productlineproducts;
         this.auditings = auditings;
         this.createddate = createddate;
         this.catalogues = catalogues;
@@ -144,14 +146,14 @@ public class Productline implements java.io.Serializable {
         this.modifiedTimestamp = modifiedTimestamp;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "productline")
-    public Set<Catalogueproductline> getCatalogueproductlines() {
-        return this.catalogueproductlines;
-    }
-
-    public void setCatalogueproductlines(Set<Catalogueproductline> catalogueproductlines) {
-        this.catalogueproductlines = catalogueproductlines;
-    }
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "productline")
+//    public Set<Catalogueproductline> getCatalogueproductlines() {
+//        return this.catalogueproductlines;
+//    }
+//
+//    public void setCatalogueproductlines(Set<Catalogueproductline> catalogueproductlines) {
+//        this.catalogueproductlines = catalogueproductlines;
+//    }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "productline")
     public Set<Imageproductline> getImageproductlines() {
@@ -162,14 +164,14 @@ public class Productline implements java.io.Serializable {
         this.imageproductlines = imageproductlines;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "productline")
-    public Set<Productlineproduct> getProductlineproducts() {
-        return this.productlineproducts;
-    }
-
-    public void setProductlineproducts(Set<Productlineproduct> productlineproducts) {
-        this.productlineproducts = productlineproducts;
-    }
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "productline")
+//    public Set<Productlineproduct> getProductlineproducts() {
+//        return this.productlineproducts;
+//    }
+//
+//    public void setProductlineproducts(Set<Productlineproduct> productlineproducts) {
+//        this.productlineproducts = productlineproducts;
+//    }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "productline")
     public Set<Auditing> getAuditings() {
@@ -201,6 +203,27 @@ public class Productline implements java.io.Serializable {
     }
     
 
+    
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "PRODUCTLINEPRODUCT",
+    joinColumns = {
+        @JoinColumn(name = "PRODUCTLINEID")
+    },
+    inverseJoinColumns = {
+        @JoinColumn(name = "PRODUCTID")
+    })
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    /**
+     * @param catalogues the books to set
+     */
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+    
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

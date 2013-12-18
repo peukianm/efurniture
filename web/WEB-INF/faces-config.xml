@@ -1,164 +1,150 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <faces-config version="2.0" xmlns="http://java.sun.com/xml/ns/javaee"
- xmlns:xi="http://www.w3.org/2001/XInclude"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
+              xmlns:xi="http://www.w3.org/2001/XInclude"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
  
- <converter>
-  <converter-id>UserrolesConverter</converter-id>
-  <converter-class>com.furniture.converter.UserrolesConverter</converter-class>
- </converter> 
+    <converter>
+        <converter-id>UserrolesConverter</converter-id>
+        <converter-class>com.furniture.converter.UserrolesConverter</converter-class>
+    </converter> 
  
- <converter>
-  <converter-id>ProductLineConverter</converter-id>
-  <converter-class>com.furniture.converter.ProductLineConverter</converter-class>
- </converter> 
+    <converter>
+        <converter-id>ProductLineConverter</converter-id>
+        <converter-class>com.furniture.converter.ProductLineConverter</converter-class>
+    </converter> 
  
- <converter>
-  <converter-id>CompanyConverter</converter-id>
-  <converter-class>com.furniture.converter.CompanyConverter</converter-class>
- </converter> 
+    <converter>
+        <converter-id>CompanyConverter</converter-id>
+        <converter-class>com.furniture.converter.CompanyConverter</converter-class>
+    </converter> 
  
- <converter>
-  <converter-id>ProductConverter</converter-id>
-  <converter-class>com.furniture.converter.ProductConverter</converter-class>
- </converter> 
+    <converter>
+        <converter-id>ProductConverter</converter-id>
+        <converter-class>com.furniture.converter.ProductConverter</converter-class>
+    </converter> 
  
- <converter>
-  <converter-id>CatalogueProductLineConverter</converter-id>
-  <converter-class>com.furniture.converter.CatalogueProductLineConverter</converter-class>
- </converter> 
+    <converter>
+        <converter-id>CatalogueProductLineConverter</converter-id>
+        <converter-class>com.furniture.converter.CatalogueProductLineConverter</converter-class>
+    </converter> 
  
- <converter>
-  <converter-id>CompanyCatalogueConverter</converter-id>
-  <converter-class>com.furniture.converter.CompanyCatalogueConverter</converter-class>
- </converter> 
+    <converter>
+        <converter-id>CompanyCatalogueConverter</converter-id>
+        <converter-class>com.furniture.converter.CompanyCatalogueConverter</converter-class>
+    </converter> 
  
- <converter>
-  <converter-id>ProductLineProductConverter</converter-id>
-  <converter-class>com.furniture.converter.ProductLineProductConverter</converter-class>
- </converter> 
+    <converter>
+        <converter-id>ProductLineProductConverter</converter-id>
+        <converter-class>com.furniture.converter.ProductLineProductConverter</converter-class>
+    </converter> 
  
- <converter>
-  <converter-id>SpecificationcategoryConverter</converter-id>
-  <converter-class>com.furniture.converter.SpecificationcategoryConverter</converter-class>
- </converter> 
+    <converter>
+        <converter-id>SpecificationcategoryConverter</converter-id>
+        <converter-class>com.furniture.converter.SpecificationcategoryConverter</converter-class>
+    </converter> 
  
- <converter>
-  <converter-id>SpecificationConverter</converter-id>
-  <converter-class>com.furniture.converter.SpecificationConverter</converter-class>
- </converter> 
- 
- 
- <converter>
-  <converter-id>ProductcategoryConverter</converter-id>
-  <converter-class>com.furniture.converter.ProductcategoryConverter</converter-class>
- </converter> 
+    <converter>
+        <converter-id>SpecificationConverter</converter-id>
+        <converter-class>com.furniture.converter.SpecificationConverter</converter-class>
+    </converter> 
  
  
- <converter>
-  <converter-id>SpecificationvalueConverter</converter-id>
-  <converter-class>com.furniture.converter.SpecificationvalueConverter</converter-class>
- </converter>
- 
- <converter>
-  <converter-id>CatalogueConverter</converter-id>
-  <converter-class>com.furniture.converter.CatalogueConverter</converter-class>
- </converter>
+    <converter>
+        <converter-id>ProductcategoryConverter</converter-id>
+        <converter-class>com.furniture.converter.ProductcategoryConverter</converter-class>
+    </converter> 
  
  
- <converter>
-  <converter-id>DoubleConverter</converter-id>
-  <converter-class>com.furniture.converter.DoubleConverter</converter-class>
- </converter>
+    <converter>
+        <converter-id>SpecificationvalueConverter</converter-id>
+        <converter-class>com.furniture.converter.SpecificationvalueConverter</converter-class>
+    </converter>
+ 
+    <converter>
+        <converter-id>CatalogueConverter</converter-id>
+        <converter-class>com.furniture.converter.CatalogueConverter</converter-class>
+    </converter>
  
  
- <converter>
-  <converter-id>IntegerConverter</converter-id>
-  <converter-class>com.furniture.converter.IntegerConverter</converter-class>
- </converter>
- 
- <converter>
-  <converter-id>DateConverter</converter-id>
-  <converter-class>com.furniture.converter.DateConverter</converter-class>
- </converter>
- 
- <converter>
-  <converter-id>CurrencyConverter</converter-id>
-  <converter-class>com.furniture.converter.CurrencyConverter</converter-class>
- </converter>
+    <converter>
+        <converter-id>DoubleConverter</converter-id>
+        <converter-class>com.furniture.converter.DoubleConverter</converter-class>
+    </converter>
  
  
- <converter>
-  <converter-id>companyProductConverter</converter-id>
-  <converter-class>com.furniture.converter.CompanyProductConverter</converter-class>
- </converter>
+    <converter>
+        <converter-id>IntegerConverter</converter-id>
+        <converter-class>com.furniture.converter.IntegerConverter</converter-class>
+    </converter>
  
- <converter>
-  <converter-id>ItemConverter</converter-id>
-  <converter-class>com.furniture.converter.ItemConverter</converter-class>
- </converter>
+    <converter>
+        <converter-id>DateConverter</converter-id>
+        <converter-class>com.furniture.converter.DateConverter</converter-class>
+    </converter>
  
- <converter>
-  <converter-id>MeasurmentConverter</converter-id>
-  <converter-class>com.furniture.converter.MeasurmentConverter</converter-class>
- </converter>
- 
- <converter>
-  <converter-id>CategoryConverter</converter-id>
-  <converter-class>com.furniture.converter.CategoryConverter</converter-class>
- </converter>
- 
-  <converter>
-  <converter-id>ActionConverter</converter-id>
-  <converter-class>com.furniture.converter.ActionConverter</converter-class>
- </converter>
- 
-  <converter>
-  <converter-id>ActioncategoryConverter</converter-id>
-  <converter-class>com.furniture.converter.ActioncategoryConverter</converter-class>
- </converter>
- 
-  <converter>
-  <converter-id>UserConverter</converter-id>
-  <converter-class>com.furniture.converter.UserConverter</converter-class>
- </converter>
+    <converter>
+        <converter-id>CurrencyConverter</converter-id>
+        <converter-class>com.furniture.converter.CurrencyConverter</converter-class>
+    </converter>
  
  
+    <converter>
+        <converter-id>companyProductConverter</converter-id>
+        <converter-class>com.furniture.converter.CompanyProductConverter</converter-class>
+    </converter>
  
+    <converter>
+        <converter-id>ItemConverter</converter-id>
+        <converter-class>com.furniture.converter.ItemConverter</converter-class>
+    </converter>
  
+    <converter>
+        <converter-id>MeasurmentConverter</converter-id>
+        <converter-class>com.furniture.converter.MeasurmentConverter</converter-class>
+    </converter>
  
- <managed-bean>
-  <managed-bean-name>guestPreferences</managed-bean-name>
-  <managed-bean-class>com.furniture.bean.GuestPreferences</managed-bean-class>
-  <managed-bean-scope>session</managed-bean-scope>
- </managed-bean>
+    <converter>
+        <converter-id>CategoryConverter</converter-id>
+        <converter-class>com.furniture.converter.CategoryConverter</converter-class>
+    </converter>
  
- <managed-bean>
-  <managed-bean-name>themeSwitcherBean</managed-bean-name>
-  <managed-bean-class>com.furniture.bean.ThemeSwitcherBean</managed-bean-class>
-  <managed-bean-scope>request</managed-bean-scope>
-  <managed-property>
-   <property-name>gp</property-name>
-   <value>#{guestPreferences}</value>
-  </managed-property>
- </managed-bean>
+    <converter>
+        <converter-id>ActionConverter</converter-id>
+        <converter-class>com.furniture.converter.ActionConverter</converter-class>
+    </converter>
+ 
+    <converter>
+        <converter-id>ActioncategoryConverter</converter-id>
+        <converter-class>com.furniture.converter.ActioncategoryConverter</converter-class>
+    </converter>
+ 
+    <converter>
+        <converter-id>UserConverter</converter-id>
+        <converter-class>com.furniture.converter.UserConverter</converter-class>
+    </converter>
  
  
  
  
- <!--<managed-bean>
-  <managed-bean-name>sessionBean</managed-bean-name>
-  <managed-bean-class>com.hosp.bean.SessionBean</managed-bean-class>
-  <managed-bean-scope>session</managed-bean-scope>
- </managed-bean>
  
-  <managed-bean>
-  <managed-bean-name>assertionBean</managed-bean-name>
-  <managed-bean-class>com.hosp.bean.AssertionBean</managed-bean-class>
-  <managed-bean-scope>view</managed-bean-scope>
- </managed-bean> 
+    <managed-bean>
+        <managed-bean-name>guestPreferences</managed-bean-name>
+        <managed-bean-class>com.furniture.bean.GuestPreferences</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
  
-    -->
+    <managed-bean>
+        <managed-bean-name>themeSwitcherBean</managed-bean-name>
+        <managed-bean-class>com.furniture.bean.ThemeSwitcherBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>gp</property-name>
+            <value>#{guestPreferences}</value>
+        </managed-property>
+    </managed-bean>
+ 
+ 
+ 
  
     <managed-bean>
         <managed-bean-name>userBean</managed-bean-name>
@@ -182,6 +168,12 @@
     <managed-bean>
         <managed-bean-name>companyAction</managed-bean-name>
         <managed-bean-class>com.furniture.action.CompanyAction</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    
+    <managed-bean>
+        <managed-bean-name>catalogueAction</managed-bean-name>
+        <managed-bean-class>com.furniture.action.CatalogueAction</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
  

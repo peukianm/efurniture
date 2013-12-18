@@ -50,7 +50,7 @@ public class Company implements java.io.Serializable {
     private List<Address> addresses = new ArrayList<Address>(0);
     private Set<Auditing> auditings = new HashSet<Auditing>(0);
     private Set<Users> useres = new HashSet<Users>(0);
-    private Set<Companycatalogue> companycatalogues = new HashSet<Companycatalogue>(0);
+    //private Set<Companycatalogue> companycatalogues = new HashSet<Companycatalogue>(0);
     private Set<Price> prices = new HashSet<Price>(0);
     private List<Catalogue> catalogues = new ArrayList<Catalogue>(0);
     private List<Category> categories = new ArrayList<Category>(0);
@@ -90,7 +90,7 @@ public class Company implements java.io.Serializable {
         this.companyproducts = companyproducts;
         this.addresses = addresses;
         this.auditings = auditings;
-        this.companycatalogues = companycatalogues;
+        //this.companycatalogues = companycatalogues;
         this.useres = useres;
         this.prices = prices;
         this.createddate = createddate;
@@ -245,14 +245,14 @@ public class Company implements java.io.Serializable {
         this.auditings = auditings;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "company")
-    public Set<Companycatalogue> getCompanycatalogues() {
-        return this.companycatalogues;
-    }
-
-    public void setCompanycatalogues(Set<Companycatalogue> companycatalogues) {
-        this.companycatalogues = companycatalogues;
-    }
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "company")
+//    public Set<Companycatalogue> getCompanycatalogues() {
+//        return this.companycatalogues;
+//    }
+//
+//    public void setCompanycatalogues(Set<Companycatalogue> companycatalogues) {
+//        this.companycatalogues = companycatalogues;
+//    }
     
  
     

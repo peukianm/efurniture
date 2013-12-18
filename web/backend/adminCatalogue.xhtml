@@ -1,0 +1,107 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="templates/uiBackend.xhtml"> 
+
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-confirm-dialog-severity {
+                margin: 0 7px 7px 0;
+            }
+
+            .noBord, .noBord tbody, .noBord tbody td, .noBord tbody tr {
+                padding: 1px 5px;
+                border-style: none !important; 
+            }
+
+            .ui-datatable tbody td {
+                padding: 1px 5px;
+            }
+
+            .ui-panelgrid td, .ui-panelgrid tr  {
+                border-style: none !important; 
+            }
+
+            .ui-fieldset-legend {
+                font-weight: bold ! important;
+                color: black !important;
+            }
+
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <p:growl autoUpdate="true"/> 
+        <h:form id="catalogueFormID">
+            <h1 class="title ui-widget-header ui-corner-all">#{bundle.adminCatalogue}</h1>
+            <div class="entry">
+
+                <p:panel id="cataloguePanelID" widgetVar="cataloguePanelWidget">
+                    <p:selectOneMenu disabled="#{sessionBean.users.role.roleid!=1}"  value="#{catalogueBean.company}" rendered="#{sessionBean.users.role.roleid==1}" 
+                                     converter="CompanyConverter"  id="selectCompany" > 						                                                                                                                                                                              
+                        <f:selectItems value="#{applicationBean.companies}" var="company" itemLabel="#{company.name}" itemValue="#{company}"   />						                                                                                        
+                        <p:ajax  listener="#{companyAction.handleCompanySelect}" update="@form"   /> 
+                    </p:selectOneMenu> 
+
+
+                    <p:fieldset legend="#{bundle.catalogues}" style="margin-top: 5px; margin-bottom: 5px;padding: 10px"  toggleable="true" >  
+                        <h:panelGrid columns="1" cellpadding="5">  
+                            <p:dataTable paginator="true" rows="10" emptyMessage="#{bundle.noCatalogues}" id="catalogueTable" value="#{catalogueBean.catalogues}"
+                                         var="catalogue" paginatorPosition="bottom">
+                                <p:column headerText="#{bundle.name}">
+                                    <p:outputLabel value="#{catalogue.name}" />
+                                </p:column>
+                            </p:dataTable>
+
+                            <p:commandButton immediate="true" value="#{bundle.newCatalogue}" type="button" onclick="createCatalogueDialogWidget.show()"   />
+                        </h:panelGrid>  
+                    </p:fieldset>  
+
+
+                    <p:fieldset legend="#{bundle.productLines}" style="margin-top: 5px; margin-bottom: 5px;padding: 10px" toggleable="true">  
+                        <h:panelGrid columns="1" cellpadding="5"> 
+                            <p:dataTable paginator="true" rows="10" emptyMessage="#{bundle.noProductLines}" id="productLineTable" value="#{catalogueBean.productlines}"
+                                         var="productline" paginatorPosition="bottom" >
+                                 
+                                
+                            </p:dataTable>
+                            
+                            
+                            <p:commandButton immediate="true" value="#{bundle.newProductLine}" action="#{catalogueAction.insertProductLine}"   />
+                        </h:panelGrid>  
+                    </p:fieldset>  
+
+                </p:panel>      
+
+            </div>
+        </h:form> 
+        
+        
+         <h:form id="createCatalogueFormID">
+                <p:dialog header="#{bundle.newCatalogue}" id="createCatalogueDialogID" position="center" widgetVar="createCatalogueDialogWidget" modal="true" resizable="false" >
+                    <p:panel id="createCataloguePanelID" widgetVar="createCataloguePanelWidget">
+                        <p:panelGrid columns="2" >                            
+                            <f:facet name="header"> 
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="#{bundle.newCatalogue}" style="font-weight: bold; font-size: 12px ! important"/>  
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                            
+                            <p:outputLabel  value="#{bundle.catalogueName}* :"  />
+                            <p:inputText value="#{catalogueBean.catalogue}" />
+                            
+                        </p:panelGrid>
+                        <p:commandButton  value="#{bundle.insert}" action="#{catalogueAction.insertCatalogue}" update=":catalogueFormID:catalogueTable" />
+                        <p:commandButton  type="button" immediate="true" value="#{bundle.close}" onclick="createCatalogueDialogWidget.hide()" />
+                    </p:panel>
+                </p:dialog>
+         </h:form>
+        
+        
+    </ui:define>
+</ui:composition>
+

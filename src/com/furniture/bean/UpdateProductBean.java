@@ -109,7 +109,7 @@ public class UpdateProductBean implements Serializable {
             selectedProductLines = updateProduct.getOrderedProductlines();
             for (int i = 0; i < selectedCompanies.size(); i++) {
                 Company company = selectedCompanies.get(i);
-                productLines.addAll(FurnitureUtil.getProductLineFromCompany(company));
+                //productLines.addAll(FurnitureUtil.getProductLineFromCompany(company));
 
             }
             Collections.sort(productLines, new Comparator<Productline>() {
