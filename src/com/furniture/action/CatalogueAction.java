@@ -10,8 +10,12 @@ import com.furniture.bean.ErrorBean;
 import com.furniture.bean.NewProductBean;
 import com.furniture.bean.ProductSearchBean;
 import com.furniture.bean.SessionBean;
+import com.furniture.dao.CompanyproductDAO;
+import com.furniture.dao.ProductlineDAO;
+import com.furniture.entities.Catalogue;
 import com.furniture.entities.Company;
 import com.furniture.entities.Product;
+import com.furniture.entities.Productline;
 import com.furniture.util.FacesUtils;
 import com.furniture.util.MessageBundleLoader;
 import com.furniture.util.PersistenceHelper;
@@ -19,25 +23,29 @@ import com.furniture.util.PersistenceUtil;
 import com.furniture.util.SystemParameters;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.transaction.UserTransaction;
 import org.apache.log4j.Logger;
+import org.primefaces.model.DualListModel;
 
 /**
  *
  * @author peukianm
  */
 public class CatalogueAction {
-     private static final Logger logger = Logger.getLogger(CatalogueAction.class);
+
+    private static final Logger logger = Logger.getLogger(CatalogueAction.class);
     private SessionBean sessionBean = (SessionBean) FacesUtils.getManagedBean("sessionBean");
     @EJB
     private PersistenceUtil persistenceUtil;
     @EJB
     private PersistenceHelper persistenceHelper;
     private CatalogueBean catalogueBean = FacesUtils.getManagedBeanJSF2("catalogueBean");
-    
-    
-    
+
     public String adminCatalogue() {
         try {
             catalogueBean.reset();
@@ -51,12 +59,12 @@ public class CatalogueAction {
             return "";
         }
     }
-    
-    
-    
+
     public void handleCompanySelect() {
-        try {            
-            Company company = catalogueBean.getCompany();            
+        try {
+            Company company = catalogueBean.getCompany();
+            catalogueBean.setCompany(company);
+            catalogueBean.init();
         } catch (Exception ex) {
             ex.printStackTrace();
             sessionBean.setErrorMsgKey("errMsg_GeneralError");
@@ -64,9 +72,242 @@ public class CatalogueAction {
         }
 
     }
+
+    public void goInsertCatalogue() {
+        try {
+            ProductlineDAO dao = new ProductlineDAO();
+            catalogueBean.setProductLineList(new DualListModel<Productline>(dao.findByProperty("active", BigDecimal.ONE), new ArrayList<Productline>(0)));
+            catalogueBean.setCatalogue(new Catalogue());
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+
+    public void goUpdateCatalogue() {
+        try {
+            ProductlineDAO dao = new ProductlineDAO();
+            List<Productline> pls = dao.findByProperty("active", BigDecimal.ONE);
+            pls.remove(catalogueBean.getCatalogue().getProductlines());
+            catalogueBean.setProductLineList(new DualListModel<Productline>(pls, catalogueBean.getCatalogue().getProductlines()));
+            FacesUtils.callRequestContext("updateCatalogueDialogWidget.open()");
+            FacesUtils.updateHTMLComponnetWIthJS("updateCataloguePanelID");
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+
+    public void insertCatalogue() {
+
+        UserTransaction userTransaction = null;
+        try {
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            Catalogue catalogue = catalogueBean.getCatalogue();
+            persistenceHelper.create(catalogue);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_INSERTCATALOGUE")), null, null, catalogue, null, null, null);
+            userTransaction.commit();
+
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("newCatalogueInserted"));
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+
+     public void removeCatalogue() {
+
+        UserTransaction userTransaction = null;
+        try {
+            Catalogue catalogue = catalogueBean.getCatalogue();            
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();            
+            persistenceHelper.remove(catalogue);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_DELETECATALOGUE")), null, null, catalogue, null, null, null);
+            userTransaction.commit();
+            catalogueBean.getCatalogues().remove(catalogue);
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("catalogueDeleted"));
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+    public void updateCatalogue() {
+        UserTransaction userTransaction = null;
+        try {
+            Catalogue catalogue = catalogueBean.getCatalogue();
+            List<Catalogue> catalogues = catalogueBean.getCatalogues();
+            catalogues.remove(catalogue);
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            catalogue = persistenceHelper.editPersist(catalogue);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATECATALOGUE")), null, null, catalogue, null, null, null);
+            userTransaction.commit();
+            catalogues.add(catalogue);
+            
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("catalogueUpdated"));
+            
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
     
     
     
+    
+    
+        public void goInsertProductline() {
+        try {            
+            Company company = catalogueBean.getCompany();
+            CompanyproductDAO dao1 = new CompanyproductDAO();
+            List<Product> pr = dao1.getCompanyProducts(company, Boolean.TRUE);
+            Collections.sort(pr, new Comparator<Product>() {
+                public int compare(Product one, Product other) {
+                    return one.getName().compareTo(other.getName());
+                }
+            });
+            
+            
+            catalogueBean.setProductList(new DualListModel<Product>(pr, new ArrayList<Product>(0) ));            
+            catalogueBean.setProductline(new Productline());
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+
+    public void goUpdateProductline() {
+        try {
+            Company company = catalogueBean.getCompany();
+            Productline productline = catalogueBean.getProductline();
+            CompanyproductDAO dao1 = new CompanyproductDAO();
+            List<Product> pr = dao1.getCompanyProducts(company, Boolean.TRUE);
+            Collections.sort(pr, new Comparator<Product>() {
+                public int compare(Product one, Product other) {
+                    return one.getName().compareTo(other.getName());
+                }
+            });
+            
+            pr.remove(productline.getProducts());
+            
+            catalogueBean.setProductList(new DualListModel<Product>( pr ,  productline.getProducts() ));
+            FacesUtils.callRequestContext("updateProductlineDialogWidget.open()");
+            FacesUtils.updateHTMLComponnetWIthJS("updateProductlinePanelID");
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+    
+    public void insertProductline() {
+
+        UserTransaction userTransaction = null;
+        try {
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            Productline productlien = catalogueBean.getProductline();
+            persistenceHelper.create(productlien);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_INSERTPRODUCTLINE")), null, productlien, null, null, null, null);
+            userTransaction.commit();
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("newProductlineInserted"));
+
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+     public void updateProductline() {
+        UserTransaction userTransaction = null;
+        try {
+            Productline productline = catalogueBean.getProductline();
+            List<Productline> productlines = catalogueBean.getProductlines();
+            productlines.remove(productline);
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            productline = persistenceHelper.editPersist(productline);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCTLINE")), null, productline, null, null, null, null);
+            userTransaction.commit();
+            productlines.add(productline);
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productlineUpdated"));
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+     
+     
+      public void removeProductline() {
+
+        UserTransaction userTransaction = null;
+        try {
+            Productline productline = catalogueBean.getProductline();
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();            
+            persistenceHelper.remove(productline);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_DELETEPRODUCTLINE")), null, productline, null, null, null, null);
+            userTransaction.commit();
+            catalogueBean.getProductlines().remove(productline);
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productlineDeleted"));
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+    
+      
+      
+      
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                          TEMPLATES!!!!!!!!!!!!!!
@@ -162,6 +403,4 @@ public class CatalogueAction {
             e.printStackTrace();
         }
     }
-    
-    
 }

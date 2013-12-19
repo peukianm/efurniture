@@ -44,6 +44,7 @@ public class Catalogue implements java.io.Serializable {
     private Set<Price> prices = new HashSet<Price>(0);
     private List<Company> companies = new ArrayList<Company>(0);
     private List<Productline> productlines = new ArrayList<Productline>(0);
+    
 
     // Constructors
     /**

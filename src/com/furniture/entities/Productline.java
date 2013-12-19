@@ -43,6 +43,9 @@ public class Productline implements java.io.Serializable {
     private Set<Auditing> auditings = new HashSet<Auditing>(0);
     private List<Catalogue> catalogues = new ArrayList<Catalogue>(0);
     private List<Product> products = new ArrayList<Product>(0);
+    private List<Company> companies = new ArrayList<Company>(0);
+    
+    
     
     
     // Constructors
@@ -117,7 +120,7 @@ public class Productline implements java.io.Serializable {
     public void setActive(BigDecimal active) {
         this.active = active;
     }
-    
+
     @Temporal(TemporalType.DATE)
     @Column(name = "CREATEDDATE", length = 7)
     public Date getCreateddate() {
@@ -154,7 +157,6 @@ public class Productline implements java.io.Serializable {
 //    public void setCatalogueproductlines(Set<Catalogueproductline> catalogueproductlines) {
 //        this.catalogueproductlines = catalogueproductlines;
 //    }
-
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "productline")
     public Set<Imageproductline> getImageproductlines() {
         return this.imageproductlines;
@@ -172,7 +174,6 @@ public class Productline implements java.io.Serializable {
 //    public void setProductlineproducts(Set<Productlineproduct> productlineproducts) {
 //        this.productlineproducts = productlineproducts;
 //    }
-
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "productline")
     public Set<Auditing> getAuditings() {
         return this.auditings;
@@ -181,8 +182,7 @@ public class Productline implements java.io.Serializable {
     public void setAuditings(Set<Auditing> auditings) {
         this.auditings = auditings;
     }
-    
-    
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "CATALOGUEPRODUCTLINE",
     joinColumns = {
@@ -201,9 +201,7 @@ public class Productline implements java.io.Serializable {
     public void setCatalogues(List<Catalogue> catalogues) {
         this.catalogues = catalogues;
     }
-    
 
-    
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "PRODUCTLINEPRODUCT",
     joinColumns = {
@@ -222,8 +220,26 @@ public class Productline implements java.io.Serializable {
     public void setProducts(List<Product> products) {
         this.products = products;
     }
+
     
     
+    @ManyToMany(cascade = CascadeType.REFRESH)
+    @JoinTable(name = "COMPANYPRODUCTLINE",
+    joinColumns = {
+        @JoinColumn(name = "PRODUCTLINEID")
+    },
+    inverseJoinColumns = {
+        @JoinColumn(name = "COMPANYID")
+    })
+    public List<Company> getCompanies() {
+        return companies;
+    }
+
+   
+    public void setCompanies(List<Company> companies) {
+        this.companies = companies;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

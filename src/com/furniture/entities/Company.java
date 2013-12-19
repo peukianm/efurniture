@@ -54,6 +54,8 @@ public class Company implements java.io.Serializable {
     private Set<Price> prices = new HashSet<Price>(0);
     private List<Catalogue> catalogues = new ArrayList<Catalogue>(0);
     private List<Category> categories = new ArrayList<Category>(0);
+    private List<Productline> productlines = new ArrayList<Productline>(0);
+    
     
     // Constructors
     /**
@@ -278,6 +280,28 @@ public class Company implements java.io.Serializable {
         this.catalogues = catalogues;
     }
 
+    
+    
+    
+    @ManyToMany(cascade = CascadeType.REFRESH)
+    @JoinTable(name = "COMPANYPRODUCTLINE",
+    joinColumns = {
+        @JoinColumn(name = "COMPANYID")
+    },
+    inverseJoinColumns = {
+        @JoinColumn(name = "PRODUCTLINEID")
+    })
+    public List<Productline> getProductlines() {        
+        return productlines;
+    }
+
+    /**
+     * @param productlines the books to set
+     */
+    public void setProductlines(List<Productline> productlines) {
+        this.productlines = productlines;
+    }
+    
     
     
     

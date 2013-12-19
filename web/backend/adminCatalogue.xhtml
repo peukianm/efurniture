@@ -22,6 +22,7 @@
 
             .ui-panelgrid td, .ui-panelgrid tr  {
                 border-style: none !important; 
+                 padding: 0px 0px !important;;
             }
 
             .ui-fieldset-legend {
@@ -35,41 +36,78 @@
     <ui:define name="content">
         <p:growl autoUpdate="true"/> 
         <h:form id="catalogueFormID">
-            <h1 class="title ui-widget-header ui-corner-all">#{bundle.adminCatalogue}</h1>
+            <h1 class="title ui-widget-header ui-corner-all">#{bundle.adminCatalogue}
+                <p:selectOneMenu style="float: right"  disabled="#{sessionBean.users.role.roleid!=1}"  value="#{catalogueBean.company}" rendered="#{sessionBean.users.role.roleid==1}" 
+                                     converter="CompanyConverter"  id="selectCompany" > 						                                                                                                                                                                              
+                        <f:selectItems value="#{applicationBean.companies}" var="company" itemLabel="#{company.name}" itemValue="#{company}"   />						                                                                                        
+                        <p:ajax  listener="#{catalogueAction.handleCompanySelect()}" update="@form"   /> 
+                </p:selectOneMenu> 
+                <p:outputLabel  value="#{sessionBean.users.company.name}" style="font-weight: bold"  rendered="#{sessionBean.users.role.roleid!=1}" />
+            
+            </h1>
             <div class="entry">
 
                 <p:panel id="cataloguePanelID" widgetVar="cataloguePanelWidget">
-                    <p:selectOneMenu disabled="#{sessionBean.users.role.roleid!=1}"  value="#{catalogueBean.company}" rendered="#{sessionBean.users.role.roleid==1}" 
-                                     converter="CompanyConverter"  id="selectCompany" > 						                                                                                                                                                                              
-                        <f:selectItems value="#{applicationBean.companies}" var="company" itemLabel="#{company.name}" itemValue="#{company}"   />						                                                                                        
-                        <p:ajax  listener="#{companyAction.handleCompanySelect}" update="@form"   /> 
-                    </p:selectOneMenu> 
+                    
 
 
                     <p:fieldset legend="#{bundle.catalogues}" style="margin-top: 5px; margin-bottom: 5px;padding: 10px"  toggleable="true" >  
                         <h:panelGrid columns="1" cellpadding="5">  
                             <p:dataTable paginator="true" rows="10" emptyMessage="#{bundle.noCatalogues}" id="catalogueTable" value="#{catalogueBean.catalogues}"
-                                         var="catalogue" paginatorPosition="bottom">
+                                         var="catalogue" paginatorPosition="bottom" paginatorAlwaysVisible="false">
                                 <p:column headerText="#{bundle.name}">
                                     <p:outputLabel value="#{catalogue.name}" />
                                 </p:column>
+                                <p:column headerText="#{bundle.actions}">
+                                   <p:commandButton id="bt1" icon="ui-icon-search" title="#{bundle.view}" immediate="true" />
+                                    <p:overlayPanel id="over1" for="bt1">
+                                        <p:dataTable rows="8" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" value="#{catalogue.productlines}"  var="pl" >
+                                            <p:column headerText="#{bundle.name}">
+                                                <p:outputLabel value="#{pl.name}" />
+                                            </p:column>                                            
+                                        </p:dataTable>
+                                    </p:overlayPanel> 
+                                                                        
+                                    <p:commandButton icon="ui-icon-pencil" action="#{catalogueAction.goUpdateCatalogue()}" />
+                                    <p:commandButton icon="ui-icon-trash" action="#{catalogueAction.removeCatalogue}">
+                                        <f:setPropertyActionListener value="#{catalogue}" target="#{catalogueBean.catalogue}" />
+                                         <p:confirm header="#{bundle.confirmation}" message="#{bundle.confirmDeleteCatalogue}" icon="ui-icon-alert" /> 
+                                    </p:commandButton>
+                                </p:column>                                
                             </p:dataTable>
 
-                            <p:commandButton immediate="true" value="#{bundle.newCatalogue}" type="button" onclick="createCatalogueDialogWidget.show()"   />
+                            <p:commandButton immediate="true" value="#{bundle.newCatalogue}" action="#{catalogueAction.goInsertCatalogue()}" onclick="createCatalogueDialogWidget.show()"  
+                                            update=":createCatalogueFormID:createCataloguePanelID"     />
                         </h:panelGrid>  
                     </p:fieldset>  
 
 
+                    
+                    
                     <p:fieldset legend="#{bundle.productLines}" style="margin-top: 5px; margin-bottom: 5px;padding: 10px" toggleable="true">  
                         <h:panelGrid columns="1" cellpadding="5"> 
                             <p:dataTable paginator="true" rows="10" emptyMessage="#{bundle.noProductLines}" id="productLineTable" value="#{catalogueBean.productlines}"
-                                         var="productline" paginatorPosition="bottom" >
-                                 
-                                
+                                         var="productline" paginatorPosition="bottom" paginatorAlwaysVisible="false">
+                                <p:column headerText="#{bundle.name}">
+                                    <p:outputLabel value="#{productline.name}" />
+                                </p:column>
+                                <p:column headerText="#{bundle.actions}">
+                                    <p:commandButton id="bt2" icon="ui-icon-search" title="#{bundle.view}" immediate="true" onclick="dialog1Widget.show()" update=":panel1" >
+                                        <f:setPropertyActionListener value="#{productline}" target="#{catalogueBean.productline}" />
+                                    </p:commandButton>
+                                    
+                                    <p:commandButton icon="ui-icon-pencil" action="#{catalogueAction.goUpdateProductline()}" />
+                                    <p:commandButton icon="ui-icon-trash" action="#{catalogueAction.removeProductline}">
+                                        <f:setPropertyActionListener value="#{productline}" target="#{catalogueBean.productline}" />    
+                                        <p:confirm header="#{bundle.confirmation}" message="#{bundle.confirmDeleteProductline}" icon="ui-icon-alert" /> 
+                                    </p:commandButton>
+                                </p:column>    
+
                             </p:dataTable>
-                            
-                            
-                            <p:commandButton immediate="true" value="#{bundle.newProductLine}" action="#{catalogueAction.insertProductLine}"   />
+
+
+                            <p:commandButton immediate="true" value="#{bundle.newProductLine}" action="#{catalogueAction.goInsertProductline()}" onclick="createProductlineDialogWidget.show()" 
+                                             update=":createProductlineFormID:createProductlinePanelID"     />
                         </h:panelGrid>  
                     </p:fieldset>  
 
@@ -77,31 +115,137 @@
 
             </div>
         </h:form> 
+
         
         
-         <h:form id="createCatalogueFormID">
-                <p:dialog header="#{bundle.newCatalogue}" id="createCatalogueDialogID" position="center" widgetVar="createCatalogueDialogWidget" modal="true" resizable="false" >
-                    <p:panel id="createCataloguePanelID" widgetVar="createCataloguePanelWidget">
-                        <p:panelGrid columns="2" >                            
-                            <f:facet name="header"> 
-                                <p:row>
-                                    <p:column>
-                                        <p:outputLabel value="#{bundle.newCatalogue}" style="font-weight: bold; font-size: 12px ! important"/>  
-                                    </p:column>
-                                </p:row>
-                            </f:facet>
-                            
-                            <p:outputLabel  value="#{bundle.catalogueName}* :"  />
-                            <p:inputText value="#{catalogueBean.catalogue}" />
-                            
-                        </p:panelGrid>
-                        <p:commandButton  value="#{bundle.insert}" action="#{catalogueAction.insertCatalogue}" update=":catalogueFormID:catalogueTable" />
-                        <p:commandButton  type="button" immediate="true" value="#{bundle.close}" onclick="createCatalogueDialogWidget.hide()" />
-                    </p:panel>
-                </p:dialog>
-         </h:form>
+        <p:dialog header="#{bundle.productLines}" id="dialog1" position="center" widgetVar="dialog1Widget" modal="true" resizable="false">
+            <h:panelGroup layout="block" id="panel1">#{catalogueBean.productline.name}
+                <p:dataTable rows="8" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" value="#{catalogueBean.productline.products}"  var="pr" >
+                    <p:column headerText="#{bundle.name}">
+                        <p:outputLabel value="#{pr.name}" />
+                    </p:column>                                            
+                </p:dataTable>
+            </h:panelGroup>
+        </p:dialog >
         
         
+        
+        
+        
+        
+        
+        <h:form id="createCatalogueFormID">
+            <p:dialog header="#{bundle.newCatalogue}" id="createCatalogueDialogID" position="center" widgetVar="createCatalogueDialogWidget" modal="true" resizable="false" >
+                <p:panel id="createCataloguePanelID" widgetVar="createCataloguePanelWidget">
+                    <p:panelGrid >                            
+                        <!--<f:facet name="header"> 
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="#{bundle.newCatalogue}" style="font-weight: bold; font-size: 12px ! important"/>  
+                                </p:column>
+                            </p:row>
+                        </f:facet>-->
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel  value="#{bundle.catalogueName}* :" style="font-weight: bold"  />                            
+                                <p:inputText id="catalogueName" value="#{catalogueBean.catalogue.name}" required="true" requiredMessage="#{bundle.catalogueName}: #{bundle.mandatoryField}" />
+                                <p:message for="catalogueName" display="icon"/> 
+                            </p:column>
+                        </p:row>
+
+                        <p:row >
+                            <p:column colspan="2">
+                                <p:pickList id="productLineList" value="#{catalogueBean.productLineList}" var="pl" itemValue="#{pl}" itemLabel="#{pl.name}" converter="ProductLineConverter"  
+                                            showSourceControls="false" showTargetControls="false" showCheckbox="false" showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" >  
+                                    <f:facet name="sourceCaption">#{bundle.available}</f:facet>  
+                                    <f:facet name="targetCaption">#{bundle.selected}</f:facet>  
+                                    <p:ajax event="transfer" />  
+                                    <p:column>  
+                                        #{pl.name}  
+                                    </p:column>  
+                                </p:pickList>  
+                            </p:column>
+                        </p:row>
+
+                    </p:panelGrid>
+                    <p:commandButton  value="#{bundle.insert}" action="#{catalogueAction.insertCatalogue}" update=":catalogueFormID:catalogueTable @form:createCataloguePanelID" />
+                    <p:commandButton  type="button" immediate="true" value="#{bundle.close}" onclick="createCatalogueDialogWidget.hide()" />
+                </p:panel>
+            </p:dialog>
+        </h:form>
+
+
+        <h:form id="updateCatalogueFormID">
+            <p:dialog header="#{bundle.updateCatalogue}" id="updateCatalogueDialogID" position="center" widgetVar="updateCatalogueDialogWidget" modal="true" resizable="false" >
+                <p:panel id="updateCataloguePanelID" widgetVar="updateCataloguePanelWidget">
+                    <p:panelGrid >                            
+                        <p:row>
+                            <p:outputLabel  value="#{bundle.catalogueName}* :"  style="font-weight: bold"/>
+                            <p:inputText id="updateCatalogueName" value="#{catalogueBean.catalogue.name}" />
+                            <p:message for="updateCatalogueName" display="icon"/> 
+                        </p:row>
+                        <p:row>
+                            <p:pickList id="productLineList" value="#{catalogueBean.productLineList}" var="pl" itemValue="#{pl}" itemLabel="#{pl.name}" converter="ProductLineConverter"  
+                                        showSourceControls="false" showTargetControls="false" showCheckbox="false" showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" >  
+                                <f:facet name="sourceCaption">#{bundle.available}</f:facet>  
+                                <f:facet name="targetCaption">#{bundle.selected}</f:facet>  
+                                <p:ajax event="transfer" />  
+                                <p:column>  
+                                    #{pl.name}  
+                                </p:column>  
+                            </p:pickList>  
+                        </p:row>   
+                    </p:panelGrid>
+                    <p:commandButton  value="#{bundle.insert}" action="#{catalogueAction.updateCatalogue}" update=":catalogueFormID:catalogueTable @form" />
+                    <p:commandButton  type="button" immediate="true" value="#{bundle.close}" onclick="updateCatalogueDialogWidget.hide()" />
+                </p:panel>
+            </p:dialog>
+        </h:form>
+        
+        
+        
+        
+        
+        
+        
+        <h:form id="createProductlineFormID">
+            <p:dialog header="#{bundle.newProductline}" id="createProductlineDialogID" position="center" widgetVar="createProductlineDialogWidget" modal="true" resizable="false" >
+                <p:panel id="createProductlinePanelID" widgetVar="createProductlinePanelWidget">
+                    <p:panelGrid >                            
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel  value="#{bundle.productlineName}* :"  style="font-weight: bold" />                            
+                                <p:inputText id="productlineName" value="#{catalogueBean.productline.name}" required="true" requiredMessage="#{bundle.productlineName}: #{bundle.mandatoryField}" />
+                                <p:message for="productlineName" display="icon"/> 
+                            </p:column>
+                        </p:row>
+
+                        <p:row >
+                            <p:column colspan="2">
+                                <p:pickList id="productList" value="#{catalogueBean.productList}" var="pr" itemValue="#{pr}" itemLabel="#{pr.name}" converter="ProductConverter"  
+                                            showSourceControls="false" showTargetControls="false" showCheckbox="false" showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" >  
+                                    <f:facet name="sourceCaption">#{bundle.available}</f:facet>  
+                                    <f:facet name="targetCaption">#{bundle.selected}</f:facet>  
+                                    <p:ajax event="transfer" />  
+                                    <p:column>  
+                                        #{pr.name}  
+                                    </p:column>  
+                                </p:pickList>  
+                            </p:column>
+                        </p:row>
+
+                    </p:panelGrid>
+                    <p:commandButton  value="#{bundle.insert}" action="#{catalogueAction.insertProductline}" update=":catalogueFormID:catalogueTable @form:createProductlinePanelID" />
+                    <p:commandButton  type="button" immediate="true" value="#{bundle.close}" onclick="createProductlineDialogWidget.hide()" />
+                </p:panel>
+            </p:dialog>
+        </h:form>
+
+        
+
+
+
+
     </ui:define>
 </ui:composition>
 

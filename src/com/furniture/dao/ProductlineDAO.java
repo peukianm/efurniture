@@ -129,7 +129,7 @@ public class ProductlineDAO {
     @SuppressWarnings("unchecked")
     public List<Productline> findByProperty(String propertyName, final Object value, final int... rowStartIdxAndCount) {
         try {
-            final String queryString = "select model from Productline model where model." + propertyName + "= :propertyValue";
+            final String queryString = "select model from Productline model where model." + propertyName + "= :propertyValue order by model.name";
             Query query = getEntityManager().createQuery(queryString);
             query.setParameter("propertyValue", value);
             if (rowStartIdxAndCount != null && rowStartIdxAndCount.length > 0) {
