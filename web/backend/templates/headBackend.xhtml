@@ -26,7 +26,7 @@
 
                  <p:submenu label="#{bundle.adminAction}" icon="ui-icon-document"  rendered="#{sessionBean.users.role.roleid ==1}"> 
                     <p:menuitem value="#{bundle.companyMgt}" action="#{companyAction.adminCompany()}" rendered="#{sessionBean.users.role.roleid ==1}"   icon="ui-icon-pencil" />
-                    <p:menuitem value="#{bundle.userMgt}" rendered="#{sessionBean.users.role.roleid ==1}"  icon="ui-icon-pencil"  />                
+                    <p:menuitem value="#{bundle.userMgt}" action="#{administrationAction.userAdmin()}" rendered="#{sessionBean.users.role.roleid ==1}"  icon="ui-icon-pencil"  />                
                     <p:menuitem value="#{bundle.audit}" action="#{administrationAction.auditControl}"  rendered="#{sessionBean.users.role.roleid ==1}"  icon="ui-icon-search"  />
                     <p:menuitem value="#{bundle.templateEditor}" rendered="#{sessionBean.users.role.roleid ==1}"  icon="ui-icon-pencil"  />
                 </p:submenu>

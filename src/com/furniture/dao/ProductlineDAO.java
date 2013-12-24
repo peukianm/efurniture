@@ -1,5 +1,7 @@
 package com.furniture.dao;
 
+import com.furniture.entities.Company;
+import com.furniture.entities.Product;
 import com.furniture.entities.Productline;
 import com.furniture.util.EJBUtil;
 import com.furniture.util.PersistenceHelper;
@@ -191,4 +193,27 @@ public class ProductlineDAO {
             throw re;
         }
     }
+    
+    
+    
+    public List<Productline> getCompanyProductlines(Company company) {
+        try {            
+            String queryString = "Select model from Productline model "
+                    + " JOIN model.companies comp   "                    
+                    + " where model.active = 1 "                    
+                    + (company!=null? " and comp = :company " :" ")
+                    + " order by model.name";
+            
+            Query query = getEntityManager().createQuery(queryString);
+            if (company != null) {
+                query.setParameter("company", company);
+            }
+            return query.getResultList();
+        } catch (RuntimeException re) {
+            logger.error("Error on finding entity", re);
+            throw re;
+        }
+    }
+    
+    
 }

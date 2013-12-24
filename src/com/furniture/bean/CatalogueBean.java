@@ -4,6 +4,7 @@
  */
 package com.furniture.bean;
 
+import com.furniture.dao.CatalogueDAO;
 import com.furniture.dao.CompanyproductDAO;
 import com.furniture.dao.ProductlineDAO;
 import com.furniture.entities.Catalogue;
@@ -32,28 +33,46 @@ import org.primefaces.model.DualListModel;
 public class CatalogueBean implements Serializable {
 
     @ManagedProperty(value = "#{sessionBean}")
-    private SessionBean sessionBean;
+    private SessionBean sessionBean; 
     private List<Catalogue> catalogues = new ArrayList<Catalogue>(0);
     private List<Productline> productlines = new ArrayList<Productline>(0);
     private List<Product> products = new ArrayList<Product>(0);
     private Catalogue catalogue;
     private Productline productline;
     private Company company;
-    private DualListModel<Productline> productLineList;
-    private DualListModel<Product> productList;
+    private DualListModel<Productline> productLineList = new DualListModel<Productline>(new ArrayList<Productline>(0), new ArrayList<Productline>(0));
+    private DualListModel<Product> productList= new DualListModel<Product>(new ArrayList<Product>(0), new ArrayList<Product>(0));
     
-
+    private DualListModel<Productline> updateProductLineList = new DualListModel<Productline>(new ArrayList<Productline>(0), new ArrayList<Productline>(0));
+    private DualListModel<Product> updateProductList = new DualListModel<Product>(new ArrayList<Product>(0), new ArrayList<Product>(0));
+    
+    
+    
     @PostConstruct
     public void init() {
         System.out.println("INITIALIZING IN Catalogue Bean!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1111");
         if (company==null)
-            company=sessionBean.getUsers().getCompany();
+            company=sessionBean.getUsers().getCompany();  
+        initializeValues(company);
+    }
+
+    
+    
+    public void initializeValues(Company company) {
         
-        catalogues = company.getCatalogues();
+        CatalogueDAO da = new CatalogueDAO();
+        catalogues = da.getCompanyCatalogues(company);
         
+        for (int i = 0; i < catalogues.size(); i++) {
+            Catalogue catalogue1 = catalogues.get(i);
+            System.out.println(catalogue1.getProductlines());            
+        }
+        
+                
         ProductlineDAO dao = new ProductlineDAO();
-        setProductLineList(new DualListModel<Productline>(dao.findByProperty("active", BigDecimal.ONE), new ArrayList<Productline>(0)));        
-        productlines = company.getProductlines();
+        productlines = dao.getCompanyProductlines(company);    
+        productLineList = new DualListModel<Productline>(productlines, new ArrayList<Productline>(0));        
+        
         
         CompanyproductDAO dao1 = new CompanyproductDAO();
         List<Product> pr = dao1.getCompanyProducts(company, Boolean.TRUE);
@@ -62,13 +81,34 @@ public class CatalogueBean implements Serializable {
                 return one.getName().compareTo(other.getName());
             }
         });                        
-        setProductList(new DualListModel<Product>(pr, new ArrayList<Product>(0) ));                                  
+        productList = new DualListModel<Product>(pr, new ArrayList<Product>(0) );
+        
+        
+        
     }
-
+    
+    
     @PreDestroy
     public void reset() {
     }
 
+    public DualListModel<Productline> getUpdateProductLineList() {
+        return updateProductLineList;
+    }
+
+    public void setUpdateProductLineList(DualListModel<Productline> updateProductLineList) {
+        this.updateProductLineList = updateProductLineList;
+    }
+
+    public DualListModel<Product> getUpdateProductList() {
+        return updateProductList;
+    }
+
+    public void setUpdateProductList(DualListModel<Product> updateProductList) {
+        this.updateProductList = updateProductList;
+    }
+
+    
     
     
     public DualListModel<Productline> getProductLineList() {

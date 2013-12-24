@@ -203,6 +203,14 @@ public class Category implements java.io.Serializable {
         @JoinColumn(name = "PRODUCTID")
     })
     public List<Product> getProducts() {
+        if (products!=null) {
+            for (int i = 0; i < products.size(); i++) {
+                Product product = products.get(i);
+                if (!product.getActive().equals(BigDecimal.ONE)){
+                    products.remove(i);
+                }            
+            }
+        }
         return products;
     }
 

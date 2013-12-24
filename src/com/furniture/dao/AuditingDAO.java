@@ -199,7 +199,7 @@ public class AuditingDAO {
 			String queryString = "Select a from Auditing a"
 					+ " where a.auditingid IS NOT NULL "
 					+ (company != null ? " and a.company=:hospital " : " ")
-					+ (user != null ? " and a.users=:usert " : " ")
+					+ (user != null ? " and a.users=:user " : " ")
 					+ (action != null ? " and a.action=:action " : " ")
                                         + (product != null ? " and a.product=:product " : " ")
 					+ (from != null ? " and a.actiondate>=:from" : " ")

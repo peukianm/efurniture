@@ -122,6 +122,11 @@
         <converter-id>UserConverter</converter-id>
         <converter-class>com.furniture.converter.UserConverter</converter-class>
     </converter>
+    
+    <converter>
+        <converter-id>RoleConverter</converter-id>
+        <converter-class>com.furniture.converter.RoleConverter</converter-class>
+    </converter>
  
  
  
@@ -146,11 +151,11 @@
  
  
  
-    <managed-bean>
+    <!--<managed-bean>
         <managed-bean-name>userBean</managed-bean-name>
         <managed-bean-class>com.furniture.bean.UserBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
+    </managed-bean>-->
  
  
     <managed-bean>

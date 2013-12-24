@@ -1,0 +1,104 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="templates/uiBackend.xhtml"> 
+
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-confirm-dialog-severity {
+                margin: 0 7px 7px 0;
+            }
+
+
+            .noBord, .noBord tbody, .noBord tbody td, .noBord tbody tr {
+                padding: 1px 5px;
+                border-style: none !important; 
+            }
+
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <p:growl autoUpdate="true"/> 
+        <div class="entry" style="line-height:100%;" >
+            <h:form id="userFormID">                		         		   
+                <p:panel id="userPanelID" widgetVar="userPanelWidget" header="#{bundle.searchCriteria} " toggleable="false" style="padding:0px ! important; width:auto;white-space: nowrap;margin:  5px" > 
+                    <table  cellpadding="5" class="content1" style="margin-bottom: 10px" >  
+                        <tr>
+                            <td style="width: auto;white-space: nowrap;"><h:outputLabel value="#{bundle.username} :"  style="font-weight: bold"  /></td>
+                            <td style="width: auto;white-space: nowrap;">  
+                                <p:inputText size="12" value="#{userBean.searchByUsername}" />
+                            </td>
+                            <td><h:outputLabel value="#{bundle.surname}:" style="font-weight: bold"  /></td>
+                            <td> 
+                                <p:inputText size="12" value="#{userBean.searchBySurname}" />
+                            </td>                             
+                        </tr>
+                        
+                        <tr>
+                            <td style="width: auto;white-space: nowrap;"><h:outputLabel value="#{bundle.role}:" style="font-weight: bold; float: right"/></td>
+                            <td style="width: auto;white-space: nowrap;" colspan="2" >   
+                                <p:selectOneMenu value="#{userBean.searchByRole}" converter="RoleConverter" >						 
+                                    <f:selectItem itemLabel="" itemValue=""  />
+                                    <f:selectItems value="#{applicationBean.roles}" var="role" itemLabel="#{role.name}" itemValue="#{role}"   />						     
+                                </p:selectOneMenu>
+
+                            </td> 
+                            <td style="width: auto;white-space: nowrap;"> <h:outputLabel value="#{bundle.company}:"  style="font-weight: bold" /></td>
+                            <td style="width: auto;white-space: nowrap;">
+                                <p:selectOneMenu value="#{userBean.searchByCompany}" converter="CompanyConverter" >						 
+                                    <f:selectItem itemLabel="" itemValue=""  />
+                                    <f:selectItems value="#{applicationBean.companies}" var="company" itemLabel="#{company.name}" itemValue="#{company}"   />						     
+                                </p:selectOneMenu>	
+                            </td>                                                             
+                        </tr>
+
+
+                    </table>
+                    <p:commandButton value="#{bundle.search}" action="#{administrationAction.searchUser()}" update="userFormID"  />
+                    <p:commandButton  value="#{bundle.reset}" action="#{administrationAction.resetUserAdmin()}" />
+                </p:panel>  
+     
+                <p:spacer height="15"/>
+
+                <p:panel id="user" header="#{bundle.searchResults}"  toggleable="false" style="padding:0px ! important; width:100%; margin-bottom: 10px; font-weight: 7px " > 
+                    <p:dataTable id="userResultsID" var="user" value="#{userBean.users}"  widgetVar="userResultsWidget"
+                                 paginator="true" rows="10" emptyMessage="#{bundle.noRecordsFound}" rowIndexVar="tt"  style="font-size: 8px" 
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                 rowsPerPageTemplate="10,20,40,100" >  
+
+                        <!--<p:column headerText="A/A" style="width:2%;font-weight: bold">  
+                            <h:outputText value="#{tt+1}" />  
+                        </p:column> -->
+
+                           
+                        <p:column  headerText="#{bundle.username}" sortBy="#{user.username}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
+                            <h:outputText value="#{user.username}" />                                                           
+                        </p:column> 
+                        
+                        <p:column  headerText="#{bundle.name}" sortBy="#{user.surname}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
+                            <h:outputText value="#{user.surname} #{user.name}" />                                                           
+                        </p:column>
+                        
+                        <p:column  headerText="#{bundle.role}" sortBy="#{user.userroleses.get(0).role.name}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
+                            <h:outputText value="#{user.userroleses.get(0).role.name}" />                                                           
+                        </p:column> 
+                         
+                        <p:column  headerText="#{bundle.company}" sortBy="#{user.company.name}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
+                            <h:outputText value="#{user.company.name}" />                                                           
+                        </p:column>
+                         
+                    </p:dataTable>   
+                </p:panel>
+
+            </h:form> 
+
+
+
+        </div>
+    </ui:define>
+
+</ui:composition>
+

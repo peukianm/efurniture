@@ -10,6 +10,7 @@ import com.furniture.dao.CurrencyDAO;
 import com.furniture.dao.ItemDAO;
 import com.furniture.dao.MeasurmentDAO;
 import com.furniture.dao.ProductcategoryDAO;
+import com.furniture.dao.RoleDAO;
 import com.furniture.dao.SpecificationDAO;
 import com.furniture.dao.SpecificationcategoryDAO;
 import com.furniture.entities.Action;
@@ -20,6 +21,7 @@ import com.furniture.entities.Currency;
 import com.furniture.entities.Item;
 import com.furniture.entities.Measurment;
 import com.furniture.entities.Productcategory;
+import com.furniture.entities.Role;
 import com.furniture.entities.Specification;
 import com.furniture.entities.Specificationcategory;
 import com.furniture.util.FurnitureUtil;
@@ -74,6 +76,23 @@ public class ApplicationBean implements Serializable {
         this.companies = companies;
     }
 
+    
+   List<Role> roles;
+
+    public List<Role> getRoles() {
+        if (roles == null) {
+            RoleDAO dao = new RoleDAO();
+            roles = dao.findAll();
+        }
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+    
+    
+    
     public void resetCompanies() {
         this.companies = null;
     }

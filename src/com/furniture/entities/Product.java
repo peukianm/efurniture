@@ -381,6 +381,14 @@ public class Product implements java.io.Serializable {
         @JoinColumn(name = "PARENTPRODUCTID")
     })
     public List<Product> getParentproducts() {
+        if (parentproducts!=null) {
+            for (int i = 0; i < parentproducts.size(); i++) {
+                Product product = parentproducts.get(i);
+                if (!product.getActive().equals(BigDecimal.ONE)){
+                    parentproducts.remove(i);
+                }            
+            }
+        }
         return parentproducts;
     }
 
@@ -397,7 +405,15 @@ public class Product implements java.io.Serializable {
         @JoinColumn(name = "SUBPRODUCTID")
     })
     public List<Product> getSubproducts() {
-        return subproducts;
+        if (subproducts!=null) {
+            for (int i = 0; i < subproducts.size(); i++) {
+                Product product = subproducts.get(i);
+                if (!product.getActive().equals(BigDecimal.ONE)){
+                    subproducts.remove(i);
+                }            
+            }
+        }
+        return subproducts;      
     }
 
     public void setSubproducts(List<Product> subproducts) {

@@ -1,6 +1,8 @@
 package com.furniture.dao;
 
 import com.furniture.entities.Catalogue;
+import com.furniture.entities.Company;
+import com.furniture.entities.Productline;
 import com.furniture.util.EJBUtil;
 import com.furniture.util.PersistenceHelper;
 import java.math.BigDecimal;
@@ -191,4 +193,50 @@ public class CatalogueDAO {
             throw re;
         }
     }
+    
+    public List<Catalogue> getCompanyCatalogues(Company company) {
+        try {            
+            String queryString = "Select DISTINCT model from Catalogue model JOIN model.companies comp  "
+                   // + " join model.productlines pl  "                    
+                    + " where model.active = 1 "
+                    //+ " and pl.active = 1 "
+                    + (company!=null? " and comp = :company " :" ")
+                    + " order by model.name";
+            
+            
+            Query query = getEntityManager().createQuery(queryString);
+            query.setHint("javax.persistence.cache.storeMode", "REFRESH");
+            if (company != null) {
+                query.setParameter("company", company);
+            }
+            
+            
+            return query.getResultList();
+        } catch (RuntimeException re) {
+            logger.error("Error on finding entity", re);
+            throw re;
+        }
+    }
+    
+     public List<Productline> getCatalogueProductlines(Catalogue catalogue) {
+        try {            
+            String queryString = "Select pl from Catalogue model "   
+                    + " JOIN  model.productlines pl   "    
+                    + " where model.active = 1 "                    
+                    + (catalogue!=null? " and model = :catalogue " :" ")
+                    + " order by pl.name";
+            
+            
+            Query query = getEntityManager().createQuery(queryString);
+            if (catalogue != null) {
+                query.setParameter("catalogue", catalogue);
+            }
+            return query.getResultList();
+        } catch (RuntimeException re) {
+            logger.error("Error on finding entity", re);
+            throw re;
+        }
+    }
+    
+    
 }

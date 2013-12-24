@@ -11,11 +11,14 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -27,6 +30,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "PRODUCTLINE", schema = "FURNITURE")
+@SequenceGenerator(name = "SEQ_PRODUCTLINE", sequenceName = "PRODUCTLINE_SEQ", allocationSize = 1)
 public class Productline implements java.io.Serializable {
 
     // Fields
@@ -86,6 +90,7 @@ public class Productline implements java.io.Serializable {
     // Property accessors
     @Id
     @Column(name = "PRODUCTLINEID", unique = true, nullable = false, precision = 22, scale = 0)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PRODUCTLINE")
     public BigDecimal getProductlineid() {
         return this.productlineid;
     }
@@ -183,7 +188,7 @@ public class Productline implements java.io.Serializable {
         this.auditings = auditings;
     }
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany( cascade = {CascadeType.PERSIST,CascadeType.MERGE, CascadeType.REFRESH} )
     @JoinTable(name = "CATALOGUEPRODUCTLINE",
     joinColumns = {
         @JoinColumn(name = "PRODUCTLINEID")
@@ -193,7 +198,7 @@ public class Productline implements java.io.Serializable {
     })
     public List<Catalogue> getCatalogues() {
         return catalogues;
-    }
+    } 
 
     /**
      * @param catalogues the books to set
@@ -202,7 +207,7 @@ public class Productline implements java.io.Serializable {
         this.catalogues = catalogues;
     }
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "PRODUCTLINEPRODUCT",
     joinColumns = {
         @JoinColumn(name = "PRODUCTLINEID")
@@ -210,7 +215,15 @@ public class Productline implements java.io.Serializable {
     inverseJoinColumns = {
         @JoinColumn(name = "PRODUCTID")
     })
-    public List<Product> getProducts() {
+    public List<Product> getProducts() {        
+        if (products!=null) {
+            for (int i = 0; i < products.size(); i++) {
+                Product product = products.get(i);
+                if (!product.getActive().equals(BigDecimal.ONE)){
+                    products.remove(i);
+                }            
+            }
+        }
         return products;
     }
 
@@ -223,7 +236,7 @@ public class Productline implements java.io.Serializable {
 
     
     
-    @ManyToMany(cascade = CascadeType.REFRESH)
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "COMPANYPRODUCTLINE",
     joinColumns = {
         @JoinColumn(name = "PRODUCTLINEID")

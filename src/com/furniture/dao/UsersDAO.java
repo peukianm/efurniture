@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import com.furniture.entities.*;
 import com.furniture.util.*;
+import java.sql.Timestamp;
 import java.util.logging.Level;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -315,6 +316,37 @@ public class UsersDAO {
             throw re;
         }
     }
+    
+    public List<Users> searchUser(Role role, Company company, String username, String surname){
+		try {
+			
+			String queryString = "Select u from Users u "
+                                + (role != null ? " JOIN u.userroleses userrole " : " " )
+                                + " where u.userid IS NOT NULL "
+                                + (company != null ? " and u.company=:company " : " ")
+                                + (role != null ? " and userrole.role=:role " : " ")
+                                
+                                + (username!=null ? " and (LOWER(u.username) like '" + ((String) username).toLowerCase() + "%'"
+                                + " OR UPPER(u.username)  like '" + ((String) username).toUpperCase() + "%') "     : " ")
+                                
+                                + (surname!=null ? " and (LOWER(u.surname) like '" + ((String) surname).toLowerCase() + "%'"
+                                + " OR UPPER(u.surname)  like '" + ((String) surname).toUpperCase() + "%') "     : " ")
+                                
+                                + " order by u.username DESC";
+
+			
+
+			Query query = getEntityManager().createQuery(queryString);
+			if (company != null)
+				query.setParameter("company", company);
+			if (role != null)
+				query.setParameter("role", role);
+			
+			return query.getResultList();
+		} catch (RuntimeException re) {			
+			throw re;
+		}
+	}
     
     
 }

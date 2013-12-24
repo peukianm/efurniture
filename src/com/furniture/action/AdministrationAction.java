@@ -156,6 +156,23 @@ public class AdministrationAction implements Serializable {
             return "";
         }
     }
+     
+     public String userAdmin() {
+        try {
+            UserBean userBean = (UserBean) FacesUtils.getManagedBean("userBean");
+            userBean.reset();
+            sessionBean.setPageCode(SystemParameters.getInstance().getProperty("PAGE_USER_ADMIN"));
+            sessionBean.setPageName(MessageBundleLoader.getMessage("userAdmin"));
+            return "userAdmin?faces-redirect=true ";
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+            return "";
+        }
+    }
+     
+     
     
     
     public List<Users> completeUser(String username) {
@@ -262,6 +279,33 @@ public class AdministrationAction implements Serializable {
     }
     
     
+     
+     
+      public String resetUserAdmin() {
+        try {
+           return userAdmin(); 
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+            return "";
+        }
+    }
+      
+      
+      public void searchUser() {
+        try {            
+            UserBean userBean = (UserBean) FacesUtils.getManagedBean("userBean");                       
+            UsersDAO dao = new UsersDAO();
+            List<Users> users = dao.searchUser(userBean.getSearchByRole(),userBean.getSearchByCompany(), userBean.getSearchByUsername(),userBean.getSearchBySurname());
+           userBean.setUsers(users);                     
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);            
+        }
+    }
+     
     
 
     public void goError(Exception ex) {
