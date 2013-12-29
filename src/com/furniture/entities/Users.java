@@ -10,10 +10,13 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -23,6 +26,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "USERS", schema = "FURNITURE")
+@SequenceGenerator(name = "SEQ_USERS", sequenceName = "USERS_SEQ", allocationSize = 1)
 public class Users implements java.io.Serializable {
 
     // Fields
@@ -39,7 +43,9 @@ public class Users implements java.io.Serializable {
     private Timestamp createdTimestamp;
     private Timestamp modifiedTimestamp;
     private List<Userroles> userroleses = new ArrayList<Userroles>(0);
-
+    private BigDecimal active;
+    
+    
     // Constructors
     /**
      * default constructor
@@ -77,12 +83,23 @@ public class Users implements java.io.Serializable {
     // Property accessors
     @Id
     @Column(name = "USERID", unique = true, nullable = false, precision = 22, scale = 0)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_USERS")
     public BigDecimal getUserid() {
         return this.userid;
     }
 
     public void setUserid(BigDecimal userid) {
         this.userid = userid;
+    }
+    
+    
+     @Column(name = "ACTIVE", precision = 22, scale = 0)
+    public BigDecimal getActive() {
+        return this.active;
+    }
+
+    public void setActive(BigDecimal active) {
+        this.active = active;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

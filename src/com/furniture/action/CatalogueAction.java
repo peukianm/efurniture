@@ -95,10 +95,7 @@ public class CatalogueAction {
             List<Productline> pls = dao.getCompanyProductlines(catalogueBean.getCompany());
             
             CatalogueDAO dao1 = new CatalogueDAO();
-            System.out.println(dao1.getCatalogueProductlines(catalogueBean.getCatalogue()));
-            System.out.println(catalogueBean.getCatalogue().getProductlines());
-            
-            
+                        
             pls.removeAll(catalogueBean.getCatalogue().getProductlines());
             catalogueBean.setUpdateProductLineList(new DualListModel<Productline>(pls, catalogueBean.getCatalogue().getProductlines()));
             FacesUtils.callRequestContext("updateCatalogueDialogWidget.show()");

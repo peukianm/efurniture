@@ -34,6 +34,8 @@ public class UserBean implements Serializable{
     private String searchBySurname;
     private Role searchByRole;
     private Company searchByCompany ;
+    private String repassword;
+    private List<Role> roles = new ArrayList<Role>(0);
 
     
     
@@ -51,6 +53,25 @@ public class UserBean implements Serializable{
         username = null;
         password = null;
     }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+        
+    public String getRepassword() {
+        return repassword;
+    }
+
+    public void setRepassword(String repassword) {
+        this.repassword = repassword;
+    }
+    
+    
 
     public SessionBean getSessionBean() {
         return sessionBean;

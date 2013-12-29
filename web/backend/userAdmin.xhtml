@@ -11,9 +11,12 @@
                 margin: 0 7px 7px 0;
             }
 
-
             .noBord, .noBord tbody, .noBord tbody td, .noBord tbody tr {
                 padding: 1px 5px;
+                border-style: none !important; 
+            }
+            .ui-panelgrid td, .ui-panelgrid tr
+            {
                 border-style: none !important; 
             }
 
@@ -32,11 +35,11 @@
                                 <p:inputText size="12" value="#{userBean.searchByUsername}" />
                             </td>
                             <td><h:outputLabel value="#{bundle.surname}:" style="font-weight: bold"  /></td>
-                            <td> 
+                            <td colspan="2"> 
                                 <p:inputText size="12" value="#{userBean.searchBySurname}" />
                             </td>                             
                         </tr>
-                        
+
                         <tr>
                             <td style="width: auto;white-space: nowrap;"><h:outputLabel value="#{bundle.role}:" style="font-weight: bold; float: right"/></td>
                             <td style="width: auto;white-space: nowrap;" colspan="2" >   
@@ -60,41 +63,187 @@
                     <p:commandButton value="#{bundle.search}" action="#{administrationAction.searchUser()}" update="userFormID"  />
                     <p:commandButton  value="#{bundle.reset}" action="#{administrationAction.resetUserAdmin()}" />
                 </p:panel>  
-     
-                <p:spacer height="15"/>
 
+                <p:spacer height="10" width="0"/>
+                <br/>
+                <p:commandButton value="#{bundle.newUser}" action="#{administrationAction.goInsertUser()}" update=":createUserFormID:createUserPanelID"  />
+                <br/>
+                <p:spacer height="10" width="0"/>
                 <p:panel id="user" header="#{bundle.searchResults}"  toggleable="false" style="padding:0px ! important; width:100%; margin-bottom: 10px; font-weight: 7px " > 
                     <p:dataTable id="userResultsID" var="user" value="#{userBean.users}"  widgetVar="userResultsWidget"
-                                 paginator="true" rows="10" emptyMessage="#{bundle.noRecordsFound}" rowIndexVar="tt"  style="font-size: 8px" 
-                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                                 rowsPerPageTemplate="10,20,40,100" >  
+                                 paginator="true" rows="6" emptyMessage="#{bundle.noRecordsFound}" rowIndexVar="tt"  style="font-size: 8px" paginatorPosition="bottom" >  
 
-                        <!--<p:column headerText="A/A" style="width:2%;font-weight: bold">  
-                            <h:outputText value="#{tt+1}" />  
-                        </p:column> -->
 
-                           
                         <p:column  headerText="#{bundle.username}" sortBy="#{user.username}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
                             <h:outputText value="#{user.username}" />                                                           
                         </p:column> 
-                        
+
                         <p:column  headerText="#{bundle.name}" sortBy="#{user.surname}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
                             <h:outputText value="#{user.surname} #{user.name}" />                                                           
                         </p:column>
-                        
-                        <p:column  headerText="#{bundle.role}" sortBy="#{user.userroleses.get(0).role.name}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
-                            <h:outputText value="#{user.userroleses.get(0).role.name}" />                                                           
+
+                        <p:column  headerText="#{bundle.role}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                                                        
+                            <ui:repeat var="userrole" value="#{user.userroleses}">
+                                <h:outputText value="#{userrole.role.name}" /> 
+                            </ui:repeat>
                         </p:column> 
-                         
+
                         <p:column  headerText="#{bundle.company}" sortBy="#{user.company.name}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
                             <h:outputText value="#{user.company.name}" />                                                           
                         </p:column>
-                         
-                    </p:dataTable>   
-                </p:panel>
 
+                        <p:column  headerText="#{bundle.active}" sortBy="#{user.active}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
+                            <h:graphicImage rendered="#{user.active==1}" url="../resources/images/success.jpg" width="14px" height="14px" />
+                            <h:graphicImage rendered="#{user.active!=1}" url="../resources/images/close.gif" width="14px" height="14px" />                                                          
+                        </p:column>
+
+
+                        <p:column headerText="#{bundle.actions}" style="width: 1px; white-space: nowrap;vertical-align: top;">
+                            <p:commandButton id="bt1" icon="ui-icon-search" title="#{bundle.view}"  onclick="viewUserWidget.show()"  update=":viewUserPanelID" >
+                                <f:setPropertyActionListener value="#{user}" target="#{userBean.user}" />
+                            </p:commandButton>
+                            <p:commandButton icon="ui-icon-pencil" action="#{administrationAction.goUpdateUser()}" update=""  >
+                                <f:setPropertyActionListener value="#{user}" target="#{userBean.user}" />
+                            </p:commandButton>
+                            <p:commandButton icon="ui-icon-trash" action="#{administrationAction.deleteUser}" update="@form" title="#{bundle.deactivate}">
+                                <f:setPropertyActionListener value="#{user}" target="#{userBean.user}" />
+                                <p:confirm header="#{bundle.confirmation}" message="#{bundle.confirmDeleteUser}" icon="ui-icon-alert" /> 
+                            </p:commandButton>
+                        </p:column>        
+
+
+                    </p:dataTable>   
+                </p:panel>                                                
             </h:form> 
 
+
+
+            <p:dialog header="#{bundle.viewUser}" id="viewUserID" position="center" widgetVar="viewUserWidget" modal="true" resizable="false">
+                <h:panelGroup layout="block" id="viewUserPanelID">
+                    <!--<f:facet name="header"> 
+                        <p:outputLabel value="#{bundle.userData}" style="font-weight: bold; font-size: 12px ! important"/>                 
+                    </f:facet> -->
+                    <p:panelGrid columns="6">
+                        <f:facet name="header"> 
+                            <p:outputLabel value="#{bundle.userData}" style="font-weight: bold; font-size: 12px ! important"/>                 
+                        </f:facet>
+                        <p:outputLabel value="#{bundle.username}:" style="font-weight: bold;" /><p:outputLabel value="#{userBean.user.username}"  />
+                        <p:outputLabel value="#{bundle.name}:" style="font-weight: bold;" /><p:outputLabel value="#{userBean.user.name}" />
+                        <p:outputLabel value="#{bundle.surname}:" style="font-weight: bold;" /><p:outputLabel value="#{userBean.user.surname}" />
+
+
+                        <p:outputLabel value="#{bundle.company}:" style="font-weight: bold;" /><p:outputLabel value="#{userBean.user.company.name}"  />
+                        <p:outputLabel value="email:" style="font-weight: bold;" /><p:outputLabel value="#{userBean.user.email}"  />
+                        <p:outputLabel value="#{bundle.phone}:" style="font-weight: bold;" /><p:outputLabel value="#{userBean.user.phone}"  />
+
+                        <p:outputLabel value="#{bundle.role} :" style="font-weight: bold;"   />
+                        <p:dataTable rows="10" paginator="false" value="#{userBean.user.userroleses}"  var="userrole" styleClass="hide-column-names" >
+                            <p:column>
+                                <p:outputLabel value="#{userrole.role.name}" /> 
+                            </p:column>    
+                        </p:dataTable>
+
+                        <p:outputLabel value="#{bundle.active} :" style="font-weight: bold;"   />
+                        <h:graphicImage rendered="#{userBean.user.active==1}" url="../resources/images/success.jpg" width="14px" height="14px" />
+                        <h:graphicImage rendered="#{userBean.user.active!=1}" url="../resources/images/close.gif" width="14px" height="14px" /> 
+
+                    </p:panelGrid>                                        
+                </h:panelGroup>
+            </p:dialog >
+
+
+
+            <h:form id="createUserFormID">
+                <p:dialog header="#{bundle.newUser}" id="createUserDialogID" position="center" widgetVar="createUserDialogWidget" modal="true" resizable="false" >
+                    <p:panel id="createUserPanelID" widgetVar="createUserPanelWidget">
+
+
+                        <p:panel>
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="#{bundle.username}:*" style="font-weight: bold;" />
+                                        <p:inputText value="#{userBean.user.username}" id="username" required="true" requiredMessage="#{bundle.username}:#{bundle.mandatoryField}" 
+                                                     validatorMessage="#{bundle.usernameValidation}" >
+                                            <f:validateLength minimum="4" maximum="15" />
+                                        </p:inputText>
+                                        <p:message for="username" display="icon"/>  
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="#{bundle.name}:*" style="font-weight: bold;" />
+                                        <p:inputText value="#{userBean.user.name}" id="name" required="true" requiredMessage="#{bundle.name}:#{bundle.mandatoryField}" />
+                                        <p:message for="name" display="icon"/>  
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel value="#{bundle.surname}:*" style="font-weight: bold;" />
+                                        <p:inputText value="#{userBean.user.surname}" id="surname" required="true" requiredMessage="#{bundle.surname}:#{bundle.mandatoryField}" />
+                                        <p:message for="surname" display="icon"/>  
+                                    </p:column>                                                                
+                                </p:row>
+                            </p:panelGrid>
+                        </p:panel>
+
+
+                        <p:panelGrid >      
+                            <p:row>
+                                <p:column>
+                                    <p:panel>
+                                        <table>
+                                            <tr>
+                                                <td><p:outputLabel value="#{bundle.password}:*" style="font-weight: bold;" /> </td>                                    
+                                                <td><p:password  match="repassword" id="password" value="#{userBean.password}" required="true"
+                                                                 requiredMessage="#{bundle.password}:#{bundle.mandatoryField}" validatorMessage="#{bundle.passwordValidation}" >                                                    
+                                                          <f:validateLength minimum="4" maximum="15" />
+                                                    </p:password>
+                                                    <p:message for="password" display="icon"/>  <br/></td>
+                                            </tr>
+                                            <tr>                                    
+                                                <td><p:outputLabel for="repassword" value="#{bundle.confirm}:" style="font-weight: bold;" /></td>
+                                                <td><p:password value="#{userBean.password}" id="repassword"  validatorMessage="#{bundle.passwordValidation}"
+                                                                required="true" requiredMessage="#{bundle.reEnterPassword}:#{bundle.mandatoryField}" >
+                                                          <f:validateLength minimum="4" maximum="15" />      
+                                                    </p:password>
+                                                    <p:message for="repassword" display="icon"/> </td>
+                                            </tr>
+                                        </table>
+                                    </p:panel>
+
+                                </p:column>
+
+
+
+                                <p:column >
+                                    <p:outputLabel value="#{bundle.role}:*" style="font-weight: bold;" />
+                                    <p:selectManyMenu   value="#{userBean.roles}" required="true" 
+                                                        requiredMessage="#{bundle.role}:#{bundle.mandatoryField}" converter="RoleConverter"  id="selectRoles" style="width:180px;height:80px" var="role" showCheckbox="true"> 						                                                                                                                                                                              
+                                        <f:selectItems value="#{applicationBean.roles}" var="rl" itemLabel="#{rl.name}" itemValue="#{rl}"   />						                                      
+                                        <p:column>#{role.name}</p:column>                                                                    
+                                    </p:selectManyMenu> 
+                                    <p:message for="selectRoles" display="icon"/> 
+                                </p:column>   
+                                <p:column style="vertical-align: top">
+                                    <table>
+                                        <tr>
+                                            <td><p:outputLabel value="email:*" style="font-weight: bold;"  /></td>
+                                            <td><p:inputText value="#{userBean.user.email}" id="email" required="true" requiredMessage="email:#{bundle.mandatoryField}" validatorMessage="#{bundle.noValidemail}" >
+                                                    <f:validateRegex pattern="^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$" />  
+                                                </p:inputText>
+                                                <p:message for="email" display="icon"/> </td>
+                                        </tr>
+                                        <tr>
+                                            <td><p:outputLabel value="#{bundle.phone}:" style="font-weight: bold;" /></td>
+                                            <td><p:inputText value="#{userBean.user.phone}" id="phone"/></td>
+                                        </tr>
+                                    </table>
+                                </p:column>                            
+                            </p:row>
+                        </p:panelGrid>
+                        <p:commandButton action="#{administrationAction.insertUser()}" value="#{bundle.insert}" update="createUserPanelID"/>
+                        <p:button value="#{bundle.cancel}" onclick="createUserDialogWidget.hide()" />
+                    </p:panel>
+                </p:dialog>
+            </h:form>
 
 
         </div>

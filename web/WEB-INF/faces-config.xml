@@ -206,6 +206,11 @@
             <base-name>com.furniture.bundle.MessageBundle</base-name>
             <var>bundle</var>
         </resource-bundle>
+        <message-bundle>
+	  	com.furniture.bundle.furnituremsg
+	</message-bundle>
+        
+        
     </application>
  
     <lifecycle>
