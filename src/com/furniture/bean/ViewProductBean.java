@@ -127,7 +127,10 @@ public class ViewProductBean implements Serializable {
 
             selectedNode = new DefaultTreeNode(product.getFirstCategory(),null);
              
-            productSpecifications = product.getOtherProductSpecifications();
+            //productSpecifications = product.getOtherProductSpecifications();
+            productSpecifications = product.getProductspecifications();
+            
+            
 //            for (int i = 0; i < productSpecifications.size(); i++) {
 //                Productspecification productSpecification = productSpecifications.get(i);
 //                System.out.println(productSpecification);

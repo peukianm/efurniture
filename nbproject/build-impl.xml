@@ -978,6 +978,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.EclipseLink2.5.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.Log4j.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.CommonLang.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${libs.Common Codec 1.9.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.Mojarra2.2.4.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.PromeFacesThemes.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.PrimeFaces4.0.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
@@ -989,6 +990,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.EclipseLink2.5.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.Log4j.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.CommonLang.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${libs.Common Codec 1.9.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.Mojarra2.2.4.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.PromeFacesThemes.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.PrimeFaces4.0.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>

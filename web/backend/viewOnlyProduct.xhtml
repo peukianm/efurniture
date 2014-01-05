@@ -90,8 +90,9 @@
                                                 <p:column  style="border-style:none ! important;">                                        
                                                     <ui:repeat var="prr" value="#{pss.productvalues}" > 
                                                         <h:outputText value="#{prr.svalue.name}" rendered="#{prr.svalue!=null and pss.specification.color!=1}" /> 
-                                                        <h:outputText value="#{prr.value}" rendered="#{prr.svalue==null and pss.specification.color!=1}" /> <!--<p:spacer width="4" rendered="#{prr.svalue==null}"/>-->
-
+                                                        <h:outputText value="#{prr.value} " rendered="#{prr.svalue==null and pss.specification.color!=1}" /> <!--<p:spacer width="4" rendered="#{prr.svalue==null}"/>-->
+                                                        <h:outputText value="#{prr.measurment.name}"  /> 
+                                                        
                                                         <p:outputPanel rendered="#{prr.svalue==null and pss.specification.color==1}" style=""  >
                                                             <div id="coloring" style="background-color: ##{prr.value};" title="#{prr.value}"></div>
                                                         </p:outputPanel> 
@@ -112,7 +113,7 @@
                                     </p:tab>
 
 
-                                    <p:tab title="#{bundle.dimensions}"  style="padding:0px ! important; margin-left: 0px;  "  >
+                                 <!--   <p:tab title="#{bundle.dimensions}"  style="padding:0px ! important; margin-left: 0px;  "  >
                                         <p:outputPanel>    
                                             <p:dataTable id="dimensionTable" value="#{viewProductBean.dimesionProductSpecifications}" var="dimesionProductSpecification" rows="10" styleClass="hide-column-names noCollapse" 
                                                          paginator="false" emptyMessage="#{bundle.noDimensionInserted}" style="border-collapse: separate;" widgetVar="dimensionDatatableWidget"> 
@@ -126,7 +127,7 @@
                                                 </p:column>
                                             </p:dataTable><br/>                                        
                                         </p:outputPanel>
-                                    </p:tab>
+                                    </p:tab> -->
 
 
                                     <p:tab title="#{bundle.price}" style="padding:0px ! important; margin-left: 0px;"  >
@@ -305,7 +306,8 @@
                                     <p:column headerText="#{bundle.values}" width="70%">                                         
                                         <ui:repeat var="pr" value="#{char.productvalues}" >
                                             <h:outputText value="#{pr.svalue.name} " rendered="#{pr.svalue!=null and char.specification.color!=1}" /> 
-                                            <h:outputText value="#{pr.value} " rendered="#{pr.svalue==null  and char.specification.color!=1}" /> 
+                                            <h:outputText value="#{pr.value} " rendered="#{pr.svalue==null  and char.specification.color!=1}" />
+                                            <h:outputText value="#{prr.measurment.name}"  /> 
 
                                             <p:outputPanel rendered="#{pr.svalue==null and char.specification.color==1}" style=""  >
                                                 <div id="coloring" style="background-color: ##{pr.value};" title="#{pr.value}" ></div>

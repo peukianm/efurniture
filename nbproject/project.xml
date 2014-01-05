@@ -24,6 +24,10 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
+                    <file>${libs.Common Codec 1.9.classpath}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
+                </library>
+                <library dirs="200">
                     <file>${libs.Mojarra2.2.4.classpath}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>

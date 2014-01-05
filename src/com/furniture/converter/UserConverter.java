@@ -18,7 +18,7 @@ public class UserConverter implements Converter {
     private PersistenceHelper persistenceHelper = EJBUtil.lookupPersistenceHelperBean();
     
     public Object getAsObject(FacesContext facesContext, UIComponent component, String submittedValue) {
-        if (submittedValue.trim().isEmpty()) {
+        if (submittedValue==null || submittedValue.trim().isEmpty()  ) {
             return null;
         } else {
             try {
@@ -28,7 +28,7 @@ public class UserConverter implements Converter {
 
             } catch (Exception exception) {
                 exception.printStackTrace();
-                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid product"));
+                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid product"));                
             }
         }
     }

@@ -61,7 +61,7 @@
                             <p:commandButton id="btn" value="#{bundle.entrance}" update="panel, :selectRolePanel"  action="#{administrationAction.loginAction}" 
                                              style="" /> <br/>
                             <p:spacer height="15" width="0" />
-                            <h:commandLink immediate="true"  value="#{bundle.forgetPassword}" style="color: #069;text-decoration: underline;font-size: 10px"   />
+                            <h:commandLink immediate="true" action="#{administrationAction.goResetPasswordEmail()}"  value="#{bundle.forgetPassword}" style="color: #069;text-decoration: underline;font-size: 10px"   />
                         </p:panel>					
                     </div>
                 </h:form>

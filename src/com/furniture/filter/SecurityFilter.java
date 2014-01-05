@@ -72,6 +72,7 @@ public class SecurityFilter implements Filter {
         if ((request.getAttribute(FILTER_APPLIED) == null)
                 && (!checkforloginpage.endsWith("index.jsp"))                
                 && (!checkforloginpage.endsWith("loginPage.jsf"))
+                && (!checkforloginpage.endsWith("resetPassword.jsf"))
                 && (!checkforloginpage.endsWith("error.jsf"))
                 && (checkforloginpage.contains("backend") || checkforloginpage.contains("common") || checkforloginpage.contains("templates"))) {
 

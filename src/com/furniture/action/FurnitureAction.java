@@ -356,7 +356,7 @@ public class FurnitureAction {
 
             if (newProductBean.getNewProduct().getItem() != null) {
                 ItemspecificationDAO d = new ItemspecificationDAO();
-                specifications.addAll(d.fetchItemSpecifications(newProductBean.getNewProduct().getItem(), true, false));
+                specifications.addAll(d.fetchItemSpecifications(newProductBean.getNewProduct().getItem(), true, true));
             }
 
             for (int i = 0; i < specs.size(); i++) {
@@ -536,6 +536,10 @@ public class FurnitureAction {
                 Productvalue productvalue = new Productvalue();
                 productvalue.setProductspecification(productSpecification);
                 productvalue.setValue(svalue);
+                
+                if (spec.getDimension().equals(BigDecimal.ONE))
+                   productvalue.setMeasurment(newProductBean.getSelectedMeasurment());
+                
                 productValues.add(productvalue);
                 productvalue.setActive(BigDecimal.ONE);
                 productSpecification.getProductvalues().add(productvalue);
@@ -628,6 +632,10 @@ public class FurnitureAction {
                 Productvalue productvalue = new Productvalue();
                 productvalue.setProductspecification(productSpecification);
                 productvalue.setValue(svalue);
+                
+                if (spec.getDimension().equals(BigDecimal.ONE))
+                    productvalue.setMeasurment(newProductBean.getSelectedMeasurment());
+                
                 productValues.add(productvalue);
                 productvalue.setActive(BigDecimal.ONE);
                 productSpecification.getProductvalues().add(productvalue);
@@ -1592,7 +1600,7 @@ public class FurnitureAction {
             Set<Specification> specifications = new HashSet<Specification>(0);
 
             ItemspecificationDAO d = new ItemspecificationDAO();
-            specifications.addAll(d.fetchItemSpecifications(viewProductBean.getProduct().getItem(), true, false));
+            specifications.addAll(d.fetchItemSpecifications(viewProductBean.getProduct().getItem(), true, true));
 
             for (int i = 0; i < specs.size(); i++) {
                 Specificationcategory specificationcategory = (Specificationcategory) specs.get(i);
@@ -1735,6 +1743,10 @@ public class FurnitureAction {
                 Productvalue productvalue = new Productvalue();
                 productvalue.setProductspecification(productSpecification);
                 productvalue.setValue(svalue);
+                
+                if (spec.getDimension().equals(BigDecimal.ONE))
+                   productvalue.setMeasurment(viewProductBean.getSelectedMeasurment());
+                
                 productValues.add(productvalue);
                 productvalue.setActive(BigDecimal.ONE);
                 productSpecification.getProductvalues().add(productvalue);
@@ -1771,7 +1783,7 @@ public class FurnitureAction {
             });
             //productSpecification = persistenceHelper.editPersist(productSpecification);
 
-            newProduct.getProductspecifications().add(productSpecification);
+            //newProduct.getProductspecifications().add(productSpecification);
             userTransaction.begin();
             persistenceHelper.create(productSpecification);
             //newProduct = persistenceHelper.editPersist(newProduct);
@@ -1779,6 +1791,7 @@ public class FurnitureAction {
             userTransaction.commit();
 
             viewProductBean.setProductSpecifications(productSpecifications);
+            System.out.println(productSpecifications.size());
             viewProductBean.setProductValues(productValues);
 
             viewProductBean.setProduct(newProduct);
@@ -1852,6 +1865,10 @@ public class FurnitureAction {
                 Productvalue productvalue = new Productvalue();
                 productvalue.setProductspecification(productSpecification);
                 productvalue.setValue(svalue);
+                
+                 if (spec.getDimension().equals(BigDecimal.ONE))
+                   productvalue.setMeasurment(viewProductBean.getSelectedMeasurment());
+                 
                 productValues.add(productvalue);
                 productvalue.setActive(BigDecimal.ONE);
                 productSpecification.getProductvalues().add(productvalue);

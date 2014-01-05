@@ -94,6 +94,7 @@
                                                 <ui:repeat var="prr" value="#{pss.productvalues}" > 
                                                     <h:outputText value="#{prr.svalue.name}" rendered="#{prr.svalue!=null and pss.specification.color!=1}" /> 
                                                     <h:outputText value="#{prr.value}" rendered="#{prr.svalue==null and pss.specification.color!=1}" /> <!--<p:spacer width="4" rendered="#{prr.svalue==null}"/>-->
+                                                    <h:outputText value="#{prr.measurment.name}"  /> 
                                                     
                                                     <p:outputPanel rendered="#{prr.svalue==null and pss.specification.color==1}" style=""  >
                                                             <div id="coloring" style="background-color: ##{prr.value};" title="#{prr.value}"></div>
@@ -116,7 +117,7 @@
                                 </p:tab>
 
 
-                                <p:tab title="#{bundle.dimensions}"  style="padding:0px ! important; margin-left: 0px;  "  >
+                               <!-- <p:tab title="#{bundle.dimensions}"  style="padding:0px ! important; margin-left: 0px;  "  >
                                     <p:outputPanel>    
                                         <p:dataTable id="dimensionTable" value="#{viewProductBean.dimesionProductSpecifications}" var="dimesionProductSpecification" rows="10" styleClass="hide-column-names noCollapse" 
                                                      paginator="false" emptyMessage="#{bundle.noDimensionInserted}" style="border-collapse: separate;" widgetVar="dimensionDatatableWidget"> 
@@ -132,7 +133,7 @@
                                         <p:commandButton icon="ui-icon-pencil"  title="Αλλαγή" style=" margin-left:95%" onclick="selectDimensionValueDialog.show();"
                                                          update=":selectDimensionValueForm:selectDimensionValuePanel" action="#{furnitureAction.showDimensionSpecificationsView()}"  rendered="#{viewProductBean.showButton}" />
                                     </p:outputPanel>
-                                </p:tab>
+                                </p:tab> -->
 
 
                                 <p:tab title="#{bundle.price}" style="padding:0px ! important; margin-left: 0px;"  >
@@ -327,6 +328,7 @@
                                     <ui:repeat var="pr" value="#{char.productvalues}" >
                                         <h:outputText value="#{pr.svalue.name} " rendered="#{pr.svalue!=null and char.specification.color!=1}" /> 
                                         <h:outputText value="#{pr.value} " rendered="#{pr.svalue==null  and char.specification.color!=1}" /> 
+                                        <h:outputText value="#{pr.measurment.name}"  /> 
                                         
                                          <p:outputPanel rendered="#{pr.svalue==null and char.specification.color==1}" style=""  >
                                                 <div id="coloring" style="background-color: ##{pr.value};" title="#{pr.value}" ></div>
@@ -408,8 +410,8 @@
                     </p:selectOneRadio>
 
 
-                    <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor}  #{viewProductBean.specification.name} :* " rendered="#{viewProductBean.specification.freetext==1  and viewProductBean.specification.color!=1}"  />  
-                    <p:inputTextarea rows="5" cols="40" value="#{viewProductBean.svalue}" rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.color!=1}" required="true" requiredMessage="#{bundle.value}: #{bundle.mandatoryField}"/>
+                    <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor}  #{viewProductBean.specification.name} :* " rendered="#{viewProductBean.specification.freetext==1  and viewProductBean.specification.color!=1 and viewProductBean.specification.dimension!=1}"  />  
+                    <p:inputTextarea rows="5" cols="40" value="#{viewProductBean.svalue}" rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.color!=1 and viewProductBean.specification.dimension!=1}" required="true" requiredMessage="#{bundle.value}: #{bundle.mandatoryField}"/>
 
                     
                     <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor}  #{viewProductBean.specification.name} :* " rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.color==1}"  />  
@@ -418,6 +420,37 @@
                     <h:outputLink value="http://www.ralcolor.com/" target="new" rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.color==1}" style="color: blue;text-decoration: underline">
                                   RAL Colors
                     </h:outputLink>
+                    
+                    
+                    <p:panel id="selectDimensionValuePanel" rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.dimension==1 and viewProductBean.specification.color!=1}">
+                        <table>
+                            <tr>
+                                <td colspan="2">
+                                    <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor}  #{viewProductBean.specification.name} " rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.color!=1  and viewProductBean.specification.dimension==1}"  /> 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.dimensionValue} :*"   />  </td>
+                                <td><p:inputText size="5" value="#{viewProductBean.svalue}"  converter="DoubleConverter" converterMessage="#{bundle.notValidNumber}"
+                                                 required="true" requiredMessage="#{bundle.value}: #{bundle.mandatoryField}" id="dimensionField" >
+                                        <f:validateDoubleRange minimum="0.00" maximum="1000000.00" /> 
+                                    </p:inputText>
+                                    <p:message for="dimensionField" display="icon" /> 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.measurment} :*"   /></td>
+                                <td><p:selectOneMenu id="measurmentField" value="#{viewProductBean.selectedMeasurment}" converter="MeasurmentConverter" required="true" requiredMessage="#{bundle.mesurment}: #{bundle.mandatoryField}">						                    
+                                        <f:selectItems value="#{applicationBean.measurments}" var="measurment" itemLabel="#{measurment.name}" itemValue="#{measurment}"   />                    
+                                    </p:selectOneMenu>
+                                    <p:message for="measurmentField" display="icon" /> 
+                                </td>                            
+                            </tr>
+                        </table>
+                    </p:panel>   
+                    
+                    
+                    
                     
                     
                     
@@ -450,8 +483,8 @@
                     </p:selectOneRadio>
 
 
-                    <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor}  #{viewProductBean.specification.name} :* " rendered="#{viewProductBean.specification.freetext==1  and viewProductBean.specification.color!=1}"  />  
-                    <p:inputTextarea rows="5" cols="40" value="#{viewProductBean.svalue}" rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.color!=1}" required="true" requiredMessage="#{bundle.value}: #{bundle.mandatoryField}"/>
+                    <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor}  #{viewProductBean.specification.name} :* " rendered="#{viewProductBean.specification.freetext==1  and viewProductBean.specification.color!=1 and viewProductBean.specification.dimension!=1}"  />  
+                    <p:inputTextarea rows="5" cols="40" value="#{viewProductBean.svalue}" rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.color!=1 and viewProductBean.specification.dimension!=1}" required="true" requiredMessage="#{bundle.value}: #{bundle.mandatoryField}"/>
 
                     
                     <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor}  #{viewProductBean.specification.name} :* " rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.color==1}"  />  
@@ -460,6 +493,35 @@
                     <h:outputLink value="http://www.ralcolor.com/" target="new" rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.color==1}" style="color: blue;text-decoration: underline">
                                   RAL Colors
                     </h:outputLink>
+                    
+                    
+                    <p:panel id="uselectDimensionValuePanel" rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.dimension==1 and viewProductBean.specification.color!=1}">
+                        <table>
+                            <tr>
+                                <td colspan="2">
+                                    <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor}  #{viewProductBean.specification.name} " rendered="#{viewProductBean.specification.freetext==1 and viewProductBean.specification.color!=1  and viewProductBean.specification.dimension==1}"  /> 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.dimensionValue} :*"   />  </td>
+                                <td><p:inputText size="5" value="#{viewProductBean.svalue}"  converter="DoubleConverter" converterMessage="#{bundle.notValidNumber}"
+                                                 required="true" requiredMessage="#{bundle.value}: #{bundle.mandatoryField}" id="udimensionField" >
+                                        <f:validateDoubleRange minimum="0.00" maximum="1000000.00" /> 
+                                    </p:inputText>
+                                    <p:message for="udimensionField" display="icon" /> 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.measurment} :*"   /></td>
+                                <td><p:selectOneMenu id="umeasurmentField" value="#{viewProductBean.selectedMeasurment}" converter="MeasurmentConverter" required="true" requiredMessage="#{bundle.mesurment}: #{bundle.mandatoryField}">						                    
+                                        <f:selectItems value="#{applicationBean.measurments}" var="measurment" itemLabel="#{measurment.name}" itemValue="#{measurment}"   />                    
+                                    </p:selectOneMenu>
+                                    <p:message for="umeasurmentField" display="icon" /> 
+                                </td>                            
+                            </tr>
+                        </table>
+                    </p:panel>   
+                    
                     
                     
                     

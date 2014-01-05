@@ -108,6 +108,7 @@
                                     <ui:repeat var="prr" value="#{pss.productvalues}" >
                                         <h:outputText value="#{prr.svalue.name} " rendered="#{prr.svalue!=null and pss.specification.color!=1}" /> 
                                         <h:outputText value="#{prr.value} " rendered="#{prr.svalue==null  and pss.specification.color!=1}" />
+                                        <h:outputText value="#{prr.measurment.name}"  /> 
                                         
                                          <p:outputPanel rendered="#{prr.svalue==null and pss.specification.color==1}" style=""  >
                                              <div id="coloring" style="background-color: ##{prr.value};" title="#{prr.value}"></div>
@@ -272,7 +273,8 @@
                                     <p:column width="80%">                                         
                                         <ui:repeat var="prr" value="#{pss.productvalues}" >
                                             <h:outputText value="#{prr.svalue.name}" rendered="#{prr.svalue!=null}" /> 
-                                            <h:outputText value="#{prr.value}" rendered="#{prr.svalue==null  and pss.specification.color!=1}" /> 
+                                            <h:outputText value="#{prr.value}" rendered="#{prr.svalue==null  and pss.specification.color!=1}" />
+                                            <h:outputText value="#{prr.measurment.name}"  /> 
                                             
                                             <p:outputPanel rendered="#{prr.svalue==null and pss.specification.color==1}" style="display: block"  >
                                                 <div id="coloring" style="border-top:20px solid ##{prr.value};"></div>

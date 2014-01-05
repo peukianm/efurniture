@@ -4,19 +4,20 @@
  */
 package com.furniture.util;
 
-import com.furniture.entities.Catalogue;
-import com.furniture.entities.Catalogueproductline;
 import com.furniture.entities.Category;
-import com.furniture.entities.Company;
-import com.furniture.entities.Companycatalogue;
-import com.furniture.entities.Productline;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import java.security.SecureRandom;
+import org.apache.commons.codec.binary.Base64;
+
+import java.util.*;
+import javax.mail.*;
+import javax.mail.internet.*;
 
 /**
  *
@@ -52,25 +53,100 @@ public class FurnitureUtil {
 //        });
 //        return retValue;
 //    }
-    
-    public static TreeNode getCategoriesTree(List<Category> categories){
-        TreeNode  root = new DefaultTreeNode("Root", null); 
+    public static TreeNode getCategoriesTree(List<Category> categories) {
+        TreeNode root = new DefaultTreeNode("Root", null);
         for (int i = 0; i < categories.size(); i++) {
             Category category = categories.get(i);
-            TreeNode node = getCategoryTree(root, category);                        
+            TreeNode node = getCategoryTree(root, category);
         }
         return root;
     }
-    
-    
+
     private static TreeNode getCategoryTree(TreeNode root, Category category) {
-        TreeNode node = new DefaultTreeNode(category, root); 
+        TreeNode node = new DefaultTreeNode(category, root);
         List<Category> childCategories = category.getCategories();
         for (int i = 0; i < childCategories.size(); i++) {
             Category childCategory = childCategories.get(i);
-            getCategoryTree(node,childCategory);            
+            getCategoryTree(node, childCategory);
         }
         return node;
+    }
+    private static final int iterations = 10 * 1024;
+    private static final int saltLen = 32;
+    private static final int desiredKeyLen = 256;
+
+    /**
+     * Computes a salted PBKDF2 hash of given plaintext password suitable for storing in a database. Empty passwords are not supported.
+     */
+    public static String getSaltedHash(String password) throws Exception {
+        byte[] salt = SecureRandom.getInstance("SHA1PRNG").generateSeed(saltLen);
+        // store the salt with the password
+        return Base64.encodeBase64String(salt) + "$" + hash(password, salt);
+    }
+
+    /**
+     * Checks whether given plaintext password corresponds to a stored salted hash of the password.
+     */
+    public static boolean check(String password, String stored) throws Exception {
+        String[] saltAndPass = stored.split("\\$");
+        if (saltAndPass.length != 2) {
+            return false;
+        }
+        String hashOfInput = hash(password, Base64.decodeBase64(saltAndPass[0]));
+        return hashOfInput.equals(saltAndPass[1]);
+    }
+
+    private static String hash(String password, byte[] salt) throws Exception {
+        if (password == null || password.length() == 0) {
+            throw new IllegalArgumentException("Empty passwords are not supported.");
+        }
+        SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        SecretKey key = f.generateSecret(new PBEKeySpec(
+                password.toCharArray(), salt, iterations, desiredKeyLen));
+        return Base64.encodeBase64String(key.getEncoded());
+    }
+    
+    
+    
+    public static void sendFromGMail(String ghost, String gport, String from, String pass, String[] to, String subject, String body) {
+        Properties props = System.getProperties();
+        String host = ghost;
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", host);
+        props.put("mail.smtp.user", from);
+        props.put("mail.smtp.password", pass);
+        props.put("mail.smtp.port", gport);
+        props.put("mail.smtp.auth", "true");
+
+        Session session = Session.getDefaultInstance(props);
+        MimeMessage message = new MimeMessage(session);
+
+        try {
+            message.setFrom(new InternetAddress(from));
+            InternetAddress[] toAddress = new InternetAddress[to.length];
+
+            // To get the array of addresses
+            for( int i = 0; i < to.length; i++ ) {
+                toAddress[i] = new InternetAddress(to[i]);
+            }
+
+            for( int i = 0; i < toAddress.length; i++) {
+                message.addRecipient(Message.RecipientType.TO, toAddress[i]);
+            }
+
+            message.setSubject(subject);
+            message.setText(body);
+            Transport transport = session.getTransport("smtp");
+            transport.connect(host, from, pass);
+            transport.sendMessage(message, message.getAllRecipients());
+            transport.close();
+        }
+        catch (AddressException ae) {
+            ae.printStackTrace();
+        }
+        catch (MessagingException me) {
+            me.printStackTrace();
+        }
     }
     
 }

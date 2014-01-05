@@ -79,12 +79,12 @@
                         </p:column> 
 
                         <p:column  headerText="#{bundle.name}" sortBy="#{user.surname}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
-                            <h:outputText value="#{user.surname} #{user.name}" />                                                           
+                            <h:outputText value="#{user.name} #{user.surname}" />                                                           
                         </p:column>
 
                         <p:column  headerText="#{bundle.role}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                                                        
                             <ui:repeat var="userrole" value="#{user.userroleses}">
-                                <h:outputText value="#{userrole.role.name}" /> 
+                                <h:outputText value="#{userrole.role.name}" /> <br/>
                             </ui:repeat>
                         </p:column> 
 
@@ -102,12 +102,11 @@
                             <p:commandButton id="bt1" icon="ui-icon-search" title="#{bundle.view}"  onclick="viewUserWidget.show()"  update=":viewUserPanelID" >
                                 <f:setPropertyActionListener value="#{user}" target="#{userBean.user}" />
                             </p:commandButton>
-                            <p:commandButton icon="ui-icon-pencil" action="#{administrationAction.goUpdateUser()}" update=""  >
+                            <p:commandButton icon="ui-icon-pencil" action="#{administrationAction.goUpdateUser()}" update=":updateUserFormID:updateUserPanelID"  >
                                 <f:setPropertyActionListener value="#{user}" target="#{userBean.user}" />
                             </p:commandButton>
-                            <p:commandButton icon="ui-icon-trash" action="#{administrationAction.deleteUser}" update="@form" title="#{bundle.deactivate}">
-                                <f:setPropertyActionListener value="#{user}" target="#{userBean.user}" />
-                                <p:confirm header="#{bundle.confirmation}" message="#{bundle.confirmDeleteUser}" icon="ui-icon-alert" /> 
+                            <p:commandButton icon="ui-icon-trash" action="#{administrationAction.goResetPasword()}" update=":resetPasswordFormID:resetPasswordPanelID" title="#{bundle.resetPassword}">
+                                <f:setPropertyActionListener value="#{user}" target="#{userBean.user}" />                                
                             </p:commandButton>
                         </p:column>        
 
@@ -133,7 +132,7 @@
 
 
                         <p:outputLabel value="#{bundle.company}:" style="font-weight: bold;" /><p:outputLabel value="#{userBean.user.company.name}"  />
-                        <p:outputLabel value="email:" style="font-weight: bold;" /><p:outputLabel value="#{userBean.user.email}"  />
+                        <p:outputLabel value="#{bundle.email}:" style="font-weight: bold;" /><p:outputLabel value="#{userBean.user.email}"  />
                         <p:outputLabel value="#{bundle.phone}:" style="font-weight: bold;" /><p:outputLabel value="#{userBean.user.phone}"  />
 
                         <p:outputLabel value="#{bundle.role} :" style="font-weight: bold;"   />
@@ -157,29 +156,43 @@
                 <p:dialog header="#{bundle.newUser}" id="createUserDialogID" position="center" widgetVar="createUserDialogWidget" modal="true" resizable="false" >
                     <p:panel id="createUserPanelID" widgetVar="createUserPanelWidget">
 
-
                         <p:panel>
                             <p:panelGrid>
                                 <p:row>
                                     <p:column>
-                                        <p:outputLabel value="#{bundle.username}:*" style="font-weight: bold;" />
+                                        <p:outputLabel value="#{bundle.username}:* " style="font-weight: bold;" />
                                         <p:inputText value="#{userBean.user.username}" id="username" required="true" requiredMessage="#{bundle.username}:#{bundle.mandatoryField}" 
-                                                     validatorMessage="#{bundle.usernameValidation}" >
+                                                     validatorMessage="#{bundle.usernameValidation}" size="25" >
                                             <f:validateLength minimum="4" maximum="15" />
                                         </p:inputText>
                                         <p:message for="username" display="icon"/>  
                                     </p:column>
                                     <p:column>
-                                        <p:outputLabel value="#{bundle.name}:*" style="font-weight: bold;" />
-                                        <p:inputText value="#{userBean.user.name}" id="name" required="true" requiredMessage="#{bundle.name}:#{bundle.mandatoryField}" />
+                                        <p:outputLabel value="#{bundle.name}:* " style="font-weight: bold;" />
+                                        <p:inputText size="25" value="#{userBean.user.name}" id="name" required="true" requiredMessage="#{bundle.name}:#{bundle.mandatoryField}" />
                                         <p:message for="name" display="icon"/>  
                                     </p:column>
 
-                                    <p:column>
-                                        <p:outputLabel value="#{bundle.surname}:*" style="font-weight: bold;" />
-                                        <p:inputText value="#{userBean.user.surname}" id="surname" required="true" requiredMessage="#{bundle.surname}:#{bundle.mandatoryField}" />
-                                        <p:message for="surname" display="icon"/>  
+                                    <p:column rowspan="2" style="vertical-align: top">
+                                        <p:outputLabel value="#{bundle.company}:* " style="font-weight: bold;" />
+                                        <p:selectOneMenu id="selectCompany" value="#{userBean.user.company}" converter="CompanyConverter" required="true" 
+                                                          requiredMessage="#{bundle.company}: #{bundle.mandatoryField}" > 
+                                            <f:selectItem itemLabel="" itemValue=""  />
+                                            <f:selectItems value="#{applicationBean.companies}" var="comp" itemLabel="#{comp.name}" itemValue="#{comp}"   />                                             
+                                        </p:selectOneMenu>
+                                        <p:message for="selectCompany" display="icon"/>
                                     </p:column>                                                                
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        
+                                    </p:column>
+                                     <p:column>
+                                        <p:outputLabel value="#{bundle.surname}:* " style="font-weight: bold;" />
+                                        <p:inputText size="25" value="#{userBean.user.surname}" id="surname" required="true" requiredMessage="#{bundle.surname}:#{bundle.mandatoryField}" />
+                                        <p:message for="surname" display="icon"/>  
+                                    </p:column>
+ 
                                 </p:row>
                             </p:panelGrid>
                         </p:panel>
@@ -191,16 +204,16 @@
                                     <p:panel>
                                         <table>
                                             <tr>
-                                                <td><p:outputLabel value="#{bundle.password}:*" style="font-weight: bold;" /> </td>                                    
+                                                <td><p:outputLabel value="#{bundle.password}:* " style="font-weight: bold;" /> </td>                                    
                                                 <td><p:password  match="repassword" id="password" value="#{userBean.password}" required="true"
-                                                                 requiredMessage="#{bundle.password}:#{bundle.mandatoryField}" validatorMessage="#{bundle.passwordValidation}" >                                                    
+                                                                 requiredMessage="#{bundle.password}:#{bundle.mandatoryField}" >                                                    
                                                           <f:validateLength minimum="4" maximum="15" />
                                                     </p:password>
                                                     <p:message for="password" display="icon"/>  <br/></td>
                                             </tr>
                                             <tr>                                    
-                                                <td><p:outputLabel for="repassword" value="#{bundle.confirm}:" style="font-weight: bold;" /></td>
-                                                <td><p:password value="#{userBean.password}" id="repassword"  validatorMessage="#{bundle.passwordValidation}"
+                                                <td><p:outputLabel for="repassword" value="#{bundle.confirm}: " style="font-weight: bold;" /></td>
+                                                <td><p:password value="#{userBean.password}" id="repassword"  
                                                                 required="true" requiredMessage="#{bundle.reEnterPassword}:#{bundle.mandatoryField}" >
                                                           <f:validateLength minimum="4" maximum="15" />      
                                                     </p:password>
@@ -208,13 +221,10 @@
                                             </tr>
                                         </table>
                                     </p:panel>
-
                                 </p:column>
 
-
-
                                 <p:column >
-                                    <p:outputLabel value="#{bundle.role}:*" style="font-weight: bold;" />
+                                    <p:outputLabel value="#{bundle.role}:* " style="font-weight: bold;" />
                                     <p:selectManyMenu   value="#{userBean.roles}" required="true" 
                                                         requiredMessage="#{bundle.role}:#{bundle.mandatoryField}" converter="RoleConverter"  id="selectRoles" style="width:180px;height:80px" var="role" showCheckbox="true"> 						                                                                                                                                                                              
                                         <f:selectItems value="#{applicationBean.roles}" var="rl" itemLabel="#{rl.name}" itemValue="#{rl}"   />						                                      
@@ -225,14 +235,15 @@
                                 <p:column style="vertical-align: top">
                                     <table>
                                         <tr>
-                                            <td><p:outputLabel value="email:*" style="font-weight: bold;"  /></td>
-                                            <td><p:inputText value="#{userBean.user.email}" id="email" required="true" requiredMessage="email:#{bundle.mandatoryField}" validatorMessage="#{bundle.noValidemail}" >
-                                                    <f:validateRegex pattern="^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$" />  
+                                            <td><p:outputLabel value="#{bundle.email}:* " style="font-weight: bold;"  /></td>
+                                            <td><p:inputText value="#{userBean.user.email}" id="email" required="true" requiredMessage="#{bundle.email}:#{bundle.mandatoryField}"  >
+                                                   <!-- <f:validateRegex pattern="^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$" /> -->
+                                                   <f:validator validatorId="emailValidator" /> 
                                                 </p:inputText>
                                                 <p:message for="email" display="icon"/> </td>
                                         </tr>
                                         <tr>
-                                            <td><p:outputLabel value="#{bundle.phone}:" style="font-weight: bold;" /></td>
+                                            <td><p:outputLabel value="#{bundle.phone}: " style="font-weight: bold;" /></td>
                                             <td><p:inputText value="#{userBean.user.phone}" id="phone"/></td>
                                         </tr>
                                     </table>
@@ -240,12 +251,127 @@
                             </p:row>
                         </p:panelGrid>
                         <p:commandButton action="#{administrationAction.insertUser()}" value="#{bundle.insert}" update="createUserPanelID"/>
-                        <p:button value="#{bundle.cancel}" onclick="createUserDialogWidget.hide()" />
+                        <p:commandButton immediate="true" value="#{bundle.cancel}" onclick="createUserDialogWidget.hide()" />
                     </p:panel>
                 </p:dialog>
             </h:form>
 
 
+            
+            <h:form id="updateUserFormID">
+                <p:dialog header="#{bundle.updateUser}" id="updateUserDialogID" position="center" widgetVar="updateUserDialogWidget" modal="true" resizable="false" >
+                    <p:panel id="updateUserPanelID" widgetVar="updateUserPanelWidget">
+
+                        <p:panel>
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="#{bundle.username}:* " style="font-weight: bold;" />
+                                        <p:inputText value="#{userBean.user.username}" id="uusername" required="true" requiredMessage="#{bundle.username}:#{bundle.mandatoryField}" 
+                                                     validatorMessage="#{bundle.usernameValidation}" size="25" >
+                                            <f:validateLength minimum="4" maximum="15" />
+                                        </p:inputText>
+                                        <p:message for="uusername" display="icon"/>  
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="#{bundle.name}:* " style="font-weight: bold;" />
+                                        <p:inputText size="25" value="#{userBean.user.name}" id="uname" required="true" requiredMessage="#{bundle.name}:#{bundle.mandatoryField}" />
+                                        <p:message for="uname" display="icon"/>  
+                                    </p:column>
+
+                                    <p:column rowspan="2" style="vertical-align: top">
+                                        <p:outputLabel value="#{bundle.active}:* " style="font-weight: bold;" />
+                                        <p:selectBooleanButton value="#{userBean.active}" onLabel="#{bundle.yes}" offLabel="#{bundle.no}" onIcon="ui-icon-check" offIcon="ui-icon-close" />                                              
+                                        
+                                       <!-- <p:selectOneMenu id="uselectCompany" value="#{userBean.user.company}" converter="CompanyConverter" required="true" 
+                                                          requiredMessage="#{bundle.company}: #{bundle.mandatoryField}" > 
+                                            <f:selectItem itemLabel="" itemValue=""  />
+                                            <f:selectItems value="#{applicationBean.companies}" var="comp" itemLabel="#{comp.name}" itemValue="#{comp}"   />                                             
+                                        </p:selectOneMenu>
+                                        <p:message for="uselectCompany" display="icon"/> -->
+                                    </p:column>                                                                
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        
+                                    </p:column>
+                                     <p:column>
+                                        <p:outputLabel value="#{bundle.surname}:* " style="font-weight: bold;" />
+                                        <p:inputText size="25" value="#{userBean.user.surname}" id="usurname" required="true" requiredMessage="#{bundle.surname}:#{bundle.mandatoryField}" />
+                                        <p:message for="usurname" display="icon"/>  
+                                    </p:column>
+ 
+                                </p:row>
+                            </p:panelGrid>
+                        </p:panel>
+
+
+                        <p:panelGrid >      
+                            <p:row>
+                                
+
+                                <p:column >
+                                    <p:outputLabel value="#{bundle.role}:* " style="font-weight: bold;" />
+                                    <p:selectManyMenu   value="#{userBean.roles}" required="true" 
+                                                        requiredMessage="#{bundle.role}:#{bundle.mandatoryField}" converter="RoleConverter"  id="uselectRoles" style="width:180px;height:80px" var="role" showCheckbox="true"> 						                                                                                                                                                                              
+                                        <f:selectItems value="#{applicationBean.roles}" var="rl" itemLabel="#{rl.name}" itemValue="#{rl}"   />						                                      
+                                        <p:column>#{role.name}</p:column>                                                                    
+                                    </p:selectManyMenu> 
+                                    <p:message for="uselectRoles" display="icon"/> 
+                                </p:column>   
+                                <p:column style="vertical-align: top">
+                                    <table>
+                                        <tr>
+                                            <td><p:outputLabel value="#{bundle.email}:* " style="font-weight: bold;"  /></td>
+                                            <td><p:inputText value="#{userBean.user.email}" id="uemail" required="true" requiredMessage="#{bundle.email}:#{bundle.mandatoryField}"  >
+                                                   
+                                                   <f:validator validatorId="emailValidator" /> 
+                                                </p:inputText>
+                                                <p:message for="uemail" display="icon"/> </td>
+                                        </tr>
+                                        <tr>
+                                            <td><p:outputLabel value="#{bundle.phone}: " style="font-weight: bold;" /></td>
+                                            <td><p:inputText value="#{userBean.user.phone}" id="uphone"/></td>
+                                        </tr>
+                                    </table>
+                                </p:column>                            
+                            </p:row>
+                        </p:panelGrid>
+                        <p:commandButton action="#{administrationAction.updateUser()}" value="#{bundle.update}" update="updateUserPanelID"/>
+                        <p:commandButton type="button" immediate="true" value="#{bundle.cancel}" onclick="updateUserDialogWidget.hide()" />
+                    </p:panel>
+                </p:dialog>
+            </h:form>
+            
+            <h:form id="resetPasswordFormID">
+                <p:dialog header="#{bundle.resetPassword}" id="resetPasswordDialogID" position="center" widgetVar="resetPasswordDialogWidget" modal="true" resizable="false" >
+                    <p:panel id="resetPasswordPanelID" widgetVar="resetPassowrdPanelWidget">
+                        <table>
+                            <tr>
+                                <td><p:outputLabel value="#{bundle.password}:* " style="font-weight: bold;" /> </td>                                    
+                                <td><p:password  match="urepassword" id="upassword" value="#{userBean.password}" required="true"
+                                                 requiredMessage="#{bundle.password}:#{bundle.mandatoryField}" >                                                    
+                                          <f:validateLength minimum="4" maximum="15" />
+                                    </p:password>
+                                    <p:message for="upassword" display="icon"/>  <br/></td>
+                            </tr>
+                            <tr>                                    
+                                <td><p:outputLabel for="urepassword" value="#{bundle.confirm}:* " style="font-weight: bold;" /></td>
+                                <td><p:password value="#{userBean.password}" id="urepassword"  
+                                                required="true" requiredMessage="#{bundle.reEnterPassword}:#{bundle.mandatoryField}" >
+                                          <f:validateLength minimum="4" maximum="15" />      
+                                    </p:password>
+                                    <p:message for="urepassword" display="icon"/> </td>
+                            </tr>
+                        </table>
+                    </p:panel>
+                    <p:commandButton action="#{administrationAction.resetPassword()}" value="#{bundle.resetPassword}" update="resetPasswordPanelID"/>
+                    <p:commandButton type="button" immediate="true" value="#{bundle.cancel}" onclick="resetPasswordDialogWidget.hide()" />
+                </p:dialog>
+            </h:form>
+            
+
+                        
         </div>
     </ui:define>
 

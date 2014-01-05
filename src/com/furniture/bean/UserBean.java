@@ -36,9 +36,9 @@ public class UserBean implements Serializable{
     private Company searchByCompany ;
     private String repassword;
     private List<Role> roles = new ArrayList<Role>(0);
+    private boolean active;
 
-    
-    
+        
     public UserBean() {
     }
 
@@ -54,6 +54,15 @@ public class UserBean implements Serializable{
         password = null;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+    
+    
     public List<Role> getRoles() {
         return roles;
     }
