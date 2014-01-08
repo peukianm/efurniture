@@ -415,6 +415,10 @@ public class FurnitureAction {
 
             if (productSpecification.getSpecification().getFreetext().equals(BigDecimal.ONE)) {
                 newProductBean.setSvalue(productSpecification.getProductvalues().get(0).getValue());
+                
+                if (productSpecification.getSpecification().getDimension().equals(BigDecimal.ONE))
+                    newProductBean.setSelectedMeasurment(productSpecification.getProductvalues().get(0).getMeasurment());
+                
             } else if(!productSpecification.getSpecification().getFreetext().equals(BigDecimal.ONE) && !productSpecification.getSpecification().getMultiplevalues().equals(BigDecimal.ONE)) {               
                 SpecificationvalueDAO svdao = new SpecificationvalueDAO();
                 Specificationvalue specificationvalue = svdao.getSpecificationValue(productSpecification.getSpecification(), productSpecification.getProductvalues().get(0).getSvalue());                
@@ -453,6 +457,9 @@ public class FurnitureAction {
 
             if (productSpecification.getSpecification().getFreetext().equals(BigDecimal.ONE)) {
                 viewProductBean.setSvalue(productSpecification.getProductvalues().get(0).getValue());
+                if (productSpecification.getSpecification().getDimension().equals(BigDecimal.ONE))
+                    viewProductBean.setSelectedMeasurment(productSpecification.getProductvalues().get(0).getMeasurment());
+                
             } else if(!productSpecification.getSpecification().getFreetext().equals(BigDecimal.ONE) && !productSpecification.getSpecification().getMultiplevalues().equals(BigDecimal.ONE)) {               
                 SpecificationvalueDAO svdao = new SpecificationvalueDAO();
                 Specificationvalue specificationvalue = svdao.getSpecificationValue(productSpecification.getSpecification(), productSpecification.getProductvalues().get(0).getSvalue());                
@@ -1361,7 +1368,7 @@ public class FurnitureAction {
             }
 
 
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_INSERTPRODUCT")), product, null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_INSERTPRODUCT")), "Product " + product.getName() + " inserted");
             userTransaction.commit();
 
             if (product.getImageproducts() != null) {
@@ -1515,8 +1522,8 @@ public class FurnitureAction {
             }
 
 
-            product = persistenceHelper.editPersist(product);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), product, null, null, null, null, null);
+            product = persistenceHelper.editPersist(product);            
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + product.getName() + " updated");
             userTransaction.commit();
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
             viewProductBean.setProduct(product);
@@ -1576,7 +1583,8 @@ public class FurnitureAction {
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
             product = persistenceHelper.editPersist(product);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), product, null, null, null, null, null);
+                        persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + product.getName() + " updated");
+
             userTransaction.commit();
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
 
@@ -1646,7 +1654,7 @@ public class FurnitureAction {
             userTransaction.begin();                        
             persistenceHelper.remove(productSpecification);
             //product = persistenceHelper.editPersist(product);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), product, null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + product.getName() + " updated");
             viewProductBean.setProduct(product);
             userTransaction.commit();
 
@@ -1787,13 +1795,11 @@ public class FurnitureAction {
             userTransaction.begin();
             persistenceHelper.create(productSpecification);
             //newProduct = persistenceHelper.editPersist(newProduct);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), newProduct, null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + newProduct.getName() + " updated");
             userTransaction.commit();
 
-            viewProductBean.setProductSpecifications(productSpecifications);
-            System.out.println(productSpecifications.size());
+            viewProductBean.setProductSpecifications(productSpecifications);            
             viewProductBean.setProductValues(productValues);
-
             viewProductBean.setProduct(newProduct);
 
             FacesUtils.callRequestContext("selectValueDialog.hide();");
@@ -1900,7 +1906,7 @@ public class FurnitureAction {
             
             productSpecification = persistenceHelper.editPersist(productSpecification);
             //newProduct = persistenceHelper.editPersist(newProduct);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), newProduct, null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + newProduct.getName() + " updated");
             userTransaction.commit();
 
             productSpecifications.add(productSpecification);                        
@@ -1986,7 +1992,7 @@ public class FurnitureAction {
             userTransaction.begin();
             persistenceHelper.create(productSpecification);
             //newProduct = persistenceHelper.editPersist(newProduct);            
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), newProduct, null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + newProduct.getName() + " updated");
             userTransaction.commit();
 
             viewProductBean.setDimesionProductSpecifications(dimensionProductSpecifications);
@@ -2023,7 +2029,7 @@ public class FurnitureAction {
             product.getProductspecifications().remove(productSpecification);
             //product = persistenceHelper.editPersist(product);
 
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + viewProductBean.getProduct().getName() + " updated");
             userTransaction.commit();
 
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
@@ -2091,7 +2097,7 @@ public class FurnitureAction {
                 persistenceHelper.remove(price);
             }
 
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + viewProductBean.getProduct().getName() + " updated");
             userTransaction.commit();
 
             List<Price> pricess = new ArrayList<Price>(0);
@@ -2142,7 +2148,7 @@ public class FurnitureAction {
             userTransaction.begin();
             ViewProductBean viewProductBean = (ViewProductBean) FacesUtils.getManagedBean("viewProductBean");
             persistenceHelper.remove(viewProductBean.getPrices().get(0));
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + viewProductBean.getProduct().getName() + " updated");
             userTransaction.commit();
             viewProductBean.setPrices(new ArrayList<Price>(0));
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
@@ -2170,7 +2176,7 @@ public class FurnitureAction {
             userTransaction.begin();
             product.setParentproducts(pproducts);
             product = persistenceHelper.editPersist(product);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + viewProductBean.getProduct().getName() + " updated");
             userTransaction.commit();
             viewProductBean.setProduct(product);
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
@@ -2198,7 +2204,7 @@ public class FurnitureAction {
             userTransaction.begin();
             product.setSubproducts(sproducts);
             product = persistenceHelper.editPersist(product);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + viewProductBean.getProduct().getName() + " updated");
             userTransaction.commit();
             viewProductBean.setProduct(product);
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
@@ -2226,7 +2232,7 @@ public class FurnitureAction {
             userTransaction.begin();
             product.setScopeCompanies(companies);
             product = persistenceHelper.editPersist(product);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + viewProductBean.getProduct().getName() + " updated");
             userTransaction.commit();
             viewProductBean.setProduct(product);
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
@@ -2328,7 +2334,7 @@ public class FurnitureAction {
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
             image = persistenceHelper.editPersist(image);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + viewProductBean.getProduct().getName() + " updated");
 
             String tempPath = SystemParameters.getInstance().getProperty("PATH_WEB_TEMP") + "\\" + image.getFilename();
             String finalPath = SystemParameters.getInstance().getProperty("PATH_WEB_PRODUCTS") + "\\" + viewProductBean.getProduct().getProductid() + "\\images\\" + image.getFilename();
@@ -2365,7 +2371,7 @@ public class FurnitureAction {
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
             video = persistenceHelper.editPersist(video);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + viewProductBean.getProduct().getName() + " updated");
             videos.add(video);
 
 
@@ -2399,7 +2405,7 @@ public class FurnitureAction {
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
             image = persistenceHelper.editPersist(image);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + viewProductBean.getProduct().getName() + " updated");
             userTransaction.commit();
             viewProductBean.setSelectedImage(image);
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
@@ -2424,7 +2430,7 @@ public class FurnitureAction {
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
             image = persistenceHelper.editPersist(image);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + viewProductBean.getProduct().getName() + " updated");
             userTransaction.commit();
             viewProductBean.setSelectedImage(image);
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
@@ -2452,7 +2458,7 @@ public class FurnitureAction {
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
             persistenceHelper.remove(image);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + viewProductBean.getProduct().getName() + " updated");
             userTransaction.commit();
 
 
@@ -2479,7 +2485,7 @@ public class FurnitureAction {
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
             video = persistenceHelper.editPersist(video);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + viewProductBean.getProduct().getName() + " updated");
             userTransaction.commit();
             viewProductBean.setSelectedVideo(video);
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
@@ -2505,7 +2511,7 @@ public class FurnitureAction {
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
             video = persistenceHelper.editPersist(video);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + viewProductBean.getProduct().getName() + " updated");
             userTransaction.commit();
             viewProductBean.setSelectedVideo(video);
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productUpdated"));
@@ -2531,7 +2537,7 @@ public class FurnitureAction {
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
             persistenceHelper.remove(video);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), viewProductBean.getProduct(), null, null, null, null, null);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCT")), "Product " + viewProductBean.getProduct().getName() + " updated");
             userTransaction.commit();
 
             videos.remove(video);
@@ -2648,8 +2654,8 @@ public class FurnitureAction {
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
             product.setActive(BigDecimal.ZERO);
-            product = persistenceHelper.editPersist(product);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_DELETEPRODUCT")), product, null, null, null, null, null);
+            product = persistenceHelper.editPersist(product);           
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_DELETEPRODUCT")), "Product " + product.getName() + " deleted");
             userTransaction.commit();
             
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("productDeleted"));
@@ -2749,9 +2755,8 @@ public class FurnitureAction {
             newPrice.setCurrency(priceBean.getCurrency());
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
-            persistenceHelper.create(newPrice);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_INSERTPRODUCTPRICE")), priceBean.getSelectedProduct(),
-                    null, null, null, null, null);
+            persistenceHelper.create(newPrice);            
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_INSERTPRODUCTPRICE")), "Product " + priceBean.getSelectedProduct().getName() + " new price inserted");
             userTransaction.commit();
             List<Price> prices = (new PriceDAO()).findByProperty("product", priceBean.getSelectedProduct());
             priceBean.setPrices(prices);
@@ -2790,9 +2795,8 @@ public class FurnitureAction {
 
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
-            persistenceHelper.remove(price);
-            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCTPRICE")), priceBean.getSelectedProduct(),
-                    null, null, null, null, null);
+            persistenceHelper.remove(price);            
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPRODUCTPRICE")), "Product " + priceBean.getSelectedProduct().getName() + "  price updated");
             userTransaction.commit();
             List<Price> prices = (new PriceDAO()).findByProperty("product", priceBean.getSelectedProduct());
             priceBean.setPrices(prices);

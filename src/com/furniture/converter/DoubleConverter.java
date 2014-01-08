@@ -7,6 +7,8 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.DateTimeConverter;
 
 import com.furniture.util.MessageBundleLoader;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -28,17 +30,18 @@ public class DoubleConverter extends DateTimeConverter implements Converter {
             if (value == null || value.isEmpty()) {
                 return null;
             }
-            //DecimalFormat df =  new DecimalFormat(patern);     //new DecimalFormat("#,##");
             
-            NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
-            format.setGroupingUsed(true);
-
-            //db = df.parseObject(value);
-
-            db = format.parseObject(value);
+            //DecimalFormat df =  new DecimalFormat(patern);     //new DecimalFormat("#,##");            
+            //NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
+            //format.setGroupingUsed(true);
+            
+            DecimalFormat formatter = new DecimalFormat(); 
+            DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+            symbols.setDecimalSeparator(',');
+            symbols.setGroupingSeparator('.');
+            db = formatter.parseObject(value);
             return db;
-        } catch (Exception e) {
-            //e.printStackTrace();
+        } catch (Exception e) {            
             //context.addMessage(component.getClientId(context), new FacesMessage(FacesMessage.SEVERITY_ERROR, MessageBundleLoader.getMessage("integerValidation"), MessageBundleLoader.getMessage("integerValidation")));
             throw new  ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     MessageBundleLoader.getMessage("integerValidation"),
@@ -52,10 +55,19 @@ public class DoubleConverter extends DateTimeConverter implements Converter {
 
         try {
 
-            NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
+            NumberFormat format = NumberFormat.getInstance(Locale.US);            
             format.setGroupingUsed(true);
-            return format.format(value);
-        } catch (Exception e) {
+            
+            Object nv = format.parseObject(value.toString());
+            
+            DecimalFormat formatter = new DecimalFormat(); 
+            DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+            symbols.setDecimalSeparator(',');
+            symbols.setGroupingSeparator('.');
+            formatter.setDecimalFormatSymbols(symbols);
+            
+            return formatter.format(nv);
+        } catch (Exception e) {            
             return "";
         }
     }

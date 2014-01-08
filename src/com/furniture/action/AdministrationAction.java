@@ -344,8 +344,7 @@ public class AdministrationAction implements Serializable {
                 Userroles userrole = userroles.get(i);
                 userBean.getRoles().add(userrole.getRole());
             }
-
-            System.out.println(userBean.getUser().getActive());
+            
             if (userBean.getUser().getActive().equals(BigDecimal.ONE)) {
                 userBean.setActive(true);
             } else {
@@ -400,9 +399,7 @@ public class AdministrationAction implements Serializable {
             }
 
             String hashedPassword = FurnitureUtil.getSaltedHash(userBean.getPassword());
-            System.out.println(userBean.getPassword());
-            System.out.println(hashedPassword);
-
+            
             user.setPassword(hashedPassword);
             user.setUserroleses(userroles);
             persistenceHelper.create(user);
@@ -488,8 +485,7 @@ public class AdministrationAction implements Serializable {
 
             //removing
             for (int i = 0; i < user.getUserroleses().size(); i++) {
-                Userroles userrole = user.getUserroleses().get(i);
-                System.out.println("REMOVING USERROLE="+userrole);
+                Userroles userrole = user.getUserroleses().get(i);                
                 persistenceHelper.remove(userrole);
             }
             user.setUserroleses(null);
@@ -498,15 +494,13 @@ public class AdministrationAction implements Serializable {
             List<Role> roles = userBean.getRoles();
             List<Userroles> userroles = new ArrayList<Userroles>(0);
             for (int i = 0; i < roles.size(); i++) {
-                Role role = roles.get(i);
-                System.out.println("ADDING ROLE="+role);
+                Role role = roles.get(i);               
                 Userroles userrole = new Userroles();
                 userrole.setUsers(user);
                 userrole.setRole(role);
                 userroles.add(userrole);
             }
-            
-            System.out.println(userroles);
+                       
             user.setUserroleses(userroles);
 
             user = persistenceHelper.editPersist(user);
@@ -577,8 +571,7 @@ public class AdministrationAction implements Serializable {
     public String sendResetPasswordEmail() {
         try {
             ResetBean resetBean = (ResetBean) FacesUtils.getManagedBean("resetBean");
-            String email = resetBean.getEmail().trim();
-            System.out.println(email);
+            String email = resetBean.getEmail().trim();            
             List<Users> users = userDAO.findByProperty("email", email);
             if (users != null && users.size() == 1) {
                 Users user = users.get(0);                
@@ -597,15 +590,10 @@ public class AdministrationAction implements Serializable {
                 FurnitureUtil.sendFromGMail(host, port, account, password, emails, subject, body);
                 FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("successUserEmail"));
                 return "";
-            } else {
-                System.out.println("ADDING ERROR MESSAGE"); 
+            } else {                
                 FacesUtils.addErrorMessage(MessageBundleLoader.getMessage("falseUserEmail"));
-                return "";
-                //sessionBean.setAlertMessage(MessageBundleLoader.getMessage("falseUserEmail"));
-                //FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
-                //FacesUtils.callRequestContext("generalAlertWidget.show()");  
+                return "";                
             }
-
 
             //return "loginPage?faces-redirect=true";
         } catch (Exception e) {

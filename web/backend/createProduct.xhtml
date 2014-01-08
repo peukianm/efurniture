@@ -407,7 +407,7 @@
                                 </td>    
                             </tr>
                             <tr>
-                                <td style="width:1px; white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.description}: "  style="font-weight: bold"/></td>
+                                <td style="width:1px; white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.lezanta}: "  style="font-weight: bold"/></td>
                                 <td ><h:outputText  value="#{image.description}" /><p:spacer width="10"/></td>
                                 <td style="width:1px; white-space:nowrap;">   
                                     <p:commandButton icon="ui-icon-pencil" immediate="true"  alt="#{bundle.update}"   update=":updateImagetDescriptionForm:updateImageDescriptionPanel" onclick="updateImageDescriptionDialog.show()" >
@@ -452,7 +452,7 @@
             <p:dialog header="#{bundle.updateDescription}" id="updateImageDescriptionID" position="center" widgetVar="updateImageDescriptionDialog" modal="true" minWidth="200" minHeight="500" resizable="false">
                 <p:outputPanel id="updateImageDescriptionPanel" widgetVar="updateImageDescriptionPanelWidget">
                     <p:panelGrid columns="2" style="width:100%" cellpadding="2" >                        
-                        <h:outputText style="font-weight: bold" value="#{bundle.description}" />
+                        <h:outputText style="font-weight: bold" value="#{bundle.lezanta}" />
                         <p:inputTextarea id="descriptionField"  rows="5" cols="50" value="#{newProductBean.selectedImage.description}"   />    
                     </p:panelGrid>
                 </p:outputPanel>
@@ -492,7 +492,7 @@
                                     </td>    
                                 </tr>
                                 <tr>
-                                    <td style="width:1px; white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.description}: "  style="font-weight: bold"/></td>
+                                    <td style="width:1px; white-space:nowrap;text-align: right"><h:outputLabel value="#{bundle.lezanta}: "  style="font-weight: bold"/></td>
                                     <td ><h:outputText  value="#{video.description}" /><p:spacer width="10"/></td>
                                     <td style="width:1px; white-space:nowrap;">   
                                         <p:commandButton icon="ui-icon-pencil" immediate="true"  alt="#{bundle.update}"   update=":updateVideoDescriptionForm:updateVideoDescriptionPanel" onclick="updateVideoDescriptionDialog.show()" >
@@ -539,7 +539,7 @@
             <p:dialog header="#{bundle.updateDescription}" id="updateVideoDescriptionID" position="center" widgetVar="updateVideoDescriptionDialog" modal="true" minWidth="200" minHeight="500" resizable="false">
                 <p:outputPanel id="updateVideoDescriptionPanel" widgetVar="updateVideoDescriptionPanelWidget">
                     <p:panelGrid columns="2" style="width:100%" cellpadding="2" >                        
-                        <h:outputText style="font-weight: bold" value="#{bundle.description}" />
+                        <h:outputText style="font-weight: bold" value="#{bundle.lezanta}" />
                         <p:inputTextarea id="descriptionFieldVideo"  rows="5" cols="50" value="#{newProductBean.selectedVideo.description}"   />    
                     </p:panelGrid>
                 </p:outputPanel>
@@ -742,11 +742,11 @@
                               RAL Colors
                 </h:outputLink>
                                
-                
+                #{newProductBean.svalue}
                 <p:panel id="uselectDimensionValuePanel" rendered="#{newProductBean.specification.freetext==1 and newProductBean.specification.dimension==1 and newProductBean.specification.color!=1}">
                     <table>
                         <tr>
-                            <td colspan="2">
+                            <td colspan="2">#{newProductBean.svalue}
                                 <p:outputLabel style="font-weight: bold; vertical-align: top" value="#{bundle.valuesFor}  #{newProductBean.specification.name} " rendered="#{newProductBean.specification.freetext==1 and newProductBean.specification.color!=1  and newProductBean.specification.dimension==1}"  /> 
                             </td>
                         </tr>
@@ -851,7 +851,7 @@
                         <p:graphicImage cache="true" id="imagemTmp" value="/media/temp/#{newProductBean.newImage.filename}" height="300" style="margin: 0 auto;"/>
                         <h:outputText style="font-weight: bold" value="#{bundle.ordered}*" rendered="#{newProductBean.newImage.filename!=null}" />
                         <p:inputMask mask="9" value="#{newProductBean.newImage.primary}" size="5" required="true" requiredMessage="#{bundle.ordered}: #{bundle.mandatoryField}" rendered="#{newProductBean.newImage.filename!=null}" />
-                        <h:outputText style="font-weight: bold" value="#{bundle.description}" rendered="#{newProductBean.newImage.filename!=null}"/>
+                        <h:outputText style="font-weight: bold" value="#{bundle.lezanta}" rendered="#{newProductBean.newImage.filename!=null}"/>
                         <p:inputTextarea  rows="5" cols="50" value="#{newProductBean.newImage.description}"  rendered="#{newProductBean.newImage.filename!=null}" />                        
                     </h:panelGrid>
                 </p:panel>
@@ -912,7 +912,7 @@
                             </td>
                             <td>
                                 <div class="middle">
-                                    <h:outputText  style="font-weight: bold;vertical-align:middle; " value="#{bundle.description}:" rendered="#{newProductBean.newVideo.filename!=null}"/>                                
+                                    <h:outputText  style="font-weight: bold;vertical-align:middle; " value="#{bundle.lezanta}:" rendered="#{newProductBean.newVideo.filename!=null}"/>                                
                                     <p:inputTextarea  rows="4" cols="40" value="#{newProductBean.newVideo.description}" rendered="#{newProductBean.newVideo.filename!=null}" />           
                                 </div>
                             </td>

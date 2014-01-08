@@ -41,9 +41,6 @@ public class ResetBean implements Serializable{
     
     @PostConstruct
     public void init() {        
-        System.out.println("Sessionid="+sessionid);
-        System.out.println("User="+user);
-        System.out.println("Userid="+userid);
         
         if (userid!=null && sessionid!=null) {            
             user = (Users)persistenceHelper.find(Users.class, new BigDecimal(userid));

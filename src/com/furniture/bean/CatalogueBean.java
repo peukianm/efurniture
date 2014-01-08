@@ -58,21 +58,18 @@ public class CatalogueBean implements Serializable {
 
     
     
-    public void initializeValues(Company company) {
-        
+    public void initializeValues(Company company) {        
         CatalogueDAO da = new CatalogueDAO();
         catalogues = da.getCompanyCatalogues(company);
         
         for (int i = 0; i < catalogues.size(); i++) {
-            Catalogue catalogue1 = catalogues.get(i);
-            System.out.println(catalogue1.getProductlines());            
+            Catalogue catalogue1 = catalogues.get(i);                       
         }
         
                 
         ProductlineDAO dao = new ProductlineDAO();
         productlines = dao.getCompanyProductlines(company);    
-        productLineList = new DualListModel<Productline>(productlines, new ArrayList<Productline>(0));        
-        
+        productLineList = new DualListModel<Productline>(productlines, new ArrayList<Productline>(0));                
         
         CompanyproductDAO dao1 = new CompanyproductDAO();
         List<Product> pr = dao1.getCompanyProducts(company, Boolean.TRUE);

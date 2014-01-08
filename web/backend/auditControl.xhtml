@@ -104,10 +104,14 @@
                             <h:outputText value="#{audit.action.name}" />                                                           
                         </p:column> 
                          
-                       
+                        <p:column exportable="false" headerText="#{bundle.comments}" sortBy="#{audit.comments}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
+                            <h:outputText value="#{audit.comments}" />                                                           
+                        </p:column>
+                        
+                        <!--
                         <p:column exportable="false" headerText="#{bundle.product}" sortBy="#{audit.product.name}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
                             <h:outputText value="#{audit.product.name}" />                                                           
-                        </p:column> 
+                        </p:column>  -->
                        
                     </p:dataTable>   
                 </p:panel>

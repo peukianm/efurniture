@@ -356,7 +356,7 @@
                                     <p:message for="upassword" display="icon"/>  <br/></td>
                             </tr>
                             <tr>                                    
-                                <td><p:outputLabel for="urepassword" value="#{bundle.confirm}:* " style="font-weight: bold;" /></td>
+                                <td><p:outputLabel for="urepassword" value="#{bundle.confirm}: " style="font-weight: bold;" /></td>
                                 <td><p:password value="#{userBean.password}" id="urepassword"  
                                                 required="true" requiredMessage="#{bundle.reEnterPassword}:#{bundle.mandatoryField}" >
                                           <f:validateLength minimum="4" maximum="15" />      

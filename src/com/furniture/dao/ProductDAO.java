@@ -339,8 +339,7 @@ public class ProductDAO {
                     Company company = companies.get(i);
                     List<Companyproduct> companyProducts = new ArrayList(company.getCompanyproducts());
                     for (int j = 0; j < companyProducts.size(); j++) {
-                        Companyproduct companyproduct = companyProducts.get(j);
-                        System.out.println(companyproduct);
+                        Companyproduct companyproduct = companyProducts.get(j);                        
                         if (companyproduct.getProduct().getActive().equals(BigDecimal.ONE)) {
                             products.add(companyproduct.getProduct());
                         }

@@ -109,6 +109,7 @@ public class NewProductBean implements Serializable {
         Users user = sessionBean.getUsers();
 
         Company company = user.getCompany();
+        newProduct.setCreateddate(new Date());
         if (company != null) {
             selectedCompany = company;
             Companyproduct companyProduct = new Companyproduct();
