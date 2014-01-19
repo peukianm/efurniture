@@ -1,10 +1,13 @@
 package com.furniture.dao;
 
 import com.furniture.entities.Item;
+import com.furniture.entities.Itemspecification;
+import com.furniture.entities.Specification;
 import com.furniture.util.EJBUtil;
 import com.furniture.util.PersistenceHelper;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -128,7 +131,7 @@ public class ItemDAO {
     @SuppressWarnings("unchecked")
     public List<Item> findByProperty(String propertyName, final Object value, final int... rowStartIdxAndCount) {
         try {
-            final String queryString = "select model from Item model where model." + propertyName + "= :propertyValue";
+            final String queryString = "select model from Item model where model." + propertyName + "= :propertyValue  order by model.name ";
             Query query = getEntityManager().createQuery(queryString);
             query.setParameter("propertyValue", value);
             if (rowStartIdxAndCount != null && rowStartIdxAndCount.length > 0) {
@@ -190,4 +193,34 @@ public class ItemDAO {
             throw re;
         }
     }
+    
+    
+    
+    public List<Specification> getItemSpecification(Item item) {
+        try {            
+            String queryString = "Select model from Itemspecification model "                                        
+                    + " where model.active = 1 "                    
+                    + (item!=null? " and model.item = :item " :" ")
+                    + " order by model.ordered ASC";
+            
+            Query query = getEntityManager().createQuery(queryString);
+            if (item != null) {
+                query.setParameter("item", item);
+            }
+            
+            List<Itemspecification> itemSpecifications = query.getResultList();
+            List<Specification> specifications = new ArrayList<Specification>(0);
+            for (int i = 0; i < itemSpecifications.size(); i++) {
+                Itemspecification itemspecification = itemSpecifications.get(i);
+                if (itemspecification.getSpecification().getActive().equals(BigDecimal.ONE)) {
+                    specifications.add(itemspecification.getSpecification());
+                }                
+            }                        
+            return specifications;
+        } catch (RuntimeException re) {
+            logger.error("Error on finding entity", re);
+            throw re;
+        }
+    }
+    
 }

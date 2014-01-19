@@ -8,8 +8,11 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -19,6 +22,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "SVALUE", schema = "FURNITURE")
+@SequenceGenerator(name = "SEQ_SVALUE", sequenceName = "SVALUE_SEQ", allocationSize = 1)
 public class Svalue implements java.io.Serializable {
 
     // Fields
@@ -69,6 +73,7 @@ public class Svalue implements java.io.Serializable {
     // Property accessors
     @Id
     @Column(name = "VALUEID", unique = true, nullable = false, precision = 22, scale = 0)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SVALUE")
     public BigDecimal getValueid() {
         return this.valueid;
     }
@@ -166,4 +171,32 @@ public class Svalue implements java.io.Serializable {
     public void setModifiedTimestamp(Timestamp modifiedTimestamp) {
         this.modifiedTimestamp = modifiedTimestamp;
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (!(obj instanceof Svalue)) {
+            return false;
+        }
+
+        Svalue compare = (Svalue) obj;
+
+        return compare.valueid.equals(this.valueid);
+    }
+
+    @Override
+    public int hashCode() {
+        return valueid != null ? this.getClass().hashCode() + valueid.hashCode() : super.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "SVALUE{" + "id=" + valueid + ", name=" + getName() + "}";
+    }
+    
+    
+    
 }

@@ -2,16 +2,21 @@ package com.furniture.entities;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -22,6 +27,7 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "SPECIFICATION", schema = "FURNITURE")
+@SequenceGenerator(name = "SEQ_SPECIFICATION", sequenceName = "SPECIFICATION_SEQ", allocationSize = 1)
 public class Specification implements java.io.Serializable {
 
     // Fields
@@ -34,9 +40,10 @@ public class Specification implements java.io.Serializable {
     private Timestamp modifiedTimestamp;
     private BigDecimal freetext;
     private BigDecimal multiplevalues;
+    private BigDecimal multipleinsert;
     private BigDecimal color;
     private BigDecimal dimension;
-    private Set<Specificationvalue> specificationvalues = new HashSet<Specificationvalue>(0);
+    private List<Specificationvalue> specificationvalues = new ArrayList<Specificationvalue>(0);
     private Set<Productspecification> productspecifications = new HashSet<Productspecification>(0);
     private Set<Auditing> auditings = new HashSet<Auditing>(0);
     private Set<Itemspecification> itemspecifications = new HashSet<Itemspecification>(0);
@@ -65,7 +72,7 @@ public class Specification implements java.io.Serializable {
      * full constructor
      */
     public Specification(BigDecimal specificationid, Specificationcategory specificationcategory, String name, String description, BigDecimal active,
-            Timestamp createdTimestamp, Timestamp modifiedTimestamp, BigDecimal freetext, Set<Specificationvalue> specificationvalues,
+            Timestamp createdTimestamp, Timestamp modifiedTimestamp, BigDecimal freetext, List<Specificationvalue> specificationvalues,
             Set<Productspecification> productspecifications, Set<Auditing> auditings, Set<Itemspecification> itemspecifications) {
         this.specificationid = specificationid;
         this.specificationcategory = specificationcategory;
@@ -84,6 +91,7 @@ public class Specification implements java.io.Serializable {
     // Property accessors
     @Id
     @Column(name = "SPECIFICATIONID", unique = true, nullable = false, precision = 22, scale = 0)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SPECIFICATION")
     public BigDecimal getSpecificationid() {
         return this.specificationid;
     }
@@ -164,13 +172,26 @@ public class Specification implements java.io.Serializable {
     public void setMultiplevalues(BigDecimal multiplevalues) {
         this.multiplevalues = multiplevalues;
     }
+    
+    
+    
+     @Column(name = "MULTIPLEINSERT", nullable = false, precision = 22, scale = 0)
+    public BigDecimal getMultipleinsert() {
+        return this.multipleinsert;
+    }
+
+    public void setMultipleinsert(BigDecimal multipleinsert) {
+        this.multipleinsert = multipleinsert;
+    }
+    
+    
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "specification")
-    public Set<Specificationvalue> getSpecificationvalues() {
+    public List<Specificationvalue> getSpecificationvalues() {
         return this.specificationvalues;
     }
 
-    public void setSpecificationvalues(Set<Specificationvalue> specificationvalues) {
+    public void setSpecificationvalues(List<Specificationvalue> specificationvalues) {
         this.specificationvalues = specificationvalues;
     }
 

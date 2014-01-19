@@ -127,7 +127,7 @@ public class SvalueDAO {
     @SuppressWarnings("unchecked")
     public List<Svalue> findByProperty(String propertyName, final Object value, final int... rowStartIdxAndCount) {
         try {
-            final String queryString = "select model from Svalue model where model." + propertyName + "= :propertyValue";
+            final String queryString = "select model from Svalue model where model." + propertyName + "= :propertyValue order by model.name ";
             Query query = getEntityManager().createQuery(queryString);
             query.setParameter("propertyValue", value);
             if (rowStartIdxAndCount != null && rowStartIdxAndCount.length > 0) {
@@ -168,7 +168,7 @@ public class SvalueDAO {
     @SuppressWarnings("unchecked")
     public List<Svalue> findAll(final int... rowStartIdxAndCount) {
         try {
-            final String queryString = "select model from Svalue model";
+            final String queryString = "select model from Svalue model order by model.name";
             Query query = getEntityManager().createQuery(queryString);
             if (rowStartIdxAndCount != null && rowStartIdxAndCount.length > 0) {
                 int rowStartIdx = Math.max(0, rowStartIdxAndCount[0]);

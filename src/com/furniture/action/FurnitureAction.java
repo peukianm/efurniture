@@ -2573,22 +2573,21 @@ public class FurnitureAction {
             List<Product> products = new ArrayList<Product>(0);
 
             if ((categories == null || categories.size() == 0) && (productSearchBean.getSearchBySelectedCompanies() == null || productSearchBean.getSearchBySelectedCompanies().size() == 0) && productSearchBean.getSearchByName() == null) {
-                if (sessionBean.getUsers().getRole().getRoleid().equals(BigDecimal.ONE)) {
+//                if (sessionBean.getUsers().getRole().getRoleid().equals(BigDecimal.ONE)) {
                     products = dao.findByProperty("active", BigDecimal.ONE);
-                } else {
-                    List<Company> companies = new ArrayList<Company>(0);
-                    companies.add(sessionBean.getUsers().getCompany());
-                    products = dao.getCategoryProduct(null, companies, null);
-                }
+//                } else {
+//                    List<Company> companies = new ArrayList<Company>(0);
+//                    companies.add(sessionBean.getUsers().getCompany());
+//                    products = dao.getCategoryProduct(null, companies, null);
+//                }
             } else {
-                if (sessionBean.getUsers().getRole().getRoleid().equals(BigDecimal.ONE)) {
+//                if (sessionBean.getUsers().getRole().getRoleid().equals(BigDecimal.ONE)) {
                    products = dao.getCategoryProduct(categories, productSearchBean.getSearchBySelectedCompanies(), productSearchBean.getSearchByName());
-                } else {
-                    List<Company> companies = new ArrayList<Company>(0);
-                    companies.add(sessionBean.getUsers().getCompany());
-                    products = dao.getCategoryProduct(categories, companies, productSearchBean.getSearchByName());
-                }
-                
+//                } else {
+//                    List<Company> companies = new ArrayList<Company>(0);
+//                    companies.add(sessionBean.getUsers().getCompany());
+//                    products = dao.getCategoryProduct(categories, companies, productSearchBean.getSearchByName());
+//                }                
             }
 
 

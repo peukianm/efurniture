@@ -1,0 +1,476 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="templates/uiBackend.xhtml"> 
+
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-confirm-dialog-severity {
+                margin: 0 7px 7px 0;
+            }
+
+            .noBord, .noBord tbody, .noBord tbody td, .noBord tbody tr {
+                padding: 1px 5px;
+                border-style: none !important; 
+            }
+
+            .ui-datatable tbody td {
+                padding: 1px 5px;
+            }
+
+            .ui-panelgrid td, .ui-panelgrid tr  {
+                border-style: none !important; 
+                padding: 0px 0px !important;;
+            }
+
+            .ui-fieldset-legend {
+                font-weight: bold ! important;
+                color: black !important;
+            }
+
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <p:growl autoUpdate="true"/> 
+        <h:form id="productFormID">
+            <h1 class="title ui-widget-header ui-corner-all">#{bundle.templateProductAdmin}</h1>
+            <div class="entry">
+
+                <p:panel id="productPanelID" widgetVar="productPanelWidget">
+
+                    <p:fieldset legend="#{bundle.prototypeProducts}" style="margin-top: 5px; margin-bottom: 5px;padding: 10px"  toggleable="true" >  
+                        <h:panelGrid columns="1" cellpadding="5">  
+                            <p:dataTable paginator="true" rows="10" emptyMessage="#{bundle.noProducts}" id="itemTable" value="#{applicationBean.items}"
+                                         var="item" paginatorPosition="bottom" paginatorAlwaysVisible="false">
+                                <p:column headerText="#{bundle.name}">
+                                    <p:outputLabel value="#{item.name}" />
+                                </p:column>
+                                <p:column headerText="#{bundle.actions}">
+                                    <p:commandButton id="bt1" icon="ui-icon-search" title="#{bundle.view}" immediate="true" />
+                                    <p:overlayPanel id="over1" for="bt1">
+                                        <p:dataTable rows="10" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" value="#{item.itemspecifications}"  var="go" >
+                                            <p:column headerText="#{bundle.specifications}">
+                                                <p:outputLabel value="#{go.specification.name}" />
+                                            </p:column>                                            
+                                        </p:dataTable>
+                                    </p:overlayPanel> 
+
+                                    <p:commandButton icon="ui-icon-pencil" action="#{administrationAction.goUpdateItem()}" update=":updateItemFormID:updateItemPanelID"  >
+                                        <f:setPropertyActionListener value="#{item}" target="#{templateEditorBean.item}" />
+                                    </p:commandButton>
+
+                                    <p:commandButton icon="ui-icon-trash" action="#{administrationAction.removeItem}" update="@form">
+                                        <f:setPropertyActionListener value="#{item}" target="#{templateEditorBean.item}" />
+                                        <p:confirm header="#{bundle.confirmation}" message="#{bundle.confirmDeleteItem}" icon="ui-icon-alert" /> 
+                                    </p:commandButton>
+
+                                </p:column>                                
+                            </p:dataTable>
+
+                            <p:commandButton immediate="true" value="#{bundle.newPrototypeProduct}" action="#{administrationAction.goInsertItem()}" onclick="createItemDialogWidget.show()"  
+                                             update=":createItemFormID:createItemPanelID"     />
+                        </h:panelGrid>  
+                    </p:fieldset>  
+
+
+                    <p:fieldset legend="#{bundle.prototypeSpecifications}" style="margin-top: 5px; margin-bottom: 5px;padding: 10px" toggleable="true">  
+                        <h:panelGrid columns="1" cellpadding="5"> 
+                            <p:dataTable paginator="true" rows="10" emptyMessage="#{bundle.noSpecifications}" id="specificationTable" value="#{applicationBean.specifications}"
+                                         var="specification" paginatorPosition="bottom" paginatorAlwaysVisible="false">
+                                <p:column headerText="#{bundle.name}">
+                                    <p:outputLabel value="#{specification.name}" />
+                                </p:column>
+
+                                <p:column  headerText="#{bundle.freetext}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
+                                    <h:graphicImage rendered="#{specification.freetext==1}" url="../resources/images/success.jpg" width="14px" height="14px" />
+                                    <h:graphicImage rendered="#{specification.freetext!=1}" url="../resources/images/close.gif" width="14px" height="14px" />                                                          
+                                </p:column>
+
+                                <p:column  headerText="#{bundle.dimension}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
+                                    <h:graphicImage rendered="#{specification.dimension==1}" url="../resources/images/success.jpg" width="14px" height="14px" />
+                                    <h:graphicImage rendered="#{specification.dimension!=1}" url="../resources/images/close.gif" width="14px" height="14px" />                                                          
+                                </p:column>
+
+                                <p:column  headerText="#{bundle.color}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
+                                    <h:graphicImage rendered="#{specification.color==1}" url="../resources/images/success.jpg" width="14px" height="14px" />
+                                    <h:graphicImage rendered="#{specification.color!=1}" url="../resources/images/close.gif" width="14px" height="14px" />                                                          
+                                </p:column>
+
+                                <p:column  headerText="#{bundle.multivalue}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
+                                    <h:graphicImage rendered="#{specification.multiplevalues==1}" url="../resources/images/success.jpg" width="14px" height="14px" />
+                                    <h:graphicImage rendered="#{specification.multiplevalues!=1}" url="../resources/images/close.gif" width="14px" height="14px" />                                                          
+                                </p:column>
+
+                                <p:column  headerText="#{bundle.multiinsert}" style="width: 1px; white-space: nowrap;vertical-align: top;" >                                                            
+                                    <h:graphicImage rendered="#{specification.multipleinsert==1}" url="../resources/images/success.jpg" width="14px" height="14px" />
+                                    <h:graphicImage rendered="#{specification.multipleinsert!=1}" url="../resources/images/close.gif" width="14px" height="14px" />                                                          
+                                </p:column>
+
+
+
+
+
+
+                                <p:column headerText="#{bundle.actions}">
+                                    <p:commandButton id="bt2" icon="ui-icon-search" title="#{bundle.view}" immediate="true" rendered="#{specification.freetext==0}" />                                        
+                                    <p:overlayPanel id="over2" for="bt2">
+                                        <p:dataTable rows="8" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" value="#{specification.specificationvalues}"  var="sv" >
+                                            <p:column headerText="#{bundle.values}">
+                                                <p:outputLabel value="#{sv.svalue.name}" />
+                                            </p:column>                                            
+                                        </p:dataTable>
+                                    </p:overlayPanel> 
+
+                                    <p:commandButton icon="ui-icon-pencil" action="#{administrationAction.goUpdateSpecification()}" update=":updateSpecificationFormID:updateSpecificationPanelID" >
+                                        <f:setPropertyActionListener value="#{specification}" target="#{templateEditorBean.specification}" />    
+                                    </p:commandButton>
+                                    <p:commandButton icon="ui-icon-trash" action="#{administrationAction.removeSpecification}" update="@form" >
+                                        <f:setPropertyActionListener value="#{specification}" target="#{templateEditorBean.specification}" />    
+                                        <p:confirm header="#{bundle.confirmation}" message="#{bundle.confirmDeleteSpecification}" icon="ui-icon-alert" /> 
+                                    </p:commandButton>
+                                </p:column>    
+
+                            </p:dataTable>
+
+
+                            <p:commandButton immediate="true" value="#{bundle.newPrototypeSpecification}" action="#{administrationAction.goInsertSpecification()}" onclick="createSpecificationDialogWidget.show()" 
+                                             update=":createSpecificationFormID:createSpecificationPanelID"     />
+                        </h:panelGrid>  
+                    </p:fieldset>  
+
+                </p:panel>      
+
+            </div>
+        </h:form> 
+
+
+
+        <!--
+                <p:dialog header="#{bundle.productLines}" id="dialog1" position="center" widgetVar="dialog1Widget" modal="true" resizable="false">
+                    <h:panelGroup layout="block" id="panel1">
+                        <f:facet name="header"> 
+                            <p:outputLabel value="{catalogueBean.catalogue.name}" style="font-weight: bold; font-size: 12px ! important"/>                 
+                        </f:facet>
+                        <p:dataTable rows="10" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" value="{catalogueBean.catalogue.productlines}"  var="pl" >
+                            <p:column headerText="#{bundle.name}">
+                                <p:outputLabel value="#{pl.name}" />
+                            </p:column>                                            
+                        </p:dataTable>
+                    </h:panelGroup>
+                </p:dialog >
+        
+        
+        
+                <p:dialog header="#{bundle.products}" id="dialog2" position="center" widgetVar="dialog2Widget" modal="true" resizable="false">
+                    <h:panelGroup layout="block" id="panel2">
+                        <f:facet name="header"> 
+                            <p:outputLabel value="{catalogueBean.productline.name}" style="font-weight: bold; font-size: 12px ! important"/>                 
+                        </f:facet>
+                        <p:dataTable rows="10" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" value="{catalogueBean.productline.products}"  var="pr" >
+                            <p:column headerText="#{bundle.name}">
+                                <p:outputLabel value="#{pr.name}" />
+                            </p:column>                                            
+                        </p:dataTable>
+                    </h:panelGroup>
+                </p:dialog >
+        
+        -->
+
+
+
+
+
+        <h:form id="createItemFormID">
+            <p:dialog header="#{bundle.newPrototypeProduct}" id="createitemDialogID" position="center" widgetVar="createItemDialogWidget" modal="true" resizable="false" >
+                <p:panel id="createItemPanelID" widgetVar="createItemPanelWidget">
+                    <p:panelGrid >                                                    
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel  value="#{bundle.productName}* : " style="font-weight: bold"  />                          
+                                <p:inputText id="itemName" value="#{templateEditorBean.item.name}" required="true" requiredMessage="#{bundle.productName}: #{bundle.mandatoryField}" />
+                                <p:message for="itemName" display="icon"/> 
+                                <br/>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>  
+                            <p:column colspan="2" styleClass="ui-widget-header" style="text-align: center">  
+                                <p:outputLabel value="#{bundle.specifications}" style="font-weight: bold; font-size: 12px ! important;"/>    
+                            </p:column>  
+                        </p:row>  
+
+                        <p:row >
+                            <p:column colspan="2">
+                                <p:pickList id="specificationList" value="#{templateEditorBean.specificationPickList}" var="spec" itemValue="#{spec}" itemLabel="#{spec.name}" converter="SpecificationConverter"  
+                                            showSourceControls="false" showTargetControls="true" showCheckbox="false" showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" >  
+                                    <f:facet name="sourceCaption">#{bundle.available}</f:facet>  
+                                    <f:facet name="targetCaption">#{bundle.selected}</f:facet>  
+                                    <p:ajax event="transfer" />  
+                                    <p:column>  
+                                        #{spec.name}  
+                                    </p:column>  
+                                </p:pickList>  
+                            </p:column>
+                        </p:row>
+
+                    </p:panelGrid>
+                    <p:commandButton  value="#{bundle.insert}" action="#{administrationAction.insertItem()}" update=":productFormID @form:createItemPanelID" />
+                    <p:commandButton  type="button" immediate="true" value="#{bundle.close}" onclick="createItemDialogWidget.hide()" />
+                </p:panel>
+            </p:dialog>
+        </h:form>
+
+
+        <h:form id="updateItemFormID">
+            <p:dialog header="#{bundle.updatePrototypeProduct}" id="updateItemDialogID" position="center" widgetVar="updateItemDialogWidget" modal="true" resizable="false" >
+                <p:panel id="updateItemPanelID" widgetVar="updateItemPanelWidget">
+                    <p:panelGrid >                            
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel  value="#{bundle.productName}* :"  style="font-weight: bold"/>
+                                <p:inputText id="updateItemName" value="#{templateEditorBean.item.name}" required="true" requiredMessage="#{bundle.productName}: #{bundle.mandatoryField}" />
+                                <p:message for="updateItemName" display="icon"/> 
+                            </p:column><br/>
+                        </p:row>
+
+
+                        <p:row>  
+                            <p:column colspan="2" styleClass="ui-widget-header" style="text-align: center">  
+                                <p:outputLabel value="#{bundle.specifications}" style="font-weight: bold; font-size: 12px ! important;"/>    
+                            </p:column>  
+                        </p:row>  
+
+                        <p:row>
+                            <p:column>
+                                <p:pickList value="#{templateEditorBean.specificationPickList}" var="spec" itemValue="#{spec}" itemLabel="#{spec.name}" converter="SpecificationConverter"  
+                                            showSourceControls="false" showTargetControls="true" showCheckbox="false" showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" >  
+                                    <f:facet name="sourceCaption">#{bundle.available}</f:facet>  
+                                    <f:facet name="targetCaption">#{bundle.selected}</f:facet>  
+                                    <p:ajax event="transfer" />  
+                                    <p:column>  
+                                        #{spec.name}  
+                                    </p:column>  
+                                </p:pickList>
+                            </p:column>
+
+
+                        </p:row>   
+                    </p:panelGrid>
+                    <p:commandButton  value="#{bundle.update}" action="#{administrationAction.updateItem}" update=":productFormID @form" />
+                    <p:commandButton  type="button" immediate="true" value="#{bundle.close}" onclick="updateItemDialogWidget.hide()" />
+                </p:panel>
+            </p:dialog>
+        </h:form>
+
+
+
+
+
+
+
+        <h:form id="createSpecificationFormID">
+            <p:dialog header="#{bundle.newSpecification}" id="createSpecificationDialogID" position="center" widgetVar="createSpecificationDialogWidget" modal="true" resizable="false" >
+                <p:panel id="createSpecificationPanelID" widgetVar="createSpecificationPanelWidget">
+                    <p:panelGrid >                            
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:outputLabel  value="#{bundle.specificationName}* :"  style="font-weight: bold" />                            
+                                <p:inputText id="specificationName" value="#{templateEditorBean.specification.name}" required="true" requiredMessage="#{bundle.specificationName}: #{bundle.mandatoryField}" />
+                                <p:message for="specificationName" display="icon"/> 
+                            </p:column> <br/>
+                        </p:row>
+
+
+
+                        <p:row>
+                            <p:column style="vertical-align: top">
+                                <p:outputLabel value="#{bundle.dimension}:* " style="font-weight: bold;" />
+                                <p:selectBooleanButton value="#{templateEditorBean.dimension}" onLabel="#{bundle.yes}" offLabel="#{bundle.no}" onIcon="ui-icon-check" offIcon="ui-icon-close" /> 
+                                <p:spacer width="10" height="10"/>
+                            </p:column>   
+
+                            <p:column  style="vertical-align: top">
+                                <p:outputLabel value="#{bundle.color}:* " style="font-weight: bold;" />
+                                <p:selectBooleanButton value="#{templateEditorBean.color}" onLabel="#{bundle.yes}" offLabel="#{bundle.no}" onIcon="ui-icon-check" offIcon="ui-icon-close" /> 
+                            </p:column>  
+
+                            <p:column style="vertical-align: top">
+                                <p:outputLabel value="#{bundle.freetext}:* " style="font-weight: bold;" />
+                                <p:selectBooleanButton value="#{templateEditorBean.freetext}" onLabel="#{bundle.yes}" offLabel="#{bundle.no}" onIcon="ui-icon-check" offIcon="ui-icon-close" /> 
+                            </p:column>   
+
+                        </p:row>
+
+                        <p:row>                                                        
+                            <p:column style="vertical-align: top">
+                                <p:outputLabel value="#{bundle.multivalue}:* " style="font-weight: bold;" />
+                                <p:selectBooleanButton value="#{templateEditorBean.multivalue}" onLabel="#{bundle.yes}" offLabel="#{bundle.no}" onIcon="ui-icon-check" offIcon="ui-icon-close" /> 
+                                <p:spacer width="10" height="10"/>
+                            </p:column>   
+
+                            <p:column colspan="2" style="vertical-align: top">
+                                <p:outputLabel value="#{bundle.multiinsert}:* " style="font-weight: bold;" />
+                                <p:selectBooleanButton value="#{templateEditorBean.multiinsert}" onLabel="#{bundle.yes}" offLabel="#{bundle.no}" onIcon="ui-icon-check" offIcon="ui-icon-close" />
+                            </p:column>   
+                        </p:row>
+
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:spacer height="10" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column >                                
+                                <p:outputLabel style="font-weight: bold;color: black" value="#{bundle.selectSpecCat}:*   " /> 
+                            </p:column>
+                            <p:column colspan="2">                                 
+                                <p:selectOneMenu value="#{templateEditorBean.specification.specificationcategory}" 
+                                                       converter="SpecificationcategoryConverter" required="true" requiredMessage="#{selectSpecCat} #{mandatoryField}">
+                                    <f:selectItems value="#{applicationBean.specificationCategories}" var="category" itemLabel="#{category.name}" itemValue="#{category}" />                                       
+                                </p:selectOneMenu>                                
+                            </p:column>                            
+                        </p:row>
+
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:spacer height="10" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>  
+                            <p:column colspan="3" styleClass="ui-widget-header" style="text-align: center">  
+                                <p:outputLabel value="#{bundle.values}" style="font-weight: bold; font-size: 12px ! important;"/>    
+                            </p:column>  
+                        </p:row> 
+
+
+                        <p:row >
+                            <p:column colspan="3">
+                                <p:pickList id="valueList" value="#{templateEditorBean.svaluePickList}" var="sval" itemValue="#{sval}" itemLabel="#{sval.name}" converter="SvalueConverter"  
+                                            showSourceControls="false" showTargetControls="false" showCheckbox="false" showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" >  
+                                    <f:facet name="sourceCaption">#{bundle.available}</f:facet>  
+                                    <f:facet name="targetCaption">#{bundle.selected}</f:facet>  
+                                    <p:ajax event="transfer" />  
+                                    <p:column>  
+                                        #{sval.name}  
+                                    </p:column>  
+                                </p:pickList>  
+                            </p:column> 
+                        </p:row>
+
+                    </p:panelGrid>
+                    <p:commandButton  value="#{bundle.insert}" action="#{administrationAction.insertSpecification()}" update=":productFormID @form:createSpecificationPanelID" />
+                    <p:commandButton  type="button" immediate="true" value="#{bundle.close}" onclick="createSpecificationDialogWidget.hide()" />
+                </p:panel>
+            </p:dialog>
+        </h:form>
+
+
+
+        <h:form id="updateSpecificationFormID">
+            <p:dialog header="#{bundle.updateSpecification}" id="updateSpecificationDialogID" position="center" widgetVar="updateSpecificationDialogWidget" modal="true" resizable="false" >
+                <p:panel id="updateSpecificationPanelID" widgetVar="updateSpecificationPanelWidget">
+                    <p:panelGrid >                            
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:outputLabel  value="#{bundle.specificationName}* :"  style="font-weight: bold"/>
+                                <p:inputText id="updateSpecificationName" value="#{templateEditorBean.specification.name}" required="true" requiredMessage="#{bundle.specificationName}: #{bundle.mandatoryField}"  />
+                                <p:message for="updateSpecificationName" display="icon"/> 
+                            </p:column> 
+                        </p:row>
+
+
+
+                        <p:row>
+                            <p:column style="vertical-align: top">
+                                <p:outputLabel value="#{bundle.dimension}:* " style="font-weight: bold;" />
+                                <p:selectBooleanButton value="#{templateEditorBean.dimension}" onLabel="#{bundle.yes}" offLabel="#{bundle.no}" onIcon="ui-icon-check" offIcon="ui-icon-close" /> 
+                                <p:spacer width="10" height="10"/>
+                            </p:column>   
+
+                            <p:column  style="vertical-align: top">
+                                <p:outputLabel value="#{bundle.color}:* " style="font-weight: bold;" />
+                                <p:selectBooleanButton value="#{templateEditorBean.color}" onLabel="#{bundle.yes}" offLabel="#{bundle.no}" onIcon="ui-icon-check" offIcon="ui-icon-close" /> 
+                            </p:column>  
+
+                            <p:column style="vertical-align: top">
+                                <p:outputLabel value="#{bundle.freetext}:* " style="font-weight: bold;" />
+                                <p:selectBooleanButton value="#{templateEditorBean.freetext}" onLabel="#{bundle.yes}" offLabel="#{bundle.no}" onIcon="ui-icon-check" offIcon="ui-icon-close" /> 
+                            </p:column>   
+
+                        </p:row>
+
+                        <p:row>                                                        
+                            <p:column style="vertical-align: top">
+                                <p:outputLabel value="#{bundle.multivalue}:* " style="font-weight: bold;" />
+                                <p:selectBooleanButton value="#{templateEditorBean.multivalue}" onLabel="#{bundle.yes}" offLabel="#{bundle.no}" onIcon="ui-icon-check" offIcon="ui-icon-close" /> 
+                                <p:spacer width="10" height="10"/>
+                            </p:column>   
+
+                            <p:column colspan="2" style="vertical-align: top">
+                                <p:outputLabel value="#{bundle.multiinsert}:* " style="font-weight: bold;" />
+                                <p:selectBooleanButton value="#{templateEditorBean.multiinsert}" onLabel="#{bundle.yes}" offLabel="#{bundle.no}" onIcon="ui-icon-check" offIcon="ui-icon-close" />
+                            </p:column>   
+                        </p:row>
+
+                         <p:row>
+                            <p:column colspan="3">
+                                <p:spacer height="10" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column >                                
+                                <p:outputLabel style="font-weight: bold;color: black" value="#{bundle.selectSpecCat}:*   " /> 
+                            </p:column>
+                            <p:column colspan="2">                                 
+                                <p:selectOneMenu value="#{templateEditorBean.specification.specificationcategory}" 
+                                                       converter="SpecificationcategoryConverter" required="true" requiredMessage="#{selectSpecCat} #{mandatoryField}">
+                                    <f:selectItems value="#{applicationBean.specificationCategories}" var="category" itemLabel="#{category.name}" itemValue="#{category}" />                                       
+                                </p:selectOneMenu>                                
+                            </p:column>                            
+                        </p:row>
+
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:spacer height="10" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>  
+                            <p:column colspan="3" styleClass="ui-widget-header" style="text-align: center">  
+                                <p:outputLabel value="#{bundle.values}" style="font-weight: bold; font-size: 12px ! important;"/>    
+                            </p:column>  
+                        </p:row>  
+
+
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:pickList value="#{templateEditorBean.svaluePickList}" var="sval" itemValue="#{sval}" itemLabel="#{sval.name}" converter="SvalueConverter"  
+                                            showSourceControls="false" showTargetControls="false" showCheckbox="false" showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" >  
+                                    <f:facet name="sourceCaption">#{bundle.available}</f:facet>  
+                                    <f:facet name="targetCaption">#{bundle.selected}</f:facet>  
+                                    <p:ajax event="transfer" />  
+                                    <p:column>  
+                                        #{sval.name}  
+                                    </p:column>  
+                                </p:pickList>
+                            </p:column> 
+                        </p:row>   
+                    </p:panelGrid>
+                    <p:commandButton  value="#{bundle.update}" action="#{administrationAction.updateSpecification}" update=":productFormID @form" />
+                    <p:commandButton  type="button" immediate="true" value="#{bundle.close}" onclick="updateSpecificationDialogWidget.hide()" />
+                </p:panel>
+            </p:dialog>
+        </h:form>
+
+
+
+
+    </ui:define>
+</ui:composition>
+

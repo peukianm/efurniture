@@ -2,14 +2,19 @@ package com.furniture.entities;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -19,6 +24,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "ITEM", schema = "FURNITURE")
+@SequenceGenerator(name = "SEQ_ITEM", sequenceName = "ITEM_SEQ", allocationSize = 1)
 public class Item implements java.io.Serializable {
 
     // Fields
@@ -30,7 +36,7 @@ public class Item implements java.io.Serializable {
     private BigDecimal active;
     private Set<Auditing> auditings = new HashSet<Auditing>(0);
     private Set<Product> products = new HashSet<Product>(0);
-    private Set<Itemspecification> itemspecifications = new HashSet<Itemspecification>(0);
+    private List<Itemspecification> itemspecifications = new ArrayList<Itemspecification>(0);
 
     // Constructors
     /**
@@ -51,7 +57,7 @@ public class Item implements java.io.Serializable {
      * full constructor
      */
     public Item(BigDecimal itemid, String name, String description, Timestamp createdTimestamp, Timestamp modifiedTimestamp, BigDecimal active,
-            Set<Auditing> auditings, Set<Product> products, Set<Itemspecification> itemspecifications) {
+            Set<Auditing> auditings, Set<Product> products, List<Itemspecification> itemspecifications) {
         this.itemid = itemid;
         this.name = name;
         this.description = description;
@@ -66,6 +72,7 @@ public class Item implements java.io.Serializable {
     // Property accessors
     @Id
     @Column(name = "ITEMID", unique = true, nullable = false, precision = 22, scale = 0)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ITEM")
     public BigDecimal getItemid() {
         return this.itemid;
     }
@@ -138,11 +145,11 @@ public class Item implements java.io.Serializable {
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "item")
-    public Set<Itemspecification> getItemspecifications() {
+    public List<Itemspecification> getItemspecifications() {
         return this.itemspecifications;
     }
 
-    public void setItemspecifications(Set<Itemspecification> itemspecifications) {
+    public void setItemspecifications(List<Itemspecification> itemspecifications) {
         this.itemspecifications = itemspecifications;
     }
 

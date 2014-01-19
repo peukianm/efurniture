@@ -212,7 +212,7 @@
                         <p:row>
                             <p:column>
                                 <p:outputLabel  value="#{bundle.catalogueName}* :"  style="font-weight: bold"/>
-                                <p:inputText id="updateCatalogueName" value="#{catalogueBean.catalogue.name}" />
+                                <p:inputText id="updateCatalogueName" value="#{catalogueBean.catalogue.name}" required="true" requiredMessage="#{bundle.catalogueName}: #{bundle.mandatoryField}" />
                                 <p:message for="updateCatalogueName" display="icon"/> 
                             </p:column><br/>
                         </p:row>
@@ -299,7 +299,7 @@
                         <p:row>
                             <p:column>
                                 <p:outputLabel  value="#{bundle.productlineName}* :"  style="font-weight: bold"/>
-                                <p:inputText id="updateProductlineName" value="#{catalogueBean.productline.name}" />
+                                <p:inputText id="updateProductlineName" value="#{catalogueBean.productline.name}" required="true" requiredMessage="#{bundle.productlineName}: #{bundle.mandatoryField}" />
                                 <p:message for="updateProductlineName" display="icon"/> 
                             </p:column> <br/>
                         </p:row>

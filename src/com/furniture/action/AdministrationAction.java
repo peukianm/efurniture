@@ -15,6 +15,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.transaction.UserTransaction;
@@ -41,22 +42,23 @@ public class AdministrationAction implements Serializable {
 //            dao.test();  
 
             UserBean userBean = (UserBean) FacesUtils.getManagedBean("userBean");
-            
+
             Users temp = null;
             List<Users> users = userDAO.findByProperty("username", userBean.getUsername());
-            if (users == null || users.size()>0) {
-               if (FurnitureUtil.check(userBean.getPassword(), users.get(0).getPassword()))
-                   temp = users.get(0);
-               else
-                   temp = null;
-            } else {                
+            if (users == null || users.size() > 0) {
+                if (FurnitureUtil.check(userBean.getPassword(), users.get(0).getPassword())) {
+                    temp = users.get(0);
+                } else {
+                    temp = null;
+                }
+            } else {
                 temp = null;
             }
-            
-            
+
+
             //Users temp = userDAO.findUser(userBean.getUsername(), userBean.getPassword());
-            
-            
+
+
             if (temp == null) {
                 userBean.setPassword(null);
                 sessionBean.setErrorMsgKey("errMsg_InvalidCredentials");
@@ -158,6 +160,21 @@ public class AdministrationAction implements Serializable {
             sessionBean.setPageCode(SystemParameters.getInstance().getProperty("PAGE_AUDIT_CONTROL"));
             sessionBean.setPageName(MessageBundleLoader.getMessage("audit"));
             return "auditControl?faces-redirect=true ";
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+            return "";
+        }
+    }
+
+    public String templateEditor() {
+        try {
+            TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("templateEditorBean");
+            templateEditorBean.reset();
+            sessionBean.setPageCode(SystemParameters.getInstance().getProperty("PAGE_TEMPLATE_EDITOR"));
+            sessionBean.setPageName(MessageBundleLoader.getMessage("templateEditor"));
+            return "templateEditor?faces-redirect=true ";
         } catch (Exception e) {
             e.printStackTrace();
             sessionBean.setErrorMsgKey("errMsg_GeneralError");
@@ -344,7 +361,7 @@ public class AdministrationAction implements Serializable {
                 Userroles userrole = userroles.get(i);
                 userBean.getRoles().add(userrole.getRole());
             }
-            
+
             if (userBean.getUser().getActive().equals(BigDecimal.ONE)) {
                 userBean.setActive(true);
             } else {
@@ -368,26 +385,26 @@ public class AdministrationAction implements Serializable {
             List<Role> roles = userBean.getRoles();
             userTransaction.begin();
             Users user = userBean.getUser();
-            
+
             List<Users> usrs = userDAO.findByProperty("username", userBean.getUser().getUsername().trim());
-            if (usrs.size()==1 ) {                
+            if (usrs.size() == 1) {
                 sessionBean.setAlertMessage(MessageBundleLoader.getMessage("useranameAlreadyUsed"));
                 FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
-                FacesUtils.callRequestContext("generalAlertWidget.show()");                
+                FacesUtils.callRequestContext("generalAlertWidget.show()");
                 return "";
             }
-            
+
             usrs = userDAO.findByProperty("email", userBean.getUser().getEmail().trim());
-            
-            if (usrs.size()==1) {                
+
+            if (usrs.size() == 1) {
                 sessionBean.setAlertMessage(MessageBundleLoader.getMessage("emailAlreadyUsed"));
                 FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
-                FacesUtils.callRequestContext("generalAlertWidget.show()");                
+                FacesUtils.callRequestContext("generalAlertWidget.show()");
                 return "";
             }
-            
-            
-            
+
+
+
 
             List<Userroles> userroles = new ArrayList<Userroles>(0);
             for (int i = 0; i < roles.size(); i++) {
@@ -399,7 +416,7 @@ public class AdministrationAction implements Serializable {
             }
 
             String hashedPassword = FurnitureUtil.getSaltedHash(userBean.getPassword());
-            
+
             user.setPassword(hashedPassword);
             user.setUserroleses(userroles);
             persistenceHelper.create(user);
@@ -454,26 +471,26 @@ public class AdministrationAction implements Serializable {
         UserTransaction userTransaction = null;
         try {
             Users user = userBean.getUser();
-            
+
             List<Users> usrs = userDAO.findByProperty("username", userBean.getUser().getUsername().trim());
-            if (usrs.size()==1 && !usrs.get(0).equals(user) ) {                
+            if (usrs.size() == 1 && !usrs.get(0).equals(user)) {
                 sessionBean.setAlertMessage(MessageBundleLoader.getMessage("useranameAlreadyUsed"));
                 FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
-                FacesUtils.callRequestContext("generalAlertWidget.show()");                
+                FacesUtils.callRequestContext("generalAlertWidget.show()");
                 return "";
             }
-            
+
             usrs = userDAO.findByProperty("email", userBean.getUser().getEmail().trim());
-            
-            if (usrs.size()==1 && !usrs.get(0).equals(user)) {                
+
+            if (usrs.size() == 1 && !usrs.get(0).equals(user)) {
                 sessionBean.setAlertMessage(MessageBundleLoader.getMessage("emailAlreadyUsed"));
                 FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
-                FacesUtils.callRequestContext("generalAlertWidget.show()");                
+                FacesUtils.callRequestContext("generalAlertWidget.show()");
                 return "";
             }
-            
-            
-            
+
+
+
             userTransaction = persistenceHelper.getUserTransaction();
             if (userBean.isActive()) {
                 user.setActive(BigDecimal.ONE);
@@ -485,7 +502,7 @@ public class AdministrationAction implements Serializable {
 
             //removing
             for (int i = 0; i < user.getUserroleses().size(); i++) {
-                Userroles userrole = user.getUserroleses().get(i);                
+                Userroles userrole = user.getUserroleses().get(i);
                 persistenceHelper.remove(userrole);
             }
             user.setUserroleses(null);
@@ -494,13 +511,13 @@ public class AdministrationAction implements Serializable {
             List<Role> roles = userBean.getRoles();
             List<Userroles> userroles = new ArrayList<Userroles>(0);
             for (int i = 0; i < roles.size(); i++) {
-                Role role = roles.get(i);               
+                Role role = roles.get(i);
                 Userroles userrole = new Userroles();
                 userrole.setUsers(user);
                 userrole.setRole(role);
                 userroles.add(userrole);
             }
-                       
+
             user.setUserroleses(userroles);
 
             user = persistenceHelper.editPersist(user);
@@ -571,28 +588,28 @@ public class AdministrationAction implements Serializable {
     public String sendResetPasswordEmail() {
         try {
             ResetBean resetBean = (ResetBean) FacesUtils.getManagedBean("resetBean");
-            String email = resetBean.getEmail().trim();            
+            String email = resetBean.getEmail().trim();
             List<Users> users = userDAO.findByProperty("email", email);
             if (users != null && users.size() == 1) {
-                Users user = users.get(0);                
+                Users user = users.get(0);
                 String username = user.getUsername();
                 String[] emails = new String[1];
                 emails[0] = user.getEmail();
-                
-                String link = SystemParameters.getInstance().getProperty("resetPassword_link")+user.getPassword() +"&userid="+user.getUserid() ;                
+
+                String link = SystemParameters.getInstance().getProperty("resetPassword_link") + user.getPassword() + "&userid=" + user.getUserid();
                 String host = SystemParameters.getInstance().getProperty("gmail_host");
                 String port = SystemParameters.getInstance().getProperty("gmail_port");
                 String account = SystemParameters.getInstance().getProperty("gmail_account");
                 String password = SystemParameters.getInstance().getProperty("gmail_password");
                 String subject = SystemParameters.getInstance().getProperty("email_subject") + username;
                 String body = SystemParameters.getInstance().getProperty("email_body") + link;
-                
+
                 FurnitureUtil.sendFromGMail(host, port, account, password, emails, subject, body);
                 FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("successUserEmail"));
                 return "";
-            } else {                
+            } else {
                 FacesUtils.addErrorMessage(MessageBundleLoader.getMessage("falseUserEmail"));
-                return "";                
+                return "";
             }
 
             //return "loginPage?faces-redirect=true";
@@ -604,7 +621,6 @@ public class AdministrationAction implements Serializable {
         }
     }
 
-    
     public void resetPasswordEmail() {
         ResetBean resetBean = (ResetBean) FacesUtils.getManagedBean("resetBean");
         UserTransaction userTransaction = null;
@@ -620,7 +636,7 @@ public class AdministrationAction implements Serializable {
             persistenceUtil.audit(user, new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATEPASSWORD")), "User Password " + user.getUsername() + " updated");
             userTransaction.commit();
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("userUpdated"));
-           
+
         } catch (Exception e) {
             try {
                 userTransaction.rollback();
@@ -629,14 +645,588 @@ public class AdministrationAction implements Serializable {
             }
             e.printStackTrace();
             sessionBean.setErrorMsgKey("errMsg_GeneralError");
-            goError(e);            
+            goError(e);
         }
     }
-    
-    
-    
-    
-    
+
+    public void goInsertItem() {
+        try {
+            TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("templateEditorBean");
+            Item newItem = new Item();
+            newItem.setActive(BigDecimal.ONE);
+            templateEditorBean.setItem(newItem);
+
+            SpecificationDAO dao = new SpecificationDAO();
+            List<Specification> specifications = dao.findByProperty("active", BigDecimal.ONE);
+            DualListModel<Specification> specificationPickList = new DualListModel<Specification>(specifications, new ArrayList<Specification>(0));
+            templateEditorBean.setSpecificationPickList(specificationPickList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+
+    public void goInsertSpecification() {
+        try {
+            TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("templateEditorBean");
+            Specification newSpecification = new Specification();
+            newSpecification.setActive(BigDecimal.ONE);
+            templateEditorBean.setSpecification(newSpecification);
+
+            SvalueDAO dao = new SvalueDAO();
+            List<Svalue> svalues = dao.findAll();
+            DualListModel<Svalue> svaluePickList = new DualListModel<Svalue>(svalues, new ArrayList<Svalue>(0));
+            templateEditorBean.setSvaluePickList(svaluePickList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+
+    public void goInsertSvalue() {
+        try {
+            TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("TemplateEditorBean");
+            Svalue svalue = new Svalue();
+            //svalue.setActive(BigDecimal.ONE);  
+            templateEditorBean.setSvalue(svalue);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+
+    public void goUpdateItem() {
+        try {
+            TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("templateEditorBean");
+            ItemDAO dao = new ItemDAO();
+            List<Specification> itemSpecifications = dao.getItemSpecification(templateEditorBean.getItem());
+
+            SpecificationDAO dao1 = new SpecificationDAO();
+            List<Specification> specifications = dao1.findByProperty("active", BigDecimal.ONE);
+
+            specifications.removeAll(itemSpecifications);
+            templateEditorBean.setSpecificationPickList(new DualListModel<Specification>(specifications, itemSpecifications));
+
+            FacesUtils.callRequestContext("updateItemDialogWidget.show()");
+            FacesUtils.updateHTMLComponnetWIthJS("updateItemPanelID");
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+
+    public void goUpdateSpecification() {
+        try {
+            TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("templateEditorBean");
+            SpecificationDAO dao = new SpecificationDAO();
+            List<Svalue> specificationSvalues = dao.getSpecificationSvalues(templateEditorBean.getSpecification());
+
+            SvalueDAO dao1 = new SvalueDAO();
+            List<Svalue> svalues = dao1.findAll();                     
+            svalues.removeAll(specificationSvalues);            
+            templateEditorBean.setSvaluePickList(new DualListModel<Svalue>(svalues, specificationSvalues));
+
+            if (templateEditorBean.getSpecification().getDimension().equals(BigDecimal.ONE)) {
+                templateEditorBean.setDimension(true);
+            } else {
+                templateEditorBean.setDimension(false);
+            }
+
+            if (templateEditorBean.getSpecification().getColor().equals(BigDecimal.ONE)) {
+                templateEditorBean.setColor(true);
+            } else {
+                templateEditorBean.setColor(false);
+            }
+
+            if (templateEditorBean.getSpecification().getMultipleinsert().equals(BigDecimal.ONE)) {
+                templateEditorBean.setMultiinsert(true);
+            } else {
+                templateEditorBean.setMultiinsert(false);
+            }
+
+            if (templateEditorBean.getSpecification().getFreetext().equals(BigDecimal.ONE)) {
+                templateEditorBean.setFreetext(true);
+            } else {
+                templateEditorBean.setFreetext(false);
+            }
+
+            if (templateEditorBean.getSpecification().getMultiplevalues().equals(BigDecimal.ONE)) {
+                templateEditorBean.setMultivalue(true);
+            } else {
+                templateEditorBean.setMultivalue(false);
+            }
+
+            FacesUtils.callRequestContext("updateSpecificationDialogWidget.show()");
+            FacesUtils.updateHTMLComponnetWIthJS("updateSpecificationPanelID");
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+
+    public void goUpdateSvalue() {
+        try {
+            TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("templateEditorBean");
+
+            FacesUtils.callRequestContext("updateSvalueDialogWidget.show()");
+            FacesUtils.updateHTMLComponnetWIthJS("updateSvaluePanelID");
+        } catch (Exception e) {
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+
+    public String insertItem() {
+
+        TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("templateEditorBean");
+        UserTransaction userTransaction = null;
+        try {
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            Item item = templateEditorBean.getItem();
+
+            List<Specification> specs = templateEditorBean.getSpecificationPickList().getTarget();
+            List<Itemspecification> ispecs = new ArrayList<Itemspecification>(0);
+            for (int i = 0; i < specs.size(); i++) {
+                Specification specification = specs.get(i);
+                Itemspecification itemSpecification = new Itemspecification();
+                itemSpecification.setSpecification(specification);
+                itemSpecification.setActive(BigDecimal.ONE);
+                itemSpecification.setItem(item);
+                itemSpecification.setOrdered(new BigDecimal(i));
+                ispecs.add(itemSpecification);
+            }
+            item.setItemspecifications(ispecs);
+
+            persistenceHelper.create(item);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_INSERTTEMPLATEPRODUCT")), "Prototype product " + item.getName() + " inserted");
+            userTransaction.commit();
+
+            templateEditorBean.reset();
+            ApplicationBean applicationBean = (ApplicationBean) FacesUtils.getManagedBean("applicationBean");
+            applicationBean.setItems(null);
+
+            FacesUtils.callRequestContext("createItemDialogWidget.hide()");
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("prototypeProductInserted"));
+            return templateEditor();
+
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+            return "";
+        }
+    }
+
+    public void insertSpecification() {
+
+        TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("templateEditorBean");
+        UserTransaction userTransaction = null;
+        try {
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            Specification specification = templateEditorBean.getSpecification();
+
+            if (templateEditorBean.isDimension()) {
+                specification.setDimension(BigDecimal.ONE);
+            } else {
+                specification.setDimension(BigDecimal.ZERO);
+            }
+
+            if (templateEditorBean.isColor()) {
+                specification.setColor(BigDecimal.ONE);
+            } else {
+                specification.setColor(BigDecimal.ZERO);
+            }
+
+            if (templateEditorBean.isFreetext()) {
+                specification.setFreetext(BigDecimal.ONE);
+            } else {
+                specification.setFreetext(BigDecimal.ZERO);
+            }
+
+            if (templateEditorBean.isMultiinsert()) {
+                specification.setMultipleinsert(BigDecimal.ONE);
+            } else {
+                specification.setMultipleinsert(BigDecimal.ZERO);
+            }
+
+            if (templateEditorBean.isMultivalue()) {
+                specification.setMultiplevalues(BigDecimal.ONE);
+            } else {
+                specification.setMultiplevalues(BigDecimal.ZERO);
+            }
+
+            
+            List<Svalue> svalues = templateEditorBean.getSvaluePickList().getTarget();
+            
+            if (specification.getFreetext().equals(BigDecimal.ZERO)) {                
+                if (svalues.size() == 0) {
+                    sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noValuesSelected"));
+                    FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
+                    FacesUtils.callRequestContext("generalAlertWidget.show()");
+                    return;
+                }
+            }
+            
+            
+             if (specification.getFreetext().equals(BigDecimal.ONE)) {                
+                if (svalues.size() > 0) {
+                    sessionBean.setAlertMessage(MessageBundleLoader.getMessage("valuesSelected"));
+                    FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
+                    FacesUtils.callRequestContext("generalAlertWidget.show()");
+                    return;
+                }
+            }
+            
+             if (specification.getDimension().equals(BigDecimal.ONE)) { 
+                 if (svalues.size() > 0) {
+                    sessionBean.setAlertMessage(MessageBundleLoader.getMessage("dimensionSelected"));
+                    FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
+                    FacesUtils.callRequestContext("generalAlertWidget.show()");
+                    return;
+                }
+             }
+             
+             
+              if (specification.getDimension().equals(BigDecimal.ONE) && specification.getColor().equals(BigDecimal.ONE)) {                  
+                sessionBean.setAlertMessage(MessageBundleLoader.getMessage("dimensionColor"));
+                FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
+                FacesUtils.callRequestContext("generalAlertWidget.show()");
+                return;                
+             }
+              
+              
+               if (specification.getMultiplevalues().equals(BigDecimal.ONE) && specification.getFreetext().equals(BigDecimal.ONE)) {                  
+                sessionBean.setAlertMessage(MessageBundleLoader.getMessage("multivaluesFreeText"));
+                FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
+                FacesUtils.callRequestContext("generalAlertWidget.show()");
+                return;                
+             }
+            
+            
+            
+            List<Specificationvalue> specificationvalues = new ArrayList<Specificationvalue>(0);
+            for (int i = 0; i < svalues.size(); i++) {
+                Svalue svalue = svalues.get(i);
+                Specificationvalue specificationvalue = new Specificationvalue();
+                specificationvalue.setActive(BigDecimal.ONE);
+                specificationvalue.setSpecification(specification);
+                specificationvalue.setSvalue(svalue);
+                specificationvalue.setOrdered(new BigDecimal(i));
+                specificationvalues.add(specificationvalue);
+            }
+            specification.setSpecificationvalues(specificationvalues);
+            
+
+
+            persistenceHelper.create(specification);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_INSERTTEMPLATEPRODUCTSPEC")), "Specification " + specification.getName() + " inserted");
+            userTransaction.commit();
+
+            templateEditorBean.reset();
+            ApplicationBean applicationBean = (ApplicationBean) FacesUtils.getManagedBean("applicationBean");
+            applicationBean.setSpecifications(null);
+
+            templateEditorBean.reset();
+            FacesUtils.callRequestContext("createSpecificationDialogWidget.hide()");
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("specificationInserted"));
+
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+
+    public void insertSvalue() {
+
+        TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("templateEditorBean");
+        UserTransaction userTransaction = null;
+        try {
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            Svalue svalue = templateEditorBean.getSvalue();
+            persistenceHelper.create(svalue);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_INSERTTEMPLATEPRODUCTSPECVALUE")), "New Specification value (default) " + svalue.getName() + " inserted");
+            userTransaction.commit();
+
+            templateEditorBean.reset();
+            ApplicationBean applicationBean = (ApplicationBean) FacesUtils.getManagedBean("applicationBean");
+            applicationBean.setSvalues(null);
+
+
+            FacesUtils.callRequestContext("createSvalueDialogWidget.hide()");
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("specificationValueInserted"));
+
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+
+    public void updateItem() {
+        TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("templateEditorBean");
+        UserTransaction userTransaction = null;
+        try {
+            Item item = templateEditorBean.getItem();
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            for (int i = 0; i < item.getItemspecifications().size(); i++) {
+                Itemspecification is = item.getItemspecifications().get(i);
+                persistenceHelper.remove(is);
+            }
+
+            item.setItemspecifications(null);
+            List<Specification> specs = templateEditorBean.getSpecificationPickList().getTarget();
+            List<Itemspecification> ispecs = new ArrayList<Itemspecification>(0);
+            for (int i = 0; i < specs.size(); i++) {
+                Specification specification = specs.get(i);
+                Itemspecification itemSpecification = new Itemspecification();
+                itemSpecification.setSpecification(specification);
+                itemSpecification.setActive(BigDecimal.ONE);
+                itemSpecification.setItem(item);
+                itemSpecification.setOrdered(new BigDecimal(i));
+                ispecs.add(itemSpecification);
+            }
+            item.setItemspecifications(ispecs);
+            item = persistenceHelper.editPersist(item);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATETEMPLATEPRODUCT")), "Protorype product " + item.getName() + " updated");
+            userTransaction.commit();
+
+            templateEditorBean.reset();
+            ApplicationBean applicationBean = (ApplicationBean) FacesUtils.getManagedBean("applicationBean");
+            applicationBean.setItems(null);
+
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("prototypeProductUpdated"));
+            FacesUtils.callRequestContext("updateItemDialogWidget.hide()");
+
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+
+    public void updateSpecification() {
+        TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("templateEditorBean");
+        UserTransaction userTransaction = null;
+        try {
+            Specification specification = templateEditorBean.getSpecification();
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+
+
+            if (templateEditorBean.isDimension()) {
+                specification.setDimension(BigDecimal.ONE);
+            } else {
+                specification.setDimension(BigDecimal.ZERO);
+            }
+
+            if (templateEditorBean.isColor()) {
+                specification.setColor(BigDecimal.ONE);
+            } else {
+                specification.setColor(BigDecimal.ZERO);
+            }
+
+            if (templateEditorBean.isFreetext()) {
+                specification.setFreetext(BigDecimal.ONE);
+            } else {
+                specification.setFreetext(BigDecimal.ZERO);
+            }
+
+            if (templateEditorBean.isMultiinsert()) {
+                specification.setMultipleinsert(BigDecimal.ONE);
+            } else {
+                specification.setMultipleinsert(BigDecimal.ZERO);
+            }
+
+            if (templateEditorBean.isMultivalue()) {
+                specification.setMultiplevalues(BigDecimal.ONE);
+            } else {
+                specification.setMultiplevalues(BigDecimal.ZERO);
+            }
+
+
+            List<Svalue> svalues = templateEditorBean.getSvaluePickList().getTarget();
+            
+            System.out.println("NEW LIST OF VALUES="+svalues.size());
+            if (specification.getFreetext().equals(BigDecimal.ZERO)) {                
+                if (svalues.size() == 0) {
+                    sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noValuesSelected"));
+                    FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
+                    FacesUtils.callRequestContext("generalAlertWidget.show()");
+                    return;
+                }
+            }
+ 
+            
+            if (specification.getFreetext().equals(BigDecimal.ONE)) {                
+                if (svalues.size() > 0) {
+                    sessionBean.setAlertMessage(MessageBundleLoader.getMessage("valuesSelected"));
+                    FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
+                    FacesUtils.callRequestContext("generalAlertWidget.show()");
+                    return;
+                }
+            }
+            
+             if (specification.getDimension().equals(BigDecimal.ONE)) { 
+                 if (svalues.size() > 0) {
+                    sessionBean.setAlertMessage(MessageBundleLoader.getMessage("dimensionSelected"));
+                    FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
+                    FacesUtils.callRequestContext("generalAlertWidget.show()");
+                    return;
+                }
+             }
+             
+             
+              if (specification.getDimension().equals(BigDecimal.ONE) && specification.getColor().equals(BigDecimal.ONE)) {                  
+                sessionBean.setAlertMessage(MessageBundleLoader.getMessage("dimensionColor"));
+                FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
+                FacesUtils.callRequestContext("generalAlertWidget.show()");
+                return;                
+             }
+              
+              
+               if (specification.getMultiplevalues().equals(BigDecimal.ONE) && specification.getFreetext().equals(BigDecimal.ONE)) {                  
+                sessionBean.setAlertMessage(MessageBundleLoader.getMessage("multivaluesFreeText"));
+                FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
+                FacesUtils.callRequestContext("generalAlertWidget.show()");
+                return;                
+             }
+              
+            
+            
+            System.out.println("PREVIOUS LIST OF VALUES="+specification.getSpecificationvalues().size());
+            for (int i = 0; i < specification.getSpecificationvalues().size(); i++) {
+                Specificationvalue specificationValue = specification.getSpecificationvalues().get(i);
+                System.out.println("REMOVING");
+                persistenceHelper.remove(specificationValue);
+            }
+  
+            specification.setSpecificationvalues(null);
+            List<Specificationvalue> specificationvalues = new ArrayList<Specificationvalue>(0);
+            for (int i = 0; i < svalues.size(); i++) {
+                Svalue svalue = svalues.get(i);
+                Specificationvalue specificationvalue = new Specificationvalue();
+                specificationvalue.setActive(BigDecimal.ONE);
+                specificationvalue.setSpecification(specification);
+                specificationvalue.setSvalue(svalue);
+                specificationvalue.setOrdered(new BigDecimal(i));
+                specificationvalues.add(specificationvalue);
+            }
+            specification.setSpecificationvalues(specificationvalues);
+
+            specification = persistenceHelper.editPersist(specification);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATETEMPLATEPRODUCTSPEC")), "Prototype product specification " + specification.getName() + " updated");
+            userTransaction.commit();
+             
+            templateEditorBean.reset();
+            ApplicationBean applicationBean = (ApplicationBean) FacesUtils.getManagedBean("applicationBean");
+            applicationBean.setSpecifications(null);
+
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("specificationUpdated"));
+            FacesUtils.callRequestContext("updateSpecificationDialogWidget.hide()");
+
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+
+    public void removeItem() {
+        TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("templateEditorBean");
+        UserTransaction userTransaction = null;
+        try {
+            Item item = templateEditorBean.getItem();
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            persistenceHelper.remove(item);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_DELETETEMPLATEPRODUCT")), "Prototype Product " + item.getName() + " deleted");
+            userTransaction.commit();
+
+            templateEditorBean.reset();
+            ApplicationBean applicationBean = (ApplicationBean) FacesUtils.getManagedBean("applicationBean");
+            applicationBean.setItems(null);
+
+
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("prototypeProductDeleted"));
+            FacesUtils.updateHTMLComponnetWIthJS("");
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+
+    public void removeSpecification() {
+        TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("templateEditorBean");
+        UserTransaction userTransaction = null;
+        try {
+            Specification specification = templateEditorBean.getSpecification();
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            persistenceHelper.remove(specification);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_DELETETEMPLATEPRODUCTSPEC")), "Prototype Product Specification " + specification.getName() + " deleted");
+            userTransaction.commit();
+
+            templateEditorBean.reset();
+            ApplicationBean applicationBean = (ApplicationBean) FacesUtils.getManagedBean("applicationBean");
+            applicationBean.setSpecifications(null);
+
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("specificationDeleted"));
+            FacesUtils.updateHTMLComponnetWIthJS("");
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+
     public void goError(Exception ex) {
         try {
             logger.error("-----------AN ERROR HAPPENED !!!! -------------------- : " + ex.toString());

@@ -1,12 +1,17 @@
 package com.furniture.dao;
 
 import com.furniture.entities.Company;
+import com.furniture.entities.Item;
+import com.furniture.entities.Itemspecification;
 import com.furniture.entities.Product;
 import com.furniture.entities.Specification;
+import com.furniture.entities.Specificationvalue;
+import com.furniture.entities.Svalue;
 import com.furniture.util.EJBUtil;
 import com.furniture.util.PersistenceHelper;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -131,7 +136,7 @@ public class SpecificationDAO {
     @SuppressWarnings("unchecked")
     public List<Specification> findByProperty(String propertyName, final Object value, final int... rowStartIdxAndCount) {
         try {
-            final String queryString = "select model from Specification model where model." + propertyName + "= :propertyValue";
+            final String queryString = "select model from Specification model where model." + propertyName + "= :propertyValue  order by model.name  ";
             Query query = getEntityManager().createQuery(queryString);
             query.setParameter("propertyValue", value);
             if (rowStartIdxAndCount != null && rowStartIdxAndCount.length > 0) {
@@ -202,7 +207,7 @@ public class SpecificationDAO {
     
     public List<Specification> getDimensionSpecifications(Boolean showOnlyActive) {
         try {
-            Query query = getEntityManager().createQuery("Select sprec from Specification spec where "
+            Query query = getEntityManager().createQuery("Select spec from Specification spec where "
                     + " where spec.dimension=1 "
                     + (showOnlyActive == true ? " and spec.active=1 " : " "));
             
@@ -213,6 +218,36 @@ public class SpecificationDAO {
         }
 
     }
+    
+    
+    
+    
+              
+    public List<Svalue> getSpecificationSvalues(Specification specification) {
+        try {            
+            String queryString = "Select model from Specificationvalue model "                                        
+                    + " where model.active = 1 "                    
+                    + (specification!=null? " and model.specification = :specification " :" ")
+                    + " order by model.svalue.name";
+            
+            Query query = getEntityManager().createQuery(queryString);
+            if (specification != null) {
+                query.setParameter("specification", specification);
+            }
+            
+            List<Specificationvalue> specificationValues = query.getResultList();
+            List<Svalue> svalues = new ArrayList<Svalue>(0);
+            for (int i = 0; i < specificationValues.size(); i++) {
+                Specificationvalue specificationValue = specificationValues.get(i);                
+                svalues.add(specificationValue.getSvalue());
+                                
+            }                        
+            return svalues;
+        } catch (RuntimeException re) {
+            logger.error("Error on finding entity", re);
+            throw re;
+        }
+    }        
     
     
     

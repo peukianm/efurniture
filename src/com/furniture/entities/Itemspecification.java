@@ -5,9 +5,12 @@ import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -17,6 +20,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "ITEMSPECIFICATION", schema = "FURNITURE")
+@SequenceGenerator(name = "SEQ_ITEMSPECIFICATION", sequenceName = "ITEMSPECIFICATION_SEQ", allocationSize = 1)
 public class Itemspecification implements java.io.Serializable {
 
     // Fields
@@ -60,6 +64,7 @@ public class Itemspecification implements java.io.Serializable {
     // Property accessors
     @Id
     @Column(name = "ID", unique = true, nullable = false, precision = 22, scale = 0)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ITEMSPECIFICATION")
     public BigDecimal getId() {
         return this.id;
     }

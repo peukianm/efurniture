@@ -129,6 +129,10 @@
     </converter>
  
  
+    <converter>
+        <converter-id>SvalueConverter</converter-id>
+        <converter-class>com.furniture.converter.SvalueConverter</converter-class>
+    </converter>
  
  
  

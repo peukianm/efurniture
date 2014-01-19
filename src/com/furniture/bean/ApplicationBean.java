@@ -13,6 +13,7 @@ import com.furniture.dao.ProductcategoryDAO;
 import com.furniture.dao.RoleDAO;
 import com.furniture.dao.SpecificationDAO;
 import com.furniture.dao.SpecificationcategoryDAO;
+import com.furniture.dao.SvalueDAO;
 import com.furniture.entities.Action;
 import com.furniture.entities.Category;
 import com.furniture.entities.Company;
@@ -24,6 +25,7 @@ import com.furniture.entities.Productcategory;
 import com.furniture.entities.Role;
 import com.furniture.entities.Specification;
 import com.furniture.entities.Specificationcategory;
+import com.furniture.entities.Svalue;
 import com.furniture.util.FurnitureUtil;
 import com.furniture.util.SystemParameters;
 import java.io.Serializable;
@@ -96,8 +98,9 @@ public class ApplicationBean implements Serializable {
     public void resetCompanies() {
         this.companies = null;
     }
+    
+    
     List<Productcategory> productcategories;
-
     public List<Productcategory> getProductcategories() {
         if (productcategories == null) {
             ProductcategoryDAO dao = new ProductcategoryDAO();
@@ -109,8 +112,9 @@ public class ApplicationBean implements Serializable {
     public void setProductcategories(List<Productcategory> Productcategories) {
         this.productcategories = productcategories;
     }
+    
+    
     List<Item> items;
-
     public List<Item> getItems() {
         if (items == null) {
             ItemDAO dao = new ItemDAO();
@@ -119,11 +123,41 @@ public class ApplicationBean implements Serializable {
         return items;
     }
 
-    public void setItems(List<Item> Items) {
+    public void setItems(List<Item> items) {
         this.items = items;
     }
-    List<Currency> currencies;
+    
+    
+    List<Specification> specifications;
+    public List<Specification> getSpecifications() {
+        if (specifications == null) {
+            SpecificationDAO dao = new SpecificationDAO();
+            specifications = dao.findByProperty("active", BigDecimal.ONE);
+        }
+        return specifications;
+    }
 
+    public void setSpecifications(List<Specification> specifications) {
+        this.specifications = specifications;
+    }
+    
+    
+    List<Svalue> svalues;
+    public List<Svalue> getSvalues() {
+        if (svalues == null) {
+            SvalueDAO dao = new SvalueDAO();
+            svalues = dao.findByProperty("active", BigDecimal.ONE);
+        }
+        return svalues;
+    }
+
+    public void setSvalues(List<Svalue> svalues) {
+        this.svalues = svalues;
+    }
+    
+    
+    
+    List<Currency> currencies;
     public List<Currency> getCurrencies() {
         if (currencies == null) {
             CurrencyDAO dao = new CurrencyDAO();
@@ -135,8 +169,9 @@ public class ApplicationBean implements Serializable {
     public void setCurrencies(List<Currency> currencies) {
         this.currencies = currencies;
     }
+    
+    
     List<Action> actions;
-
     public List<Action> getActions() {
         if (actions == null) {
             ActionDAO dao = new ActionDAO();
@@ -148,8 +183,9 @@ public class ApplicationBean implements Serializable {
     public void setActions(List<Action> actions) {
         this.actions = actions;
     }
+    
+    
     List<Specification> dimensionSpecifications;
-
     public List<Specification> getDimensionSpecifications() {
         if (dimensionSpecifications == null) {
             SpecificationDAO dao = new SpecificationDAO();
@@ -161,8 +197,9 @@ public class ApplicationBean implements Serializable {
     public void setDimensionSpecifications(List<Specification> dimensionSpecifications) {
         this.dimensionSpecifications = dimensionSpecifications;
     }
+    
+    
     List<Measurment> measurments;
-
     public List<Measurment> getmeasurments() {
         if (measurments == null) {
             MeasurmentDAO dao = new MeasurmentDAO();
@@ -174,8 +211,9 @@ public class ApplicationBean implements Serializable {
     public void setMeasurments(List<Measurment> measurments) {
         this.measurments = measurments;
     }
+    
+    
     List<Companyproduct> companyproducts = new ArrayList<Companyproduct>(0);
-
     public List<Companyproduct> getCompanyproducts() {
         if (companyproducts.size() == 0) {
             CompanyDAO dao = new CompanyDAO();
@@ -194,8 +232,9 @@ public class ApplicationBean implements Serializable {
     public void setCompanyproducts(List<Companyproduct> companyproducts) {
         this.companyproducts = companyproducts;
     }
+    
+    
     private TreeNode root;
-
     public TreeNode getRoot() {
         CompanyDAO dao = new CompanyDAO();
         List<Category> categories = dao.getAllRootCategories(true);
@@ -206,8 +245,9 @@ public class ApplicationBean implements Serializable {
     public void setRoot(TreeNode root) {
         this.root = root;
     }
+    
+    
     private List<Category> rootCategories;
-
     public List<Category> getRootCategories() {
         CompanyDAO dao = new CompanyDAO();
         rootCategories = dao.getAllRootCategories(true);
