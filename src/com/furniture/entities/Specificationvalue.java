@@ -2,6 +2,7 @@ package com.furniture.entities;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,6 +22,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "SPECIFICATIONVALUE", schema = "FURNITURE")
 @SequenceGenerator(name = "SEQ_SPECIFICATIONVALUE", sequenceName = "SPECIFICATIONVALUE_SEQ", allocationSize = 1)
+@Cacheable(false)
 public class Specificationvalue implements java.io.Serializable {
 
     // Fields

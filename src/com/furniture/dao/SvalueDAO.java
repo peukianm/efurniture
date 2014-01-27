@@ -170,6 +170,7 @@ public class SvalueDAO {
         try {
             final String queryString = "select model from Svalue model order by model.name";
             Query query = getEntityManager().createQuery(queryString);
+            //query.setHint("javax.persistence.cache.storeMode", "REFRESH");
             if (rowStartIdxAndCount != null && rowStartIdxAndCount.length > 0) {
                 int rowStartIdx = Math.max(0, rowStartIdxAndCount[0]);
                 if (rowStartIdx > 0) {

@@ -69,7 +69,7 @@ public class Productvalue implements java.io.Serializable {
         this.modifiedTimestamp = modifiedTimestamp;
         this.measurment = measurment;
     }
-
+ 
     // Property accessors
     @Id
     @Column(name = "ID", unique = true, nullable = false, precision = 22, scale = 0)

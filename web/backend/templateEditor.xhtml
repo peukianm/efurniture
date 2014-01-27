@@ -109,11 +109,6 @@
                                     <h:graphicImage rendered="#{specification.multipleinsert!=1}" url="../resources/images/close.gif" width="14px" height="14px" />                                                          
                                 </p:column>
 
-
-
-
-
-
                                 <p:column headerText="#{bundle.actions}">
                                     <p:commandButton id="bt2" icon="ui-icon-search" title="#{bundle.view}" immediate="true" rendered="#{specification.freetext==0}" />                                        
                                     <p:overlayPanel id="over2" for="bt2">
@@ -138,6 +133,33 @@
 
                             <p:commandButton immediate="true" value="#{bundle.newPrototypeSpecification}" action="#{administrationAction.goInsertSpecification()}" onclick="createSpecificationDialogWidget.show()" 
                                              update=":createSpecificationFormID:createSpecificationPanelID"     />
+                        </h:panelGrid>  
+                    </p:fieldset>  
+                    
+                    
+                    <p:fieldset legend="#{bundle.defaultValues}" style="margin-top: 5px; margin-bottom: 5px;padding: 10px"  toggleable="true" collapsed="true" >  
+                        <h:panelGrid columns="1" cellpadding="5">  
+                            <p:dataTable paginator="true" rows="10" emptyMessage="#{bundle.noValues}" id="svalueTable" value="#{applicationBean.svalues}"
+                                         var="svalue" paginatorPosition="bottom" paginatorAlwaysVisible="false">
+                                <p:column headerText="#{bundle.name}">
+                                    <p:outputLabel value="#{svalue.name}" />
+                                </p:column>
+                                <p:column headerText="#{bundle.actions}">
+                                    
+                                    <p:commandButton icon="ui-icon-pencil" action="#{administrationAction.goUpdateSvalue()}" update=":updateSvalueFormID:updateSvaluePanelID"  >
+                                        <f:setPropertyActionListener value="#{svalue}" target="#{templateEditorBean.svalue}" />
+                                    </p:commandButton>
+
+                                    <p:commandButton icon="ui-icon-trash" action="#{administrationAction.removeSvalue()}" update="@form">
+                                        <f:setPropertyActionListener value="#{svalue}" target="#{templateEditorBean.svalue}" />
+                                        <p:confirm header="#{bundle.confirmation}" message="#{bundle.confirmDeleteSpecificationValue}" icon="ui-icon-alert" /> 
+                                    </p:commandButton>
+
+                                </p:column>                                
+                            </p:dataTable>
+
+                            <p:commandButton immediate="true" value="#{bundle.newSvalue}" action="#{administrationAction.goInsertSvalue()}" onclick="createSvalueDialogWidget.show()"  
+                                             update=":createSvalueFormID:createSvaluePanelID"     />
                         </h:panelGrid>  
                     </p:fieldset>  
 
@@ -467,6 +489,47 @@
                 </p:panel>
             </p:dialog>
         </h:form>
+        
+        
+        
+         <h:form id="createSvalueFormID">
+            <p:dialog header="#{bundle.newSvalue}" id="createSvalueDialogID" position="center" widgetVar="createSvalueDialogWidget" modal="true" resizable="false" >
+                <p:panel id="createSvaluePanelID" widgetVar="createSvaluePanelWidget">
+                    <p:panelGrid >                                                    
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel  value="#{bundle.svalueName}* : " style="font-weight: bold"  />                          
+                                <p:inputText id="svalueName" value="#{templateEditorBean.svalue.name}" required="true" requiredMessage="#{bundle.svalueName}: #{bundle.mandatoryField}" />
+                                <p:message for="svalueName" display="icon"/> 
+                                <br/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:commandButton  value="#{bundle.insert}" action="#{administrationAction.insertSvalue()}" update=":productFormID @form:createSvaluePanelID" />
+                    <p:commandButton  type="button" immediate="true" value="#{bundle.close}" onclick="createSvalueDialogWidget.hide()" />
+                </p:panel>
+            </p:dialog>
+        </h:form>
+        
+        
+         <h:form id="updateSvalueFormID">
+            <p:dialog header="#{bundle.updateSvalue}" id="updateSvalueDialogID" position="center" widgetVar="updateSvalueDialogWidget" modal="true" resizable="false" >
+                <p:panel id="updateSvaluePanelID" widgetVar="updateSvaluePanelWidget">
+                    <p:panelGrid >                            
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel  value="#{bundle.svalueName}* :"  style="font-weight: bold"/>
+                                <p:inputText id="updateSvalueName" value="#{templateEditorBean.svalue.name}" required="true" requiredMessage="#{bundle.svalueName}: #{bundle.mandatoryField}" />
+                                <p:message for="updateSvalueName" display="icon"/> 
+                            </p:column><br/>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:commandButton  value="#{bundle.update}" action="#{administrationAction.updateSvalue()}" update=":productFormID @form" />
+                    <p:commandButton  type="button" immediate="true" value="#{bundle.close}" onclick="updateSvalueDialogWidget.hide()" />
+                </p:panel>
+            </p:dialog>
+        </h:form>
+
 
 
 

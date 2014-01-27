@@ -126,7 +126,7 @@ public class Svalue implements java.io.Serializable {
     public void setHasimage(BigDecimal hasimage) {
         this.hasimage = hasimage;
     }
-
+ 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "svalue")
     public Set<Specificationvalue> getSpecificationvalues() {
         return this.specificationvalues;

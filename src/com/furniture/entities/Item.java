@@ -135,7 +135,7 @@ public class Item implements java.io.Serializable {
         this.auditings = auditings;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "item")
+    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, mappedBy = "item")
     public Set<Product> getProducts() {
         return this.products;
     }

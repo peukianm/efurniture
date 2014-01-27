@@ -402,8 +402,7 @@ public class ProductDAO {
     public Set<Product> getCategoryProduct(Category category, Company company) {
         Set<Product> products = new HashSet<Product>(0);
         try {
-            //products.addAll(category.getProducts());
-            System.out.println("category.getProducts()="+category.getProducts());
+            //products.addAll(category.getProducts());            
             for (int i = 0; i < category.getProducts().size(); i++) {
                 Product product = category.getProducts().get(i);
 

@@ -146,7 +146,7 @@ public class ApplicationBean implements Serializable {
     public List<Svalue> getSvalues() {
         if (svalues == null) {
             SvalueDAO dao = new SvalueDAO();
-            svalues = dao.findByProperty("active", BigDecimal.ONE);
+            svalues = dao.findAll();
         }
         return svalues;
     }

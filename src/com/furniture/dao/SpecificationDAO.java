@@ -138,6 +138,7 @@ public class SpecificationDAO {
         try {
             final String queryString = "select model from Specification model where model." + propertyName + "= :propertyValue  order by model.name  ";
             Query query = getEntityManager().createQuery(queryString);
+            //query.setHint("javax.persistence.cache.storeMode", "REFRESH");
             query.setParameter("propertyValue", value);
             if (rowStartIdxAndCount != null && rowStartIdxAndCount.length > 0) {
                 int rowStartIdx = Math.max(0, rowStartIdxAndCount[0]);

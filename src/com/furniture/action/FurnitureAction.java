@@ -496,7 +496,7 @@ public class FurnitureAction {
             
             for (int i = 0; i < productSpecifications.size(); i++) {
                 Productspecification productspecification = productSpecifications.get(i);
-                if (productspecification.getSpecification().equals(spec)) {                    
+                if (productspecification.getSpecification().equals(spec) && !spec.getMultipleinsert().equals(BigDecimal.ONE)) {                    
                      sessionBean.setAlertMessage(MessageBundleLoader.getMessage("specAlreadySelected"));
                      FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
                      FacesUtils.callRequestContext("generalAlertWidget.show()");                    
@@ -846,7 +846,7 @@ public class FurnitureAction {
 
             for (int i = 0; i < dimensionProductSpecifications.size(); i++) {
                 Productspecification productspecification = dimensionProductSpecifications.get(i);
-                if (productspecification.getSpecification().equals(spec)) {                    
+                if (productspecification.getSpecification().equals(spec) && !spec.getMultipleinsert().equals(BigDecimal.ONE)) {                    
                      sessionBean.setAlertMessage(MessageBundleLoader.getMessage("specAlreadySelected"));
                      FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
                      FacesUtils.callRequestContext("generalAlertWidget.show()");                    
@@ -1702,7 +1702,7 @@ public class FurnitureAction {
             
             for (int i = 0; i < productSpecifications.size(); i++) {
                 Productspecification productspecification = productSpecifications.get(i);
-                if (productspecification.getSpecification().equals(spec)) {                    
+                if (productspecification.getSpecification().equals(spec) && !spec.getMultipleinsert().equals(BigDecimal.ONE)) {                    
                      sessionBean.setAlertMessage(MessageBundleLoader.getMessage("specAlreadySelected"));
                      FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
                      FacesUtils.callRequestContext("generalAlertWidget.show()");                    
@@ -1944,7 +1944,7 @@ public class FurnitureAction {
             List<Productspecification> dimensionProductSpecifications = viewProductBean.getDimesionProductSpecifications();
             for (int i = 0; i < dimensionProductSpecifications.size(); i++) {
                 Productspecification productspecification = dimensionProductSpecifications.get(i);
-                if (productspecification.getSpecification().equals(spec)) {                    
+                if (productspecification.getSpecification().equals(spec) && !spec.getMultipleinsert().equals(BigDecimal.ONE)) {                    
                      sessionBean.setAlertMessage(MessageBundleLoader.getMessage("specAlreadySelected"));
                      FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
                      FacesUtils.callRequestContext("generalAlertWidget.show()");                    

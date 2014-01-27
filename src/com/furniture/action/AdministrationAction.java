@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.transaction.UserTransaction;
@@ -687,9 +688,9 @@ public class AdministrationAction implements Serializable {
 
     public void goInsertSvalue() {
         try {
-            TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("TemplateEditorBean");
+            TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("templateEditorBean");
             Svalue svalue = new Svalue();
-            //svalue.setActive(BigDecimal.ONE);  
+            svalue.setHasimage(BigDecimal.ZERO);  
             templateEditorBean.setSvalue(svalue);
 
         } catch (Exception e) {
@@ -939,6 +940,7 @@ public class AdministrationAction implements Serializable {
             templateEditorBean.reset();
             ApplicationBean applicationBean = (ApplicationBean) FacesUtils.getManagedBean("applicationBean");
             applicationBean.setSpecifications(null);
+            applicationBean.setItems(null);
 
             templateEditorBean.reset();
             FacesUtils.callRequestContext("createSpecificationDialogWidget.hide()");
@@ -971,6 +973,8 @@ public class AdministrationAction implements Serializable {
             templateEditorBean.reset();
             ApplicationBean applicationBean = (ApplicationBean) FacesUtils.getManagedBean("applicationBean");
             applicationBean.setSvalues(null);
+            applicationBean.setSpecifications(null);
+            applicationBean.setItems(null);
 
 
             FacesUtils.callRequestContext("createSvalueDialogWidget.hide()");
@@ -1076,9 +1080,8 @@ public class AdministrationAction implements Serializable {
             }
 
 
-            List<Svalue> svalues = templateEditorBean.getSvaluePickList().getTarget();
+            List<Svalue> svalues = templateEditorBean.getSvaluePickList().getTarget();            
             
-            System.out.println("NEW LIST OF VALUES="+svalues.size());
             if (specification.getFreetext().equals(BigDecimal.ZERO)) {                
                 if (svalues.size() == 0) {
                     sessionBean.setAlertMessage(MessageBundleLoader.getMessage("noValuesSelected"));
@@ -1124,11 +1127,8 @@ public class AdministrationAction implements Serializable {
              }
               
             
-            
-            System.out.println("PREVIOUS LIST OF VALUES="+specification.getSpecificationvalues().size());
             for (int i = 0; i < specification.getSpecificationvalues().size(); i++) {
-                Specificationvalue specificationValue = specification.getSpecificationvalues().get(i);
-                System.out.println("REMOVING");
+                Specificationvalue specificationValue = specification.getSpecificationvalues().get(i);                
                 persistenceHelper.remove(specificationValue);
             }
   
@@ -1152,6 +1152,7 @@ public class AdministrationAction implements Serializable {
             templateEditorBean.reset();
             ApplicationBean applicationBean = (ApplicationBean) FacesUtils.getManagedBean("applicationBean");
             applicationBean.setSpecifications(null);
+            applicationBean.setItems(null);
 
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("specificationUpdated"));
             FacesUtils.callRequestContext("updateSpecificationDialogWidget.hide()");
@@ -1167,12 +1168,62 @@ public class AdministrationAction implements Serializable {
             goError(e);
         }
     }
+    
+    
+    
+    
+    public void updateSvalue() {
+        TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("templateEditorBean");
+        UserTransaction userTransaction = null;
+        try {
+            Svalue svalue = templateEditorBean.getSvalue();
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            
+            
+            svalue = persistenceHelper.editPersist(svalue);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_UPDATETEMPLATEPRODUCTSPECVALUE")), "Protorype product speccification value " + svalue.getName() + " updated");
+            userTransaction.commit();
+
+            templateEditorBean.reset();
+            ApplicationBean applicationBean = (ApplicationBean) FacesUtils.getManagedBean("applicationBean");
+            applicationBean.setSvalues(null);
+            applicationBean.setSpecifications(null);
+            applicationBean.setItems(null);
+
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("specificationValueUpdated"));
+            FacesUtils.callRequestContext("updateSvalueDialogWidget.hide()");
+
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
+    
 
     public void removeItem() {
         TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("templateEditorBean");
         UserTransaction userTransaction = null;
         try {
             Item item = templateEditorBean.getItem();
+            
+            ProductDAO dao = new ProductDAO();            
+            List<Product> products = dao.findByProperty("item", item);
+            if (products.size()>0) {
+                sessionBean.setAlertMessage(MessageBundleLoader.getMessage("itemInserted"));
+                FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
+                FacesUtils.callRequestContext("generalAlertWidget.show()");
+                return;
+            }
+            
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
             persistenceHelper.remove(item);
@@ -1203,6 +1254,16 @@ public class AdministrationAction implements Serializable {
         UserTransaction userTransaction = null;
         try {
             Specification specification = templateEditorBean.getSpecification();
+            
+            ProductspecificationDAO dao = new ProductspecificationDAO();            
+            List<Productspecification> productspecifications = dao.findByProperty("specification", specification);
+            if (productspecifications.size()>0) {
+                sessionBean.setAlertMessage(MessageBundleLoader.getMessage("specificationValInserted"));
+                FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
+                FacesUtils.callRequestContext("generalAlertWidget.show()");
+                return;
+            }
+            
             userTransaction = persistenceHelper.getUserTransaction();
             userTransaction.begin();
             persistenceHelper.remove(specification);
@@ -1212,6 +1273,7 @@ public class AdministrationAction implements Serializable {
             templateEditorBean.reset();
             ApplicationBean applicationBean = (ApplicationBean) FacesUtils.getManagedBean("applicationBean");
             applicationBean.setSpecifications(null);
+            applicationBean.setItems(null);
 
             FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("specificationDeleted"));
             FacesUtils.updateHTMLComponnetWIthJS("");
@@ -1226,6 +1288,62 @@ public class AdministrationAction implements Serializable {
             goError(e);
         }
     }
+    
+    
+    
+    
+    public void removeSvalue() {
+        TemplateEditorBean templateEditorBean = (TemplateEditorBean) FacesUtils.getManagedBean("templateEditorBean");
+        UserTransaction userTransaction = null;
+        try {
+            Svalue svalue = templateEditorBean.getSvalue();
+            ProductvalueDAO dao = new ProductvalueDAO();            
+            List<Productvalue> productvalues = dao.findByProperty("svalue", svalue);
+            if (productvalues.size()>0) {
+                sessionBean.setAlertMessage(MessageBundleLoader.getMessage("svalueInserted"));
+                FacesUtils.updateHTMLComponnetWIthJS("alertPanel");
+                FacesUtils.callRequestContext("generalAlertWidget.show()");
+                return;
+            }
+            
+                    
+            userTransaction = persistenceHelper.getUserTransaction();
+            userTransaction.begin();
+            
+            
+//            Iterator itr = svalue.getSpecificationvalues().iterator();
+//            while (itr.hasNext()) {
+//                Specificationvalue sv = (Specificationvalue)itr.next();
+//                persistenceHelper.remove(sv);
+//            }
+            
+            
+            persistenceHelper.remove(svalue);
+            persistenceUtil.audit(sessionBean.getUsers(), new BigDecimal(SystemParameters.getInstance().getProperty("ACT_DELETETEMPLATEPRODUCTSPECVALUE")), "Prototype Product specification value " + svalue.getName() + " deleted");
+            userTransaction.commit();
+
+            templateEditorBean.reset();
+            ApplicationBean applicationBean = (ApplicationBean) FacesUtils.getManagedBean("applicationBean");
+            applicationBean.setSvalues(null);
+            applicationBean.setSpecifications(null);
+            applicationBean.setItems(null);
+
+
+            FacesUtils.addInfoMessage(MessageBundleLoader.getMessage("specificationValueDeleted"));
+            FacesUtils.updateHTMLComponnetWIthJS("");
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            sessionBean.setErrorMsgKey("errMsg_GeneralError");
+            goError(e);
+        }
+    }
+    
+    
 
     public void goError(Exception ex) {
         try {
